@@ -1,0 +1,4 @@
+
+@echo off
+echo benchmark_app -m tts_zn_mix_en.xml -i bert:bert.npy -i ja_bert:ja_bert.npy -i lang_ids:lang_ids.npy -i noise_scale:noise_scale.npy -i noise_scale_w:noise_scale_w.npy -i phones:phones.npy -i phones_length:phones_length.npy -i sdp_ratio:sdp_ratio.npy -i speakers:speakers.npy -i tones:tones.npy  -i length_scale:length_scale.npy
+benchmark_app -m tts_zn_mix_en.xml -i bert:bert.npy -i ja_bert:ja_bert.npy -i lang_ids:lang_ids.npy -i noise_scale:noise_scale.npy -i noise_scale_w:noise_scale_w.npy -i phones:phones.npy -i phones_length:phones_length.npy -i sdp_ratio:sdp_ratio.npy -i speakers:speakers.npy -i tones:tones.npy  -i length_scale:length_scale.npy
