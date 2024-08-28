@@ -21,22 +21,19 @@ namespace melo
         {
             openvoice_zh_tts_model_ = nullptr;
         }
-        if (openvoice_en_tts_model_)
+        if (openvoice_tts_model_)
         {
-            openvoice_en_tts_model_ = nullptr;
+            openvoice_tts_model_ = nullptr;
         }
         if (openvoice_zh_bert_model_)
         {
             openvoice_zh_bert_model_ = nullptr;
         }
-        if (openvoice_en_bert_model_)
+        if (openvoice_bert_model_)
         {
-            openvoice_en_bert_model_ = nullptr;
+            openvoice_bert_model_ = nullptr;
         }
-        if (openvoice_cv_model_)
-        {
-            openvoice_cv_model_ = nullptr;
-        }
+
     }
 
     Status MeloTTSProcessor::LoadTTSModel(const std::string &zh_tts_path,  const std::string &zh_bert_path, const std::string & tokenizer_data_path)
@@ -402,10 +399,6 @@ namespace melo
         {
             openvoice_bert_model_ = openvoice_zh_bert_model_;
         }
-        //else if (language_ == "EN")
-        //{
-        //    openvoice_bert_model_ = openvoice_en_bert_model_;
-        //}
         else
         {
             std::string msg =
@@ -539,34 +532,7 @@ namespace melo
         return Status::OK();
     }
 
-    Status MeloTTSProcessor::converter_infer(
-        const std::vector<float> &spec, const std::vector<float> &source_se,
-        const std::vector<float> &target_se, std::vector<float> &wavs)
-    {
-        int spec_length = static_cast<int>(spec.size() / 513);
-        openvoice_cv_model_->ResizeInputTensor(0, {1, 513, spec_length});
-        openvoice_cv_model_->SetInputData(0, spec.data());
-        openvoice_cv_model_->SetInputData(1, source_se.data());
-        openvoice_cv_model_->SetInputData(2, target_se.data());
 
-        try
-        {
-            openvoice_cv_model_->Run();
-            const float *output =
-                static_cast<const float *>(openvoice_cv_model_->GetOutputData(0));
-            size_t output_size = openvoice_cv_model_->GetOutputTensorSize(0);
-            std::cout << "output_size" << output_size << std::endl;
-            wavs.resize(output_size);
-            memcpy(wavs.data(), output, output_size * sizeof(float));
-        }
-        catch (std::exception &e)
-        {
-            std::string msg = "openvoice converter error : " + std::string(e.what());
-            MELO_LOG(MELO_ERROR) << msg;
-            MELO_ERROR_RETURN(msg);
-        }
-        return Status::OK();
-    }
 
     Status MeloTTSProcessor::WriteWave(const std::string &filename,
                                             int32_t sampling_rate,

@@ -72,11 +72,8 @@ namespace melo
                                std::vector<float> &wavs);
 
         std::shared_ptr<OpenvinoModel> openvoice_zh_tts_model_;
-        std::shared_ptr<OpenvinoModel> openvoice_en_tts_model_;
         std::shared_ptr<OpenvinoModel> openvoice_zh_bert_model_;
-        std::shared_ptr<OpenvinoModel> openvoice_en_bert_model_;
         std::shared_ptr<OpenvinoModel> openvoice_bert_model_;
-        std::shared_ptr<OpenvinoModel> openvoice_cv_model_;
         std::shared_ptr<OpenvinoModel> openvoice_tts_model_;
 
 
