@@ -198,9 +198,8 @@ namespace melo
 
 
         //example 2
-        input_ids.push_back({ 101, 6784, 7984, 2693, 85065, 33719, 1817, 3295, 2415, 6990,
-        1776, 2160, 4270, 3203, 2383, 18958, 59242, 4108, 3259, 6805,
-        2981, 5975, 4767, 4508, 3203, 2383, 79947, 20849, 59242, 102 });
+        input_ids.push_back({ 101,6784,7984,2693,85065,33719,1817,3295,2415,6990,1776,2160,4270,3203,2383,18958,59242,4108,3259,6805,2981,5975,4767,4508,3203,2383,79947,20849,59242,102 });
+       
         int n = input_ids.front().size();
         attention_mask.push_back(std::vector<int64_t>(n,1));
         token_type_id.push_back(std::vector<int64_t>(n, 0));
@@ -242,7 +241,7 @@ namespace melo
             }
             std::cout << std::endl;
             };
-        printVec(input_ids,"input_ids");
+        /*printVec(input_ids,"input_ids");
         printVec(attention_mask, "attention_mask");
         printVec(token_type_id,"token_type_id_.bin");
         printVec(phones_ids, "phones_ids");
@@ -251,7 +250,7 @@ namespace melo
         printVec(word2ph, "word2ph");
         
 
-        system("pause");
+        system("pause");*/
         int target_speaker_id = sid;
         if (sid < 0 || sid >= speaker_emb.size())
         {

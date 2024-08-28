@@ -5,7 +5,16 @@
 #include <vector>
 #include <unordered_map>
 namespace melo {
-
+/**
+ * @brief UTF-8 Tokenizer for 'bert-base-multilingual-uncased' model.
+ *
+ * This tokenizer is specifically designed for handling UTF-8 encoded text data
+ * for the 'bert-base-multilingual-uncased' model. It focuses on tokenizing
+ * Chinese characters and English lowercase words, deliberately excluding any
+ * punctuation marks. The tokenizer ensures that the input text is segmented
+ * into tokens that align with the BERT model's input specifications, while
+ * maintaining UTF-8 encoding integrity.
+ */
 class Tokenizer {
 private:
     std::unordered_map<std::string, int> m_token2id;

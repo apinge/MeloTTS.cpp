@@ -205,7 +205,6 @@ namespace melo
 					if (current_eng.size() > 0)
 					{
 						std::transform(current_eng.begin(),current_eng.end(), current_eng.begin(), _tolower);
-
 						searchEnglishWord(current_eng, str_out, id_out);
 
 						current_eng = "";
