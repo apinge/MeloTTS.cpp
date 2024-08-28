@@ -5,6 +5,13 @@ project(MeloTTS)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# for env witout setting utf-8 for Chinese 
+if(WIN32)
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/execution-charset:utf-8>")
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/bigobj>")
+endif()
+
 
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 
@@ -42,11 +49,6 @@ add_executable(meloTTS_ov ${SOURCE_FILES} ${HEADER_FILES})
 target_compile_definitions(meloTTS_ov PRIVATE "$<$<CONFIG:DEBUG>:DEBUG>")
 target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
 
-if(WIN32)
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/execution-charset:utf-8>")
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/bigobj>")
-endif()
 
 target_link_libraries(meloTTS_ov
     PRIVATE openvino::runtime  # Link OpenVINO Runtime privately
