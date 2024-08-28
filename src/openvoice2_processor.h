@@ -38,7 +38,6 @@ namespace melo
         /// @return successs or failure
         Status Process(const std::string &text, const int sid,
                        const std::vector<float> &addit_param, 
-                       const std::string &data_path,
                        std::vector<float> &out_audio_buffer);
 
         Status LoadTTSModel(const std::string &zh_tts_path, const std::string &zh_bert_path, const std::string& tokenizer_data_path);
@@ -81,8 +80,7 @@ namespace melo
         std::shared_ptr<OpenvinoModel> openvoice_cv_model_;
         std::shared_ptr<OpenvinoModel> openvoice_tts_model_;
 
-        std::vector<float> target_se_;
-        std::vector<std::vector<float>> source_se_;
+
         std::string language_ = "ZH";
 
         std::vector<std::vector<float>> speaker_emb;

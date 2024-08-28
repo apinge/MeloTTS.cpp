@@ -23,12 +23,11 @@ int main()
     //std::vector<float> addit_param = { 0.2, 0.667, 1.0, 0.80 };
     std::string convert_text = "";
     std::vector<float> wav_data;
-    std::string data_path = "../thirdParty/tts_ov/vocab_bert.txt";
     //loop for time
     for (int k = 0; k < 1; ++k) {
-      tts_processor->Process(convert_text, 0, addit_param, data_path, wav_data);
+      tts_processor->Process(convert_text, 0, addit_param, wav_data);
       //16000 origin
-      tts_processor->WriteWave("../tts_intel.wav", 44100,
+      tts_processor->WriteWave("../melo_tts.wav", 44100,
                                wav_data.data(), wav_data.size());
       std::cout << "finish to generate wav" << std::endl;
     }

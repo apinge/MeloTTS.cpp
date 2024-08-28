@@ -84,7 +84,6 @@ namespace melo
 
     Status TTSOpenVoiceProcessor::Process(const std::string &text, const int sid,
                                           const std::vector<float> &addit_param,
-                                          const std::string &data_path,
                                           std::vector<float> &out_audio_buffer)
     {
         MELO_LOG(MELO_DEBUG) << "TTSProcessor::Process start";
