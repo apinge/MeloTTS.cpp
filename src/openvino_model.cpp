@@ -40,8 +40,6 @@ namespace melo
                     device_config[ov::enable_profiling.name()] = false;
                     // device_config[ov::inference_num_threads.name()] = 1;
                      ov_core->set_property(device_name,{{"CPU_RUNTIME_CACHE_CAPACITY", "0"}});
-                    // // device_config[ov::hint::scheduling_core_type.name()] =
-                    // //     ov::hint::SchedulingCoreType::PCORE_ONLY;
                 }
                 if (device_name.find("GPU") != std::string::npos)
                 {
@@ -54,6 +52,7 @@ namespace melo
                         ov::hint::Priority::HIGH;
                     device_config[ov::hint::enable_cpu_pinning.name()] = true;
                     device_config[ov::enable_profiling.name()] = false;
+                    device_config[ov::intel_gpu::hint::enable_kernels_reuse.name()] = true;
                 }
                 compiled_model =
                     ov_core->compile_model(model_, device_name, device_config);
