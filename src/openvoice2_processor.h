@@ -25,7 +25,7 @@ namespace melo
     class MeloTTSProcessor
     {
     public:
-        MeloTTSProcessor() = default;
+        MeloTTSProcessor() { core_ptr = std::make_shared<ov::Core>(); };
         ~MeloTTSProcessor();
 
         /// @brief save generate audio to file
@@ -66,11 +66,8 @@ namespace melo
                          const std::vector<float> &bert,
                          const std::vector<float> &ja_bert, std::vector<float> &wavs);
 
-        Status converter_infer(const std::vector<float> &spec,
-                               const std::vector<float> &source_se,
-                               const std::vector<float> &target_se,
-                               std::vector<float> &wavs);
 
+        std::shared_ptr<ov::Core> core_ptr;
         std::shared_ptr<OpenvinoModel> openvoice_zh_tts_model_;
         std::shared_ptr<OpenvinoModel> openvoice_zh_bert_model_;
         std::shared_ptr<OpenvinoModel> openvoice_bert_model_;

@@ -28,7 +28,8 @@ namespace melo
 		OpenvinoModel(const OpenvinoModel &) = delete;
 		OpenvinoModel &operator=(const OpenvinoModel &) = delete;
 
-		OpenvinoModel();
+
+		explicit OpenvinoModel(std::shared_ptr<ov::Core> & _core_ptr):ov_core(_core_ptr){ }
 		~OpenvinoModel();
 
 		Status Init(const std::string& model_path, const std::string& device_name);
@@ -57,6 +58,7 @@ namespace melo
 		OPENVINO_DEVICE_NAME StringToDeviceName(const std::string &device_name);
 
 	private:
+		std::shared_ptr<ov::Core> ov_core;
 		std::shared_ptr<ov::Model> model_;
 		ov::InferRequest infer_request_;
 		std::map<int, ov::Shape> input_shape_map_;

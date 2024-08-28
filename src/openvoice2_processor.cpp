@@ -40,11 +40,11 @@ namespace melo
     {
         std::string device_name = "CPU";
         MELO_LOG(MELO_TRACE) << "LoadTTSModel start";
-        openvoice_zh_tts_model_ = std::make_shared<OpenvinoModel>();
+        openvoice_zh_tts_model_ = std::make_shared<OpenvinoModel>(core_ptr);
         openvoice_zh_tts_model_->Init(zh_tts_path, device_name);
 
 
-        openvoice_zh_bert_model_ = std::make_shared<OpenvinoModel>();
+        openvoice_zh_bert_model_ = std::make_shared<OpenvinoModel>(core_ptr);
         openvoice_zh_bert_model_->Init(zh_bert_path, device_name);
 
         //init tokenizer

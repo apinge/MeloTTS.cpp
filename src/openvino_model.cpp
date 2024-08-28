@@ -5,15 +5,14 @@
 namespace melo
 {
 
-    OpenvinoModel::OpenvinoModel() {}
 
     OpenvinoModel::~OpenvinoModel() {}
 
     Status OpenvinoModel::Init(const std::string &model_path, const std::string &device_name)
     {
         MELO_LOG(MELO_INFO) << "read model from path : " << model_path;
-        ov::Core ov_core;
-        model_ = ov_core.read_model(model_path);
+
+        model_ = ov_core->read_model(model_path);
         if (model_ == nullptr)
         {
             std::string msg = "Read model faild! filename:" + model_path;
@@ -40,7 +39,7 @@ namespace melo
                     device_config[ov::hint::enable_cpu_pinning.name()] = true;
                     device_config[ov::enable_profiling.name()] = false;
                     // device_config[ov::inference_num_threads.name()] = 1;
-                     ov_core.set_property(device_name,{{"CPU_RUNTIME_CACHE_CAPACITY", "0"}});
+                     ov_core->set_property(device_name,{{"CPU_RUNTIME_CACHE_CAPACITY", "0"}});
                     // // device_config[ov::hint::scheduling_core_type.name()] =
                     // //     ov::hint::SchedulingCoreType::PCORE_ONLY;
                 }
@@ -57,7 +56,7 @@ namespace melo
                     device_config[ov::enable_profiling.name()] = false;
                 }
                 compiled_model =
-                    ov_core.compile_model(model_, device_name, device_config);
+                    ov_core->compile_model(model_, device_name, device_config);
                 MELO_LOG(MELO_DEBUG) << " dst device name: " << device_name;
                 break;
             }
