@@ -197,10 +197,10 @@ namespace melo
 
         //example 2
         
-        std::string input_text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
+        // "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
         std::vector<int64_t> ids;
         std::vector<std::string> strs;
-        tokenizer.Tokenize(input_text,strs,ids);
+        tokenizer.Tokenize(text,strs,ids);
         input_ids.push_back(ids);
         int n = input_ids.front().size();
         attention_mask.push_back(std::vector<int64_t>(n,1));

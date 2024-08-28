@@ -23,12 +23,8 @@ int main()
 
     tts_processor->LoadTTSModel(zh_tts_path, zh_bert_path, vocab_bert_path);
     std::vector<float> addit_param = { 0.2, 0.6, 1.0, 0.80 };
-    /*sdp_ration_ = addit_param[0];
-        noise_scale_ = addit_param[1];
-        length_scale_ = addit_param[2];
-        noise_scale_w_ = addit_param[3];*/
-    //std::vector<float> addit_param = { 0.2, 0.667, 1.0, 0.80 };
-    std::string convert_text = "";
+
+    std::string convert_text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
     std::vector<float> wav_data;
     //loop for time
     //while(true){
