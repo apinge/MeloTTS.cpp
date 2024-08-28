@@ -14,11 +14,11 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
 #endif
 
-    melo::Tokenizer tokenizer("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp\\thirdParty\\tts_ov\\vocab.txt");
+    melo::Tokenizer tokenizer("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp\\thirdParty\\tts_ov\\vocab_bert.txt");
     std::string text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
     std::cout << text << std::endl;
     std::vector<std::string> tokens;
-    std::vector<int> token_ids;
+    std::vector<int64_t> token_ids;
     tokenizer.Tokenize(text, tokens, token_ids);
     for (const auto& word : tokens) std::cout << word << " ";
     std::cout << std::endl;

@@ -10,6 +10,7 @@
 #include "status.h"
 #include "openvino_model.h"
 #include "info_data.h"
+#include "tokenizer.h"
 //#include "utils.h"
 namespace melo
 {
@@ -40,7 +41,7 @@ namespace melo
                        const std::string &data_path,
                        std::vector<float> &out_audio_buffer);
 
-        Status LoadTTSModel(const std::string &zh_tts_path, const std::string &zh_bert_path);
+        Status LoadTTSModel(const std::string &zh_tts_path, const std::string &zh_bert_path, const std::string& tokenizer_data_path);
 
         Status WriteWave(const std::string &filename, int32_t sampling_rate,
                          const float *samples, int32_t n);
@@ -48,6 +49,7 @@ namespace melo
         int GetSampleRate() { return 16000; }
 
     private:
+        melo::Tokenizer tokenizer;
         Status get_berts(const std::vector<int64_t> &phones,
                          const std::string &language, const std::vector<int> &word2ph,
                          const std::vector<int64_t> &input_ids,

@@ -30,10 +30,11 @@ private:
     void StrSplit(const std::string& str, const char split, std::vector<std::string>& res);
 
 public:
-    explicit Tokenizer(const std::string & token_filename);
+    Tokenizer() = default;
+    Tokenizer(const std::string & token_filename);
     ~Tokenizer() = default;
     //include tokenize bert_tokenizer
-    void Tokenize(const std::string& str_info, std::vector<std::string>& str_out, std::vector<int>& id_out);
+    void Tokenize(const std::string& str_info, std::vector<std::string>& str_out, std::vector<int64_t>& id_out);
 };
 
 } // namespace melo

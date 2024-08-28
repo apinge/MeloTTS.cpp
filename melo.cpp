@@ -12,8 +12,9 @@ int main()
 
     std::string zh_tts_path = "../thirdParty/tts_ov/tts_zn_mix_en.xml";
     std::string zh_bert_path = "../thirdParty/tts_ov/bert.xml";
+    std::string vocab_bert_path = "../thirdParty/tts_ov/vocab_bert.txt";
 
-    tts_processor->LoadTTSModel(zh_tts_path, zh_bert_path);
+    tts_processor->LoadTTSModel(zh_tts_path, zh_bert_path, vocab_bert_path);
     std::vector<float> addit_param = { 0.2, 0.6, 1.0, 0.80 };
     /*sdp_ration_ = addit_param[0];
         noise_scale_ = addit_param[1];
@@ -22,7 +23,7 @@ int main()
     //std::vector<float> addit_param = { 0.2, 0.667, 1.0, 0.80 };
     std::string convert_text = "";
     std::vector<float> wav_data;
-    std::string data_path = "../thirdParty/binData/";
+    std::string data_path = "../thirdParty/tts_ov/vocab_bert.txt";
     //loop for time
     for (int k = 0; k < 1; ++k) {
       tts_processor->Process(convert_text, 0, addit_param, data_path, wav_data);

@@ -40,7 +40,7 @@ namespace melo
         }
     }
 
-    Status TTSOpenVoiceProcessor::LoadTTSModel(const std::string &zh_tts_path,  const std::string &zh_bert_path)
+    Status TTSOpenVoiceProcessor::LoadTTSModel(const std::string &zh_tts_path,  const std::string &zh_bert_path, const std::string & tokenizer_data_path)
     {
         std::string device_name = "CPU";
         MELO_LOG(MELO_TRACE) << "LoadTTSModel start";
@@ -51,7 +51,8 @@ namespace melo
         openvoice_zh_bert_model_ = std::make_shared<OpenvinoModel>();
         openvoice_zh_bert_model_->Init(zh_bert_path, device_name);
 
-
+        //init tokenizer
+        tokenizer = melo::Tokenizer(tokenizer_data_path);
 
         bool flag = false;
         if (openvoice_zh_bert_model_ == nullptr)
@@ -198,8 +199,12 @@ namespace melo
 
 
         //example 2
-        input_ids.push_back({ 101,6784,7984,2693,85065,33719,1817,3295,2415,6990,1776,2160,4270,3203,2383,18958,59242,4108,3259,6805,2981,5975,4767,4508,3203,2383,79947,20849,59242,102 });
-       
+        
+        std::string input_text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
+        std::vector<int64_t> ids;
+        std::vector<std::string> strs;
+        tokenizer.Tokenize(input_text,strs,ids);
+        input_ids.push_back(ids);
         int n = input_ids.front().size();
         attention_mask.push_back(std::vector<int64_t>(n,1));
         token_type_id.push_back(std::vector<int64_t>(n, 0));

@@ -18,10 +18,14 @@ namespace melo
 			std::cerr << "[Error] Tokenizer::ReadTokenFile: Could not open file " << token_filename << std::endl;
 			return;
 		}
-		int idx = 0;
-		while (std::getline(file, line))
-			m_token2id.emplace(std::move(line), idx++);
-
+		while (std::getline(file, line)) {
+			size_t pos = line.find(':');
+			if (pos != std::string::npos) {
+				std::string token = line.substr(0, pos);
+				std::string id = line.substr(pos + 1);
+				m_token2id.emplace(std::move(token), std::stoi(id));
+			}
+		}
 		file.close();
 		return;
 	}
@@ -147,7 +151,7 @@ namespace melo
 				return ch;
 		};
 
-	void Tokenizer::Tokenize(const std::string & str_info, std::vector<std::string> &str_out, std::vector<int> &id_out)
+	void Tokenizer::Tokenize(const std::string & str_info, std::vector<std::string> &str_out, std::vector<int64_t> &id_out)
 	{
 		
 		id_out.emplace_back(m_token2id.at("[CLS]"));
@@ -157,7 +161,7 @@ namespace melo
 
 		// serach word in dict and fill the res in str_out and id_out
         // some english word may be split in two in tokenizer dict e.g. compiler -> comp + ##iler
-		auto searchEnglishWord = [&](const std::string word, std::vector<std::string>& str_out, std::vector<int>& id_out) {
+		auto searchEnglishWord = [&](const std::string word, std::vector<std::string>& str_out, std::vector<int64_t>& id_out) {
 			if (m_token2id.count(current_eng)) {
 				id_out.push_back(m_token2id.at(current_eng));
 				str_out.push_back(current_eng);
