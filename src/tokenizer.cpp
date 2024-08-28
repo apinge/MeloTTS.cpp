@@ -151,10 +151,35 @@ namespace melo
 	{
 		
 		id_out.emplace_back(m_token2id.at("[CLS]"));
-
 		std::vector<std::string> strList;
 		StrSplit(str_info, ' ', strList);
 		std::string current_eng, current_chinese;
+
+		// serach word in dict and fill the res in str_out and id_out
+        // some english word may be split in two in tokenizer dict e.g. compiler -> comp + ##iler
+		auto searchEnglishWord = [&](const std::string word, std::vector<std::string>& str_out, std::vector<int>& id_out) {
+			if (m_token2id.count(current_eng)) {
+				id_out.push_back(m_token2id.at(current_eng));
+				str_out.push_back(current_eng);
+			}
+			else {
+				int suffixBeg = 0;
+				int idx = SearchEngPrefix(current_eng, suffixBeg);
+				if (suffixBeg != 0) {
+					id_out.push_back(idx);
+					std::string wordSuffix = current_eng.substr(suffixBeg);
+					id_out.push_back(SearchEngSuffix(wordSuffix));
+					str_out.push_back(current_eng.substr(0, suffixBeg));
+					str_out.push_back("##" + wordSuffix);
+				}
+				else
+				{
+					id_out.push_back(m_token2id.at("[UNK]"));
+					str_out.push_back(current_eng);
+				}
+			}
+			};
+
 		for (auto &item : strList)
 		{
 			current_eng = "";
@@ -180,27 +205,9 @@ namespace melo
 					if (current_eng.size() > 0)
 					{
 						std::transform(current_eng.begin(),current_eng.end(), current_eng.begin(), _tolower);
-						if (m_token2id.count(current_eng)) {
-							id_out.push_back(m_token2id.at(current_eng));
-							str_out.push_back(current_eng);
-						}
-						else {
-							int suffixBeg = 0;
-							int idx = SearchEngPrefix(current_eng, suffixBeg);
-							if (suffixBeg != 0) {
-								id_out.push_back(idx);
-								id_out.push_back(SearchEngSuffix(current_eng.substr(suffixBeg)));
-								std::cout << current_eng.substr(0, suffixBeg) << std::endl;
-								std::cout << "##" + current_eng.substr(suffixBeg) << std::endl;
-								str_out.push_back(current_eng.substr(0, suffixBeg));
-								str_out.push_back("##" + current_eng.substr(suffixBeg));
-							}
-							else
-							{
-								id_out.push_back(m_token2id.at("[UNK]"));
-								str_out.push_back(current_eng);
-							}
-						}
+
+						searchEnglishWord(current_eng, str_out, id_out);
+
 						current_eng = "";
 					}
 					current_chinese += ch;
@@ -218,27 +225,7 @@ namespace melo
 			if (current_eng.size() > 0)
 			{
 				std::transform(current_eng.begin(), current_eng.end(), current_eng.begin(), _tolower);
-				if (m_token2id.count(current_eng)) {
-					id_out.push_back(m_token2id.at(current_eng));
-					str_out.push_back(current_eng);
-				}
-				else {
-					int suffixBeg = 0;
-					int idx = SearchEngPrefix(current_eng, suffixBeg);
-					if (suffixBeg != 0) {
-						id_out.push_back(idx);
-						id_out.push_back(SearchEngSuffix(current_eng.substr(suffixBeg)));
-						std::cout << current_eng.substr(0, suffixBeg) << std::endl;
-						std::cout << "##" + current_eng.substr(suffixBeg) << std::endl;
-						str_out.push_back(current_eng.substr(0, suffixBeg));
-						str_out.push_back("##" + current_eng.substr(suffixBeg));
-					}
-					else
-					{
-						id_out.push_back(m_token2id.at("[UNK]"));
-						str_out.push_back(current_eng);
-					}
-				}
+				searchEnglishWord(current_eng, str_out, id_out);
 
 			}
 		}
