@@ -14,7 +14,7 @@
 namespace melo
 {
 
-    TTSOpenVoiceProcessor::~TTSOpenVoiceProcessor()
+    MeloTTSProcessor::~MeloTTSProcessor()
     {
 
         if (openvoice_zh_tts_model_)
@@ -39,7 +39,7 @@ namespace melo
         }
     }
 
-    Status TTSOpenVoiceProcessor::LoadTTSModel(const std::string &zh_tts_path,  const std::string &zh_bert_path, const std::string & tokenizer_data_path)
+    Status MeloTTSProcessor::LoadTTSModel(const std::string &zh_tts_path,  const std::string &zh_bert_path, const std::string & tokenizer_data_path)
     {
         std::string device_name = "CPU";
         MELO_LOG(MELO_TRACE) << "LoadTTSModel start";
@@ -81,7 +81,7 @@ namespace melo
         return Status::OK();
     }
 
-    Status TTSOpenVoiceProcessor::Process(const std::string &text, const int sid,
+    Status MeloTTSProcessor::Process(const std::string &text, const int sid,
                                           const std::vector<float> &addit_param,
                                           std::vector<float> &out_audio_buffer)
     {
@@ -176,6 +176,7 @@ namespace melo
         std::vector<std::vector<int64_t>> tones;
         std::vector<std::vector<int64_t>> lang_ids;
 
+
         //readInt64VecrFromFile(data_path + "phones_ids.bin", phones_ids);
         //readIntVecFromFile(data_path + "word2ph.bin", word2ph);
         //readInt64VecrFromFile(data_path + "input_ids.bin", input_ids);
@@ -183,6 +184,7 @@ namespace melo
         //readInt64VecrFromFile(data_path + "token_type_id.bin", token_type_id);
         //readInt64VecrFromFile(data_path + "tones.bin", tones);
         //readInt64VecrFromFile(data_path + "lang_ids.bin", lang_ids);
+
         //example 1
         //input_ids.push_back({ 101, 4348, 9416, 1659, 3530, 5675, 9074, 2082,  102 });
         //attention_mask.push_back({ 1, 1, 1, 1, 1, 1, 1, 1, 1 });
@@ -264,6 +266,7 @@ namespace melo
         if ((phones_ids.size() == tones.size()) &&
             (input_ids.size() == token_type_id.size()))
         {
+
             for (int text_idx = 0; text_idx < phones_ids.size(); ++text_idx)
             {
                 std::vector<int64_t> input_phone_ids = phones_ids[text_idx];
@@ -354,7 +357,7 @@ namespace melo
         return Status::OK();
     }
 
-    Status TTSOpenVoiceProcessor::get_berts(
+    Status MeloTTSProcessor::get_berts(
         const std::vector<int64_t> &phones, const std::string &language,
         const std::vector<int> &word2ph, const std::vector<int64_t> &input_ids,
         const std::vector<int64_t> &attention_mask,
@@ -387,7 +390,7 @@ namespace melo
         return Status::OK();
     }
 
-    Status TTSOpenVoiceProcessor::bert_infer(
+    Status MeloTTSProcessor::bert_infer(
         const std::vector<int64_t> &input_ids,
         const std::vector<int64_t> &attention_mask,
         const std::vector<int64_t> &token_type_ids,
@@ -456,7 +459,7 @@ namespace melo
         return Status::OK();
     }
 
-    Status TTSOpenVoiceProcessor::tts_infer(const std::vector<int64_t> &target_seq,
+    Status MeloTTSProcessor::tts_infer(const std::vector<int64_t> &target_seq,
                                             const int64_t speakers,
                                             const std::vector<int64_t> &tones,
                                             const std::vector<int64_t> &lang_ids,
@@ -536,7 +539,7 @@ namespace melo
         return Status::OK();
     }
 
-    Status TTSOpenVoiceProcessor::converter_infer(
+    Status MeloTTSProcessor::converter_infer(
         const std::vector<float> &spec, const std::vector<float> &source_se,
         const std::vector<float> &target_se, std::vector<float> &wavs)
     {
@@ -565,7 +568,7 @@ namespace melo
         return Status::OK();
     }
 
-    Status TTSOpenVoiceProcessor::WriteWave(const std::string &filename,
+    Status MeloTTSProcessor::WriteWave(const std::string &filename,
                                             int32_t sampling_rate,
                                             const float *samples, int32_t n)
     {

@@ -22,11 +22,11 @@ namespace melo
         double used;
     };
 
-    class TTSOpenVoiceProcessor
+    class MeloTTSProcessor
     {
     public:
-        TTSOpenVoiceProcessor() = default;
-        ~TTSOpenVoiceProcessor();
+        MeloTTSProcessor() = default;
+        ~MeloTTSProcessor();
 
         /// @brief save generate audio to file
         /// @param text input text
