@@ -1,5 +1,4 @@
-﻿// Copyright (C) 2019 FaceUnity Inc. All rights reserved.
-
+﻿
 #include "openvoice2_processor.h"
 #include "librosa.h"
 #include <iostream>

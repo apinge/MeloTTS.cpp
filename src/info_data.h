@@ -1,4 +1,4 @@
-// Copyright (C) 2019 FaceUnity Inc. All rights reserved.
+
 #ifndef MELO_FUGAN_INFO_DATA_H_
 #define MELO_FUGAN_INFO_DATA_H_
 #include <vector>

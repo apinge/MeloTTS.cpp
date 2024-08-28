@@ -1,4 +1,3 @@
-// Copyright (C) 2019 FaceUnity Inc. All rights reserved.
 
 #ifndef MELO_TTS_TEXT_LIBROSA_H_
 #define MELO_TTS_TEXT_LIBROSA_H_

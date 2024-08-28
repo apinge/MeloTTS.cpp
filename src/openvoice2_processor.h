@@ -1,4 +1,3 @@
-// Copyright (C) 2019 FaceUnity Inc. All rights reserved.
 
 #ifndef MELO_OPENVOICE_OPENVOICE_PROCESSOR_H_
 #define MELO_OPENVOICE_OPENVOICE_PROCESSOR_H_

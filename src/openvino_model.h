@@ -1,4 +1,3 @@
-// Copyright (C) 2019 FaceUnity Inc. All rights reserved.
 
 #ifndef MELO_MODEL_OPENVINO_OPENVINO_MODEL_H_
 #define MELO_MODEL_OPENVINO_OPENVINO_MODEL_H_
