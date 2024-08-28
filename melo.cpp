@@ -3,16 +3,24 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cassert>
 #include "src/openvoice2_processor.h"
 
 
 int main()
 {
+    // set ONEDNN_CACHE_CAPACITY 
+    auto status = _putenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY=100");
+    if (status == 0) {
+        char* onednn_kernel_capacity = std::getenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY");
+        std::cout << "set ONEDNN_PRIMITIVE_CACHE_CAPACITY: " << onednn_kernel_capacity << "\n";
+        assert((*onednn_kernel_capacity=="100") && "[ERROR] Set ONEDNN_PRIMITIVE_CACHE_CAPACITY fails!");
+    }
     melo::MeloTTSProcessor* tts_processor =  new melo::MeloTTSProcessor();
 
     //fp16 model
-    //std::string zh_tts_path = "../thirdParty/tts_ov/tts_zn_mix_en.xml";
-   // std::string zh_bert_path = "../thirdParty/tts_ov/bert.xml";
+    //std::string zh_tts_path = "thirdParty/tts_ov/tts_zn_mix_en.xml";
+    //std::string zh_bert_path = "thirdParty/tts_ov/bert.xml";
 
     //int8 model
     std::string zh_tts_path = "thirdParty/tts_ov/tts_int8.xml";
