@@ -22,7 +22,6 @@ namespace melo
 
         int device_number = StringToDeviceName(device_name);
 
-        ov::CompiledModel compiled_model;
         for (int idx = device_number; idx > DEVICE_NAME_NO; idx--)
         {
             try
@@ -52,9 +51,9 @@ namespace melo
                         ov::hint::Priority::HIGH;
                     device_config[ov::hint::enable_cpu_pinning.name()] = true;
                     device_config[ov::enable_profiling.name()] = false;
-                    device_config[ov::intel_gpu::hint::enable_kernels_reuse.name()] = true;
+                    //device_config[ov::intel_gpu::hint::enable_kernels_reuse.name()] = true;
                 }
-                compiled_model =
+                compiled_model_ =
                     ov_core->compile_model(model_, device_name, device_config);
                 MELO_LOG(MELO_DEBUG) << " dst device name: " << device_name;
                 break;
@@ -69,7 +68,7 @@ namespace melo
             }
         }
 
-        infer_request_ = compiled_model.create_infer_request();
+        infer_request_ = compiled_model_.create_infer_request();
 
         int output_num = model_->outputs().size();
         output_size_.clear();
@@ -284,6 +283,10 @@ namespace melo
             //iop_precision = getPrecision2(user_precisions_map.at(item.get_any_name()));
         }
 
+    }
+
+    void OpenvinoModel::ReleaseInferBuffer() {
+        //compiled_model_.release_buffers();
     }
 
 } // namespace melo

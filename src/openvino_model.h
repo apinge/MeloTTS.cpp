@@ -1,6 +1,6 @@
 
-#ifndef MELO_MODEL_OPENVINO_OPENVINO_MODEL_H_
-#define MELO_MODEL_OPENVINO_OPENVINO_MODEL_H_
+#ifndef MELO_MODEL_OPENVINO_MODEL_H_
+#define MELO_MODEL_OPENVINO_MODEL_H_
 
 #include <map>
 #include <memory>
@@ -53,6 +53,7 @@ namespace melo
 
 		void PrintInputNames() const;
 
+		void ReleaseInferBuffer();
 	protected:
 		std::string DeviceNameToString(OPENVINO_DEVICE_NAME device_name);
 		OPENVINO_DEVICE_NAME StringToDeviceName(const std::string &device_name);
@@ -61,6 +62,7 @@ namespace melo
 		std::shared_ptr<ov::Core> ov_core;
 		std::shared_ptr<ov::Model> model_;
 		ov::InferRequest infer_request_;
+		ov::CompiledModel compiled_model_;
 		std::map<int, ov::Shape> input_shape_map_;
 		std::vector<size_t> output_size_;
 		std::vector<char> xml_buffer_;
@@ -70,4 +72,4 @@ namespace melo
 
 } // namespace melo
 
-#endif // MELO_MODEL_OPENVINO_OPENVINO_MODEL_H_
+#endif // MELO_MODEL_OPENVINO_MODEL_H_
