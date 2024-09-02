@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <any>
 #include "status.h"
 #include "logging.h"
 #include "openvino/runtime/intel_gpu/properties.hpp"
@@ -69,6 +70,44 @@ namespace melo
 		std::vector<char> bin_buffer_;
 		std::string d_gpu_ = "";
 	};
+
+	/**
+	 * @class AbstractOpenvinoModel
+	 * @brief An abstract base class for OpenVINO models.
+	 *
+	 * This class serves as an interface for OpenVINO models, providing a common
+	 * structure for loading, configuring, and running inference on models using
+	 * Intel's OpenVINO toolkit. Derived classes must implement the pure virtual
+	 * methods to provide specific functionalities for different model types.
+	 */
+     class AbstractOpenvinoModel 
+     {
+	 public:
+		 explicit AbstractOpenvinoModel(std::unique_ptr<ov::Core> core_ptr, const std::string&  model_path, const std::string & device, const ov::AnyMap& config);
+		 virtual ~AbstractOpenvinoModel() = default;
+
+		 AbstractOpenvinoModel(const AbstractOpenvinoModel&) = delete;
+		 AbstractOpenvinoModel& operator=(const AbstractOpenvinoModel&) = delete;
+		 AbstractOpenvinoModel(AbstractOpenvinoModel&&) = delete;
+		 AbstractOpenvinoModel& operator=(AbstractOpenvinoModel&& other) = delete;
+
+		 virtual void infer(const std::vector<std::any>& args) = 0;
+	 protected:
+		 template<typename T>
+		 void process_vector(const std::any& arg) {
+			 if (arg.type() == typeid(std::vector<T>)) {
+				 const auto& vec = std::any_cast<const std::vector<T>&>(arg);
+				 //std::cout << "Processing vector of type " << typeid(T).name() << " with size " << vec.size() << std::endl;
+			 }
+			 else {
+				 std::cerr << "Type mismatch!" << std::endl;
+			 }
+		 }
+	 private:
+		 std::unique_ptr<ov::InferRequest> infer_request_;
+		 std::unique_ptr<ov::CompiledModel> compiled_model_;
+
+     };
 
 } // namespace melo
 
