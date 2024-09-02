@@ -1,20 +1,32 @@
 ﻿
+#ifdef CRT_
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#endif
+
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <cassert>
+#include <sstream>
 #include "src/openvoice2_processor.h"
 
 
 int main()
 {
     // set ONEDNN_CACHE_CAPACITY 
-    auto status = _putenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY=100");
+    auto status = _putenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY=0");
     if (status == 0) {
         char* onednn_kernel_capacity = std::getenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY");
         std::cout << "set ONEDNN_PRIMITIVE_CACHE_CAPACITY: " << onednn_kernel_capacity << "\n";
-        assert((*onednn_kernel_capacity=="100") && "[ERROR] Set ONEDNN_PRIMITIVE_CACHE_CAPACITY fails!");
+        int y;
+        std::stringstream ss(onednn_kernel_capacity);
+        ss >> y;
+        //std::cout << y << std::endl;
+        assert((y==0) && "[ERROR] Set ONEDNN_PRIMITIVE_CACHE_CAPACITY fails!");
     }
     melo::MeloTTSProcessor* tts_processor =  new melo::MeloTTSProcessor();
 
@@ -40,5 +52,9 @@ int main()
     //16000 origin
     tts_processor->WriteWave("melo_tts_int8.wav", 44100, wav_data.data(), wav_data.size());
     std::cout << "finish to generate wav" << std::endl;
-    return 0;
+    //return 0;
+#ifdef CRT_
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+    _CrtDumpMemoryLeaks();
+#endif
 }
