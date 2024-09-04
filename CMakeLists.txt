@@ -25,10 +25,12 @@ set(SOURCE_FILES
     src/openvino_model.cpp
     src/logging.cpp
     src/tokenizer.cpp
+    src/cmudict.cpp
 )
 
 # Header files
 set(HEADER_FILES
+    src/cmudict.h
     src/openvoice2_processor.h
     src/openvino_model.h
     src/logging.h
@@ -68,4 +70,7 @@ if (${ENABLE_TESTS})
     target_link_libraries(bert_tokenizer_test PRIVATE openvino::runtime) 
     target_include_directories(bert_tokenizer_test PRIVATE src/tokenizer.h)
     #set_target_properties(bert_tokenizer_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
+
+    add_executable(cmudict_test tests/cmudict_test.cpp src/cmudict.cpp)
+    target_include_directories(cmudict_test PRIVATE src/cmudict.h)
 endif()
