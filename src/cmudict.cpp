@@ -4,7 +4,8 @@
 #include "cmudict.h"
 namespace melo {
 
-    // 从文件加载数据的构造函数
+    // Constructor that loads data from a file.
+    // @param filename The name of the file from which to load the data.
     CMUDict::CMUDict(const std::string& filename) {
         std::ifstream file(filename);
         if (!file.is_open()) {
@@ -17,12 +18,12 @@ namespace melo {
             std::istringstream iss(line);
             std::string key;
             if (!std::getline(iss, key, ':')) {
-                continue; // 跳过无法解析的行
+                continue; // Skip lines that cannot be parsed.
             }
 
             std::vector<std::vector<std::string>> value;
             std::string part;
-            // 处理值部分
+
             while (std::getline(iss, part)) {
                 std::istringstream partStream(part);
                 std::vector<std::string> subValues;
@@ -43,7 +44,10 @@ namespace melo {
         file.close();
     }
 
-    // 重载 operator<< 以打印 CMUDict
+    // Overloads the operator<< to print the contents of a CMUDict object.
+    // @param out The output stream to which the data is to be printed.
+    // @param cmudict The CMUDict object to be printed.
+    // @return Returns the output stream for chaining.
     [[maybe_unused]]  std::ostream& operator<<(std::ostream& os, const CMUDict& dict) {
         for (const auto& pair : dict.dict_) {
             const std::string& key = pair.first;
