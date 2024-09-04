@@ -20,14 +20,14 @@ namespace melo {
 
      
         inline  std::optional<std::reference_wrapper<const std::vector<std::vector<std::string>>>> find(const std::string& key) const {
-            if ( dict_.count(key)) {
+            if ( dict_.contains(key)) {
                 return std::cref(dict_.at(key));
             }
             else {
                 return std::nullopt;
             }
         }
-    // 友元函数，用于重载 operator<<
+    // Friend function for overloading the operator<<
     friend std::ostream& operator<<(std::ostream& os, const CMUDict& dict);
     private:
         std::unordered_map<std::string, std::vector<std::vector<std::string>>> dict_;
