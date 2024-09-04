@@ -223,6 +223,8 @@ namespace melo
 
 				chineseList = SplitChineseString(current_chinese);
 				str_out.insert(str_out.end(), chineseList.begin(), chineseList.end());
+				auto ids = String2Ids(chineseList);
+				id_out.insert(id_out.end(), ids.begin(), ids.end());
 				current_chinese = "";
 			}
 			if (current_eng.size() > 0)
