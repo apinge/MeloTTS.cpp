@@ -48,6 +48,9 @@ namespace melo
 
     private:
         melo::Tokenizer tokenizer;
+        Status prepare_input_npu (const std::vector<int64_t>& input,
+                                  std::vector<int64_t>& processed_input,
+                                  size_t input_seq_length);
         Status get_berts(const std::vector<int64_t> &phones,
                          const std::string &language, const std::vector<int> &word2ph,
                          const std::vector<int64_t> &input_ids,

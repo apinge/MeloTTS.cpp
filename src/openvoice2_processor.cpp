@@ -39,13 +39,14 @@ namespace melo
     Status MeloTTSProcessor::LoadTTSModel(const std::string &zh_tts_path,  const std::string &zh_bert_path, const std::string & tokenizer_data_path)
     {
         std::string device_name = "CPU";
+        std::string bert_device_name = "NPU";
         MELO_LOG(MELO_TRACE) << "LoadTTSModel start";
         openvoice_zh_tts_model_ = std::make_shared<OpenvinoModel>(core_ptr);
         openvoice_zh_tts_model_->Init(zh_tts_path, device_name);
 
 
         openvoice_zh_bert_model_ = std::make_shared<OpenvinoModel>(core_ptr);
-        openvoice_zh_bert_model_->Init(zh_bert_path, device_name);
+        openvoice_zh_bert_model_->Init(zh_bert_path, bert_device_name);
 
         //init tokenizer
         tokenizer = melo::Tokenizer(tokenizer_data_path);
@@ -387,6 +388,19 @@ namespace melo
         return Status::OK();
     }
 
+    Status MeloTTSProcessor::prepare_input_npu (const std::vector<int64_t>& input, std::vector<int64_t>& processed_input, size_t input_seq_length) {
+        processed_input.resize(input_seq_length, 0);  // 初始化为 0
+        if (input.size() < input_seq_length) {
+            // input_ids 长度小于模型输入尺寸时，补 0
+            std::copy(input.begin(), input.end(), processed_input.begin());
+        } else {
+            // input_ids 长度大于或等于输入尺寸时，截断并输出提示
+            std::copy(input.begin(), input.begin() + input_seq_length, processed_input.begin());
+            std::cout << "Warning: input_ids is longer than model input size. Truncating to fit." << std::endl;
+        }
+        return Status::OK();
+    }
+
     Status MeloTTSProcessor::bert_infer(
         const std::vector<int64_t> &input_ids,
         const std::vector<int64_t> &attention_mask,
@@ -408,22 +422,22 @@ namespace melo
         }
         
         openvoice_bert_model_->PrintInputNames();
-        openvoice_bert_model_->ResizeInputTensor(0, {1, input_ids_length});
-        openvoice_bert_model_->SetInputData(0, input_ids.data());
+        // const ov::Tensor input_tensor = infer_request_.get_input_tensor(index);
+        // const ov::Shape input_shape = input_tensor.get_shape();
+        // size_t max_length = input_shape[1];  // 第二维是序列长度
+        size_t max_length = 64; // static model input shape
+        std::vector<int64_t> processed_input_ids;
+        std::vector<int64_t> processed_attention_mask;
+        std::vector<int64_t> processed_token_type_ids;
 
-       
-
-        int attention_mask_length = static_cast<int>(attention_mask.size());
-        openvoice_bert_model_->ResizeInputTensor(2, {1, attention_mask_length});
-        openvoice_bert_model_->SetInputData(2, attention_mask.data());
-
-
-        int token_type_ids_length = static_cast<int>(token_type_ids.size());
-        openvoice_bert_model_->ResizeInputTensor(1, { 1, token_type_ids_length });
-        openvoice_bert_model_->SetInputData(1, token_type_ids.data());
-
+        prepare_input_npu(input_ids, processed_input_ids, max_length);
+        prepare_input_npu(attention_mask, processed_attention_mask, max_length);
+        prepare_input_npu(token_type_ids, processed_token_type_ids, max_length);
 
   
+        openvoice_bert_model_->SetInputData(0, processed_input_ids.data());
+        openvoice_bert_model_->SetInputData(2, processed_attention_mask.data());
+        openvoice_bert_model_->SetInputData(1, processed_token_type_ids.data());
 
         std::cout << "bert data ok\n";
 
