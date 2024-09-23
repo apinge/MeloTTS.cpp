@@ -9,5 +9,5 @@ How to build
 >mkdir buld && cd build
 >cmake -S .. && cmake --build . --config Release
 >cd ..
->buid\Release\meloTTS_ov.exe
+>build\Release\meloTTS_ov.exe
 ```
