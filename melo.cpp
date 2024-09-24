@@ -63,12 +63,12 @@ int main()
     melo::MeloTTSProcessor* tts_processor =  new melo::MeloTTSProcessor();
 
     //fp16 model
-    //std::string zh_tts_path = "thirdParty/tts_ov/tts_zn_mix_en.xml";
-    //std::string zh_bert_path = "thirdParty/tts_ov/bert.xml";
+    std::string zh_tts_path = "thirdParty/tts_ov/tts_zn_mix_en.xml";
+    std::string zh_bert_path = "thirdParty/tts_ov/bert_zn_mix_en.xml";
 
     //int8 model
-    std::string zh_tts_path = "thirdParty/tts_ov/tts_int8.xml";
-    std::string zh_bert_path = "thirdParty/tts_ov/bert_int8.xml";
+    //std::string zh_tts_path = "thirdParty/tts_ov/tts_zn_mix_en_int8.xml";
+    //std::string zh_bert_path = "thirdParty/tts_ov/bert_zn_mix_en_int8.xml";
 
     // init tokenizer
     std::string vocab_bert_path = "thirdParty/tts_ov/vocab_bert.txt";
