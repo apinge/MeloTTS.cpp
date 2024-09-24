@@ -350,6 +350,9 @@ namespace melo
             MELO_LOG(MELO_ERROR) << msg;
             MELO_ERROR_RETURN(msg);
         }
+        // release infer buffer after inference
+        openvoice_zh_tts_model_->ReleaseInferMemory();
+        openvoice_zh_bert_model_->ReleaseInferMemory();
 
         return Status::OK();
     }
@@ -406,8 +409,9 @@ namespace melo
             MELO_LOG(MELO_ERROR) << msg;
             MELO_ERROR_RETURN(msg);
         }
-        
+#ifdef MELO_DEBUG
         openvoice_bert_model_->PrintInputNames();
+#endif
         openvoice_bert_model_->ResizeInputTensor(0, {1, input_ids_length});
         openvoice_bert_model_->SetInputData(0, input_ids.data());
 
@@ -424,8 +428,9 @@ namespace melo
 
 
   
-
+#ifdef MELO_DEBUG
         std::cout << "bert data ok\n";
+#endif
 
         try
         {
@@ -475,7 +480,9 @@ namespace melo
             MELO_LOG(MELO_ERROR) << msg;
             MELO_ERROR_RETURN(msg);
         }
+#ifdef MELO_DEBUG
         openvoice_tts_model_->PrintInputNames();
+#endif
         int target_seq_length = static_cast<int>(target_seq.size());
         //phones
         openvoice_tts_model_->ResizeInputTensor(0, {1, target_seq_length});
@@ -510,13 +517,15 @@ namespace melo
         openvoice_tts_model_->SetInputData(8, &length_scale_);
         openvoice_tts_model_->SetInputData(9, &noise_scale_w_);
         openvoice_tts_model_->SetInputData(10, &sdp_ration_);
-
+#ifdef MELO_DEBUG
         std::cout << "data prepare ok\n";
-
+#endif
         try
         {
             openvoice_tts_model_->Run();
+#ifdef MELO_DEBUG
             std::cout << "infer ok\n";
+#endif
             const float *output =
                 static_cast<const float *>(openvoice_tts_model_->GetOutputData(0));
             size_t output_size = openvoice_tts_model_->GetOutputTensorSize(0);

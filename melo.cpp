@@ -55,8 +55,9 @@ int main()
 
     std::string convert_text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
     std::vector<float> wav_data;
-
+    startTime = Time::now();
     tts_processor->Process(convert_text, 0, addit_param, wav_data);
+    std::cout << "OV infer Time:" << execTime << " milliseconds\n";
 
     //16000 origin
     tts_processor->WriteWave("melo_tts_CPU.wav", 44100, wav_data.data(), wav_data.size());

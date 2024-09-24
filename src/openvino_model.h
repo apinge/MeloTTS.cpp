@@ -54,7 +54,7 @@ namespace melo
 
 		void PrintInputNames() const;
 
-		void ReleaseInferBuffer();
+		void ReleaseInferMemory();
 	protected:
 		std::string DeviceNameToString(OPENVINO_DEVICE_NAME device_name);
 		OPENVINO_DEVICE_NAME StringToDeviceName(const std::string &device_name);

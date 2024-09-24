@@ -151,7 +151,10 @@ namespace melo
         const ov::Tensor &output_tensor = infer_request_.get_output_tensor(index);
         const float *output_data = output_tensor.data<const float>();
         ov::Shape output_tensor_shape = output_tensor.get_shape();
+#ifdef  MELO_DEBUG
         std::cout << output_tensor_shape.to_string() << std::endl;
+#endif //  MELO_DEBUG
+
         size_t dim = 1;
         for (int i = 0; i < output_tensor_shape.size(); ++i)
         {
@@ -285,8 +288,9 @@ namespace melo
 
     }
 
-    void OpenvinoModel::ReleaseInferBuffer() {
-        //compiled_model_.release_buffers();
+    void OpenvinoModel::ReleaseInferMemory() {
+        // this api works since OV2024.4 RC2
+        compiled_model_.release_memory();
     }
 
 } // namespace melo
