@@ -26,6 +26,7 @@ set(SOURCE_FILES
     src/logging.cpp
     src/tokenizer.cpp
     src/cmudict.cpp
+    src/utils.cpp
 )
 
 # Header files
@@ -38,6 +39,7 @@ set(HEADER_FILES
     src/status.h
     src/librosa.h
     src/tokenizer.h
+    src/utils.h
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
 

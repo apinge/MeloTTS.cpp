@@ -12,8 +12,7 @@
 #include <string>
 #include <cassert>
 #include <sstream>
-#include <format>
-#include <chrono>
+
 
 //#define DEBUG_MEMORY
 
@@ -26,12 +25,8 @@
 #endif
 
 #include "src/openvoice2_processor.h"
+#include "utils.h"
 
-typedef std::chrono::high_resolution_clock Time;
-typedef std::chrono::milliseconds ms;
-inline double get_duration_ms_till_now(Time::time_point& startTime) {
-    return std::chrono::duration_cast<ms>(Time::now() - startTime).count();
-};
 #if defined(_WIN32) && defined(DEBUG_MEMORY)
 // To ensure correct resolution of symbols, add Psapi.lib to TARGETLIBS
 // and compile with -DPSAPI_VERSION=1
@@ -51,7 +46,7 @@ static void DebugMemoryInfo(const char* header)
 int main()
 {
     // set ONEDNN_CACHE_CAPACITY 
-    auto status = _putenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY=0");
+    auto status = _putenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY=100");
     if (status == 0) {
         char* onednn_kernel_capacity = std::getenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY");
         std::cout << "set ONEDNN_PRIMITIVE_CACHE_CAPACITY: " << onednn_kernel_capacity << "\n";
@@ -85,7 +80,7 @@ int main()
     std::string convert_text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
     std::vector<float> wav_data;
 #if defined(_WIN32) && defined(DEBUG_MEMORY)
-    for (int i = 0; i < 50; ++i) {
+   for (int i = 0; i < 50; ++i) {
 #endif 
         startTime = Time::now();
         tts_processor->Process(convert_text, 0, addit_param, wav_data);

@@ -1,6 +1,7 @@
-#include "openvino_model.h"
 #include <algorithm>
 #include <cstring>
+#include "openvino_model.h"
+#include "utils.h"
 
 namespace melo
 {
@@ -8,7 +9,7 @@ namespace melo
 
     OpenvinoModel::~OpenvinoModel() {}
 
-    Status OpenvinoModel::Init(const std::string &model_path, const std::string &device_name)
+    Status OpenvinoModel::Init(const std::string& model_path, const std::string& device_name)
     {
         MELO_LOG(MELO_INFO) << "read model from path : " << model_path;
 
@@ -20,54 +21,49 @@ namespace melo
             MELO_ERROR_RETURN(msg);
         }
 
-        int device_number = StringToDeviceName(device_name);
-
-        for (int idx = device_number; idx > DEVICE_NAME_NO; idx--)
+        try
         {
-            try
+            ov::AnyMap device_config = {};
+            if (device_name.find("CPU") != std::string::npos)
             {
-                std::string device_name =
-                    DeviceNameToString(static_cast<OPENVINO_DEVICE_NAME>(idx));
-                ov::AnyMap device_config = {};
-                if (device_name.find("CPU") != std::string::npos)
-                {
-                    device_config[ov::cache_dir.name()] = "cache";
-                    device_config[ov::hint::scheduling_core_type.name()] =
-                        ov::hint::SchedulingCoreType::PCORE_ONLY;
-                    device_config[ov::hint::enable_hyper_threading.name()] = false;
-                    device_config[ov::hint::enable_cpu_pinning.name()] = true;
-                    device_config[ov::enable_profiling.name()] = false;
-                    // device_config[ov::inference_num_threads.name()] = 1;
-                     ov_core->set_property(device_name,{{"CPU_RUNTIME_CACHE_CAPACITY", "0"}});
-                }
-                if (device_name.find("GPU") != std::string::npos)
-                {
-                    device_config[ov::cache_dir.name()] = "cache";
-                    device_config[ov::intel_gpu::hint::queue_throttle.name()] =
-                        ov::intel_gpu::hint::ThrottleLevel::MEDIUM;
-                    device_config[ov::intel_gpu::hint::queue_priority.name()] =
-                        ov::hint::Priority::MEDIUM;
-                    device_config[ov::intel_gpu::hint::host_task_priority.name()] =
-                        ov::hint::Priority::HIGH;
-                    device_config[ov::hint::enable_cpu_pinning.name()] = true;
-                    device_config[ov::enable_profiling.name()] = false;
-                    //device_config[ov::intel_gpu::hint::enable_kernels_reuse.name()] = true;
-                }
-                compiled_model_ =
-                    ov_core->compile_model(model_, device_name, device_config);
-                MELO_LOG(MELO_DEBUG) << " dst device name: " << device_name;
-                break;
+                device_config[ov::cache_dir.name()] = "cache";
+                device_config[ov::hint::scheduling_core_type.name()] =
+                    ov::hint::SchedulingCoreType::PCORE_ONLY;
+                device_config[ov::hint::enable_hyper_threading.name()] = false;
+                device_config[ov::hint::enable_cpu_pinning.name()] = true;
+                device_config[ov::enable_profiling.name()] = false;
+                // device_config[ov::inference_num_threads.name()] = 1;
+                ov_core->set_property(device_name, { {"CPU_RUNTIME_CACHE_CAPACITY", "0"} });
             }
-            catch (std::exception &e)
+            if (device_name.find("GPU") != std::string::npos)
             {
-                MELO_LOG(MELO_ERROR) << e.what();
+                device_config[ov::cache_dir.name()] = "cache";
+                device_config[ov::intel_gpu::hint::queue_throttle.name()] =
+                    ov::intel_gpu::hint::ThrottleLevel::MEDIUM;
+                device_config[ov::intel_gpu::hint::queue_priority.name()] =
+                    ov::hint::Priority::MEDIUM;
+                device_config[ov::intel_gpu::hint::host_task_priority.name()] =
+                    ov::hint::Priority::HIGH;
+                device_config[ov::hint::enable_cpu_pinning.name()] = true;
+                device_config[ov::enable_profiling.name()] = false;
+                device_config[ov::intel_gpu::hint::enable_kernels_reuse.name()] = true;
             }
-            catch (...)
-            {
-                MELO_LOG(MELO_ERROR) << "catch other error";
-            }
-        }
+            auto startTime = Time::now();
+            compiled_model_ = ov_core->compile_model(model_path, device_name, device_config);
+            auto compileTime = get_duration_ms_till_now(startTime);
+            std::cout << std::format("compile model {} on {}",model_path, device_name) << std::endl;
+            MELO_LOG(MELO_DEBUG) << " dst device name: " << device_name;
 
+        }
+        catch (std::exception& e)
+        {
+            MELO_LOG(MELO_ERROR) << e.what();
+        }
+        catch (...)
+        {
+            MELO_LOG(MELO_ERROR) << "catch other error";
+        }
+    
         infer_request_ = compiled_model_.create_infer_request();
 
         int output_num = model_->outputs().size();
