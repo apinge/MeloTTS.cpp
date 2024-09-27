@@ -11,6 +11,7 @@
 #include "logging.h"
 #include "openvino/runtime/intel_gpu/properties.hpp"
 #include "openvino/openvino.hpp"
+#include "utils.h"
 
 namespace melo
 {
@@ -34,6 +35,11 @@ namespace melo
 		~OpenvinoModel();
 
 		Status Init(const std::string& model_path, const std::string& device_name);
+
+		inline void GetOVInfo(std::shared_ptr<ov::Core>& ov_core_ptr, const std::string & device_name) {
+			std::cout << "OpenVINO:" << ov::get_openvino_version() << std::endl;
+			std::cout << "Model Device info:" << ov_core_ptr->get_versions(device_name) << std::endl;
+		}
 
 		void SetInputData(int index, const void *data);
 		//void SetInputData(int index, const void* data, const ov::element::Type& type);

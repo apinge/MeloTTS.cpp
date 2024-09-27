@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cstring>
 #include "openvino_model.h"
-#include "utils.h"
+
 
 namespace melo
 {
@@ -52,6 +52,7 @@ namespace melo
             compiled_model_ = ov_core->compile_model(model_path, device_name, device_config);
             auto compileTime = get_duration_ms_till_now(startTime);
             std::cout << std::format("compile model {} on {}",model_path, device_name) << std::endl;
+            GetOVInfo(ov_core, device_name);
             MELO_LOG(MELO_DEBUG) << " dst device name: " << device_name;
 
         }
