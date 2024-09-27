@@ -43,7 +43,7 @@ namespace melo
 	void Tokenizer::String2Ids(std::vector<std::string>& input, std::vector<int>& output)
 	{
 
-		auto _tolower = [&](const char& ch) -> char
+		auto _tolower = [](const char& ch) -> char
 			{
 				if (ch <= 'Z' && ch >= 'A')
 					return ch - ('A' - 'a');
@@ -73,7 +73,7 @@ namespace melo
 	std::vector<int> Tokenizer::String2Ids(std::vector<std::string>& input)
 	{
 		std::vector<int> res;
-		auto _tolower = [&](const char& ch) -> char
+		auto _tolower = [](const char& ch) -> char
 			{
 				if (ch <= 'Z' && ch >= 'A')
 					return ch - ('A' - 'a');
@@ -143,7 +143,7 @@ namespace melo
 			return m_token2id.at(suffix);
 		return m_token2id.at("[UNK]");//unknown token
 	}
-	auto _tolower = [&](const char& ch) -> char
+	auto _tolower = [](const char& ch) -> char
 		{
 			if (ch <= 'Z' && ch >= 'A')
 				return ch - ('A' - 'a');

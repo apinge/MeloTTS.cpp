@@ -39,4 +39,4 @@ namespace melo {
     };
 
 } // namespace melo
-#endif TOKENIZER_H
+#endif //TOKENIZER_H

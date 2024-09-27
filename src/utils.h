@@ -12,4 +12,5 @@ typedef std::chrono::milliseconds ms;
 inline double get_duration_ms_till_now(Time::time_point& startTime) {
     return std::chrono::duration_cast<ms>(Time::now() - startTime).count();
 };
+void ConfigureOneDNNCache();
 #endif //  UTILS_H

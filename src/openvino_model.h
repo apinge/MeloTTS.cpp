@@ -89,7 +89,7 @@ namespace melo
      class AbstractOpenvinoModel 
      {
 	 public:
-		 explicit AbstractOpenvinoModel(std::unique_ptr<ov::Core> core_ptr, const std::string&  model_path, const std::string & device, const ov::AnyMap& config);
+		 explicit AbstractOpenvinoModel(std::unique_ptr<ov::Core> core_ptr, const std::string& model_path, const std::string& device, const ov::AnyMap& config = {});
 		 virtual ~AbstractOpenvinoModel() = default;
 
 		 AbstractOpenvinoModel(const AbstractOpenvinoModel&) = delete;
@@ -98,6 +98,18 @@ namespace melo
 		 AbstractOpenvinoModel& operator=(AbstractOpenvinoModel&& other) = delete;
 
 		 virtual void infer(const std::vector<std::any>& args) = 0;
+		 inline void ReleaseInferMemory(){
+			 // this api works since OV2024.4 RC2
+			 compiled_model_->release_memory();
+		 }
+		 inline void GetOVInfo(std::unique_ptr<ov::Core>& core_ptr, const std::string& device_name) {
+			 std::cout << "OpenVINO:" << ov::get_openvino_version() << std::endl;
+			 std::cout << "Model Device info:" << core_ptr->get_versions(device_name) << std::endl;
+		 }
+		 // TODO How to set AUTO device?
+		 inline ov::AnyMap SetOVConfig(std::string & device_name) {
+
+		 }
 	 protected:
 		 template<typename T>
 		 void process_vector(const std::any& arg) {

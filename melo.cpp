@@ -8,10 +8,11 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
+//#include <sstream>
 #include <string>
-#include <cassert>
+//#include <cassert>
 #include <sstream>
+#include <cstdlib>
 
 
 //#define DEBUG_MEMORY
@@ -45,16 +46,8 @@ static void DebugMemoryInfo(const char* header)
 #endif
 int main()
 {
-    // set ONEDNN_CACHE_CAPACITY 
-    auto status = _putenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY=100");
-    if (status == 0) {
-        char* onednn_kernel_capacity = std::getenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY");
-        std::cout << "set ONEDNN_PRIMITIVE_CACHE_CAPACITY: " << onednn_kernel_capacity << "\n";
-        int y;
-        std::stringstream ss(onednn_kernel_capacity);
-        ss >> y;
-        assert((y==0) && "[ERROR] Set ONEDNN_PRIMITIVE_CACHE_CAPACITY fails!");
-    }
+    ConfigureOneDNNCache();
+
     melo::MeloTTSProcessor* tts_processor =  new melo::MeloTTSProcessor();
 
     //fp16 model

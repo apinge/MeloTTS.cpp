@@ -2,7 +2,6 @@
 #include <cstring>
 #include "openvino_model.h"
 
-
 namespace melo
 {
 
