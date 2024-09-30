@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <any>
+#include <filesystem>
 #include "status.h"
 #include "logging.h"
 #include "openvino/runtime/intel_gpu/properties.hpp"
@@ -15,7 +16,6 @@
 
 namespace melo
 {
-
 	typedef enum OPENVINO_DEVICE_NAME
 	{
 		DEVICE_NAME_NO = -1,
@@ -89,27 +89,57 @@ namespace melo
      class AbstractOpenvinoModel 
      {
 	 public:
-		 explicit AbstractOpenvinoModel(std::unique_ptr<ov::Core> core_ptr, const std::string& model_path, const std::string& device, const ov::AnyMap& config = {});
+		 AbstractOpenvinoModel(std::unique_ptr<ov::Core> & core_ptr, const std::string& model_path, const std::string& device);
+		 AbstractOpenvinoModel(std::unique_ptr<ov::Core>& core_ptr, const std::filesystem::path& model_path, const std::string& device);
+		 AbstractOpenvinoModel(std::shared_ptr<ov::Core>& core_ptr, const std::string& model_path, const std::string& device);
+		 AbstractOpenvinoModel() = default;
 		 virtual ~AbstractOpenvinoModel() = default;
 
-		 AbstractOpenvinoModel(const AbstractOpenvinoModel&) = delete;
-		 AbstractOpenvinoModel& operator=(const AbstractOpenvinoModel&) = delete;
-		 AbstractOpenvinoModel(AbstractOpenvinoModel&&) = delete;
-		 AbstractOpenvinoModel& operator=(AbstractOpenvinoModel&& other) = delete;
+		 AbstractOpenvinoModel(const AbstractOpenvinoModel&) = default;
+		 AbstractOpenvinoModel& operator=(const AbstractOpenvinoModel&) = default;
+		 AbstractOpenvinoModel(AbstractOpenvinoModel&&) = default;
+		 AbstractOpenvinoModel& operator=(AbstractOpenvinoModel&& other) = default;
 
-		 virtual void infer(const std::vector<std::any>& args) = 0;
-		 inline void ReleaseInferMemory(){
+		 virtual void ov_infer() = 0;
+
+
+		 inline void release_infer_memory(){
 			 // this api works since OV2024.4 RC2
-			 compiled_model_->release_memory();
+			 _compiled_model->release_memory();
 		 }
-		 inline void GetOVInfo(std::unique_ptr<ov::Core>& core_ptr, const std::string& device_name) {
+		 inline void get_ov_info(std::unique_ptr<ov::Core>& core_ptr, const std::string& device_name) {
+			 std::cout << "OpenVINO:" << ov::get_openvino_version() << std::endl;
+			 std::cout << "Model Device info:" << core_ptr->get_versions(device_name) << std::endl;
+		 }
+		 inline void get_ov_info(std::shared_ptr<ov::Core>& core_ptr, const std::string& device_name) {
 			 std::cout << "OpenVINO:" << ov::get_openvino_version() << std::endl;
 			 std::cout << "Model Device info:" << core_ptr->get_versions(device_name) << std::endl;
 		 }
 		 // TODO How to set AUTO device?
-		 inline ov::AnyMap SetOVConfig(std::string & device_name) {
-
+		 inline ov::AnyMap set_ov_config(const std::string & device_name) {
+			 ov::AnyMap device_config = {};
+			 if (device_name.find("CPU") != std::string::npos)
+			 {
+				 device_config[ov::cache_dir.name()] = "cache";
+				 device_config[ov::hint::scheduling_core_type.name()] = ov::hint::SchedulingCoreType::PCORE_ONLY;
+				 device_config[ov::hint::enable_hyper_threading.name()] = false;
+				 device_config[ov::hint::enable_cpu_pinning.name()] = true;
+				 device_config[ov::enable_profiling.name()] = false;
+				 // device_config[ov::inference_num_threads.name()] = 1;
+			 }
+			 if (device_name.find("GPU") != std::string::npos)
+			 {
+				 device_config[ov::cache_dir.name()] = "cache";
+				 device_config[ov::intel_gpu::hint::queue_throttle.name()] = ov::intel_gpu::hint::ThrottleLevel::MEDIUM;
+				 device_config[ov::intel_gpu::hint::queue_priority.name()] = ov::hint::Priority::MEDIUM;
+				 device_config[ov::intel_gpu::hint::host_task_priority.name()] = ov::hint::Priority::HIGH;
+				 device_config[ov::hint::enable_cpu_pinning.name()] = true;
+				 device_config[ov::enable_profiling.name()] = false;
+				 device_config[ov::intel_gpu::hint::enable_kernels_reuse.name()] = true;
+			 }
+			 return  device_config;
 		 }
+		 void print_input_names() const;
 	 protected:
 		 template<typename T>
 		 void process_vector(const std::any& arg) {
@@ -121,9 +151,9 @@ namespace melo
 				 std::cerr << "Type mismatch!" << std::endl;
 			 }
 		 }
-	 private:
-		 std::unique_ptr<ov::InferRequest> infer_request_;
-		 std::unique_ptr<ov::CompiledModel> compiled_model_;
+		 std::unique_ptr<ov::InferRequest> _infer_request;
+		 std::unique_ptr<ov::CompiledModel> _compiled_model;
+		 std::string _device;
 
      };
 

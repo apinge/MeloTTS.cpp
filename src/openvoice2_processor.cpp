@@ -49,6 +49,8 @@ namespace melo
 
         //init tokenizer
         tokenizer = melo::Tokenizer(tokenizer_data_path);
+        tokenizer_ptr = std::make_shared<melo::Tokenizer>(tokenizer_data_path);
+        zh_bert = melo::Bert(core_ptr, zh_bert_path, "CPU", "ZH", tokenizer_ptr);
 
         bool flag = false;
         if (openvoice_zh_bert_model_ == nullptr)
@@ -233,16 +235,7 @@ namespace melo
          0, 8, 0, 7, 0, 9, 0, 7, 0, 7, 0, 7, 0, 8, 0, 7, 0, 8, 0, 7, 0, 7, 0, 7,
          0, 0, 0 });
         word2ph.push_back({ 3, 4, 4, 4, 8, 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 14, 20, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 6, 20, 2 });
-        auto printVec = [](const auto& vec, const std::string& vecName) {
-            std::cout << vecName << ":\n";
-            for (const auto& row : vec) {
-               
-                for (const auto& x : row) std::cout << x << " ";
-                std::cout << "|" << row.size() << std::endl;
-               
-            }
-            std::cout << std::endl;
-            };
+        
         /*printVec(input_ids,"input_ids");
         printVec(attention_mask, "attention_mask");
         printVec(token_type_id,"token_type_id_.bin");
@@ -263,8 +256,9 @@ namespace melo
         if ((phones_ids.size() == tones.size()) &&
             (input_ids.size() == token_type_id.size()))
         {
+            int n = 1;
 
-            for (int text_idx = 0; text_idx < phones_ids.size(); ++text_idx)
+            for (int text_idx = 0; text_idx < n; ++text_idx)
             {
                 std::vector<int64_t> input_phone_ids = phones_ids[text_idx];
                 std::vector<int> input_word2ph = word2ph[text_idx];
@@ -277,13 +271,16 @@ namespace melo
                     << "< " << text_idx
                     << " ---------------------------------------------- phones size : "
                     << input_phone_ids.size() << " ->";
-                std::vector<std::vector<float>> ja_bert;
+                std::vector<std::vector<float>> ja_bert, jb_bert;
                 std::vector<float> bert;
                 std::vector<float> jabert;
-                MELO_RETURN_IF_ERROR(get_berts(input_phone_ids, language_, input_word2ph,
-                                               input_input_ids, input_token_type_id,
-                                               input_attention_mask, ja_bert));
-
+                zh_bert.get_bert_feature(text, input_word2ph, ja_bert);
+                //MELO_RETURN_IF_ERROR(get_berts(input_phone_ids, language_, input_word2ph,
+                //                               input_input_ids, input_token_type_id,
+                //                               input_attention_mask, ja_bert));
+                std::cout << "ja_bert" << ja_bert.size() << " "<<ja_bert.front().size() << std::endl;
+                std::cout << "input_phone_ids.size()" << input_phone_ids.size() << std::endl;
+               // std::cout << "jb_bert" << jb_bert.size() << " " << jb_bert.front().size() << std::endl;
                 for (int j = 0; j < phones_ids[text_idx].size(); ++j)
                 {
                     std::vector<float> tmp(1024, 0.0);
@@ -435,8 +432,7 @@ namespace melo
         try
         {
             openvoice_bert_model_->Run();
-            const float *output =
-                static_cast<const float *>(openvoice_bert_model_->GetOutputData(0));
+            const float *output = static_cast<const float *>(openvoice_bert_model_->GetOutputData(0));
             size_t output_size = openvoice_bert_model_->GetOutputTensorSize(0);
             int frame_num = static_cast<int>(output_size / 768);
             bert_feats.resize(frame_num, std::vector<float>(768, 0.0));

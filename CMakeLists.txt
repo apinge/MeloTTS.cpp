@@ -19,18 +19,21 @@ find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # Source files
-set(SOURCE_FILES
-    melo.cpp
+set(SOURCE_FILES_OLD
+    melo_old.cpp
     src/openvoice2_processor.cpp
     src/openvino_model.cpp
     src/logging.cpp
     src/tokenizer.cpp
     src/cmudict.cpp
     src/utils.cpp
+    src/bert.cpp
+    src/openvoice_tts.cpp
+    src/tts.cpp
 )
 
 # Header files
-set(HEADER_FILES
+set(HEADER_FILES_OLD
     src/cmudict.h
     src/openvoice2_processor.h
     src/openvino_model.h
@@ -40,11 +43,53 @@ set(HEADER_FILES
     src/librosa.h
     src/tokenizer.h
     src/utils.h
+    src/bert.h
+    src/openvoice_tts.h
+    src/tts.h
+)
+# Source files
+set(SOURCE_FILES
+    melo.cpp
+    src/openvino_model.cpp
+    src/logging.cpp
+    src/tokenizer.cpp
+    src/cmudict.cpp
+    src/utils.cpp
+    src/bert.cpp
+    src/openvoice_tts.cpp
+    src/tts.cpp
+)
+
+# Header files
+set(HEADER_FILES
+    src/cmudict.h
+    src/openvino_model.h
+    src/logging.h
+    src/info_data.h
+    src/status.h
+    src/librosa.h
+    src/tokenizer.h
+    src/utils.h
+    src/bert.h
+    src/openvoice_tts.h
+    src/tts.h
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
 
 
 
+
+# Define the executable
+add_executable(meloTTS_ov_old ${SOURCE_FILES_OLD} ${HEADER_FILES_OLD})
+
+# Define DEBUG macro for Debug configuration
+target_compile_definitions(meloTTS_ov_old PRIVATE "$<$<CONFIG:DEBUG>:DEBUG>")
+target_include_directories(meloTTS_ov_old PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
+
+
+target_link_libraries(meloTTS_ov_old
+    PRIVATE openvino::runtime  # Link OpenVINO Runtime privately
+)
 
 # Define the executable
 add_executable(meloTTS_ov ${SOURCE_FILES} ${HEADER_FILES})
@@ -68,11 +113,20 @@ endif()
 option(ENABLE_TESTS "Enable tests" ON)
 if (${ENABLE_TESTS})
     #add_subdirectory(tests)
-    add_executable(bert_tokenizer_test tests/bert_tokenizer.cpp src/tokenizer.cpp)
-    target_link_libraries(bert_tokenizer_test PRIVATE openvino::runtime) 
-    target_include_directories(bert_tokenizer_test PRIVATE src/tokenizer.h)
+    add_executable(test_tokenizer tests/test_tokenizer.cpp src/tokenizer.cpp)
+    target_link_libraries(test_tokenizer PRIVATE openvino::runtime) 
+    target_include_directories(test_tokenizer PRIVATE src/tokenizer.h)
     #set_target_properties(bert_tokenizer_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
 
-    add_executable(cmudict_test tests/cmudict_test.cpp src/cmudict.cpp)
-    target_include_directories(cmudict_test PRIVATE src/cmudict.h)
+    add_executable(test_cmudict tests/test_cmudict.cpp src/cmudict.cpp)
+    target_include_directories(test_cmudict PRIVATE src/cmudict.h)
+
+    add_executable(test_bert tests/test_bert.cpp src/tokenizer.cpp src/openvino_model.cpp src/bert.cpp  src/utils.cpp src/logging.cpp)
+    target_link_libraries(test_bert PRIVATE openvino::runtime) 
+    target_include_directories(test_bert PRIVATE src/tokenizer.h src/openvino_model.h src/bert.h  src/logging.h src/utils.h)
+
+    add_executable(test_openvoice_tts tests/test_openvoice_tts.cpp src/openvino_model.cpp src/openvoice_tts.cpp  src/utils.cpp src/logging.cpp src/tokenizer.cpp src/bert.cpp src/logging.cpp)
+    target_link_libraries(test_openvoice_tts PRIVATE openvino::runtime) 
+    target_include_directories(test_openvoice_tts PRIVATE src/openvoice_tts.h src/openvino_model.h src/logging.h src/utils.h src/tokenizer.h src/bert.h src/info_data.h )
+
 endif()

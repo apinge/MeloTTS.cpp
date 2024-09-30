@@ -10,6 +10,7 @@
 #include "openvino_model.h"
 #include "info_data.h"
 #include "tokenizer.h"
+#include "bert.h"
 //#include "utils.h"
 namespace melo
 {
@@ -48,6 +49,8 @@ namespace melo
 
     private:
         melo::Tokenizer tokenizer;
+        std::shared_ptr<melo::Tokenizer> tokenizer_ptr;
+        melo::Bert zh_bert;
         Status get_berts(const std::vector<int64_t> &phones,
                          const std::string &language, const std::vector<int> &word2ph,
                          const std::vector<int64_t> &input_ids,
@@ -78,10 +81,10 @@ namespace melo
 
         std::vector<std::vector<float>> speaker_emb;
 
-        float sdp_ration_ = 0.2;
-        float noise_scale_ = 0.6;
-        float length_scale_ = 1.00;
-        float noise_scale_w_ = 0.80;
+        float sdp_ration_ = 0.2f;
+        float noise_scale_ = 0.6f;
+        float length_scale_ = 1.00f;
+        float noise_scale_w_ = 0.80f;
 
     };
 

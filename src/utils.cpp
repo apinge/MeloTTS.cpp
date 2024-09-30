@@ -10,8 +10,8 @@ void ConfigureOneDNNCache() {
     auto status = setenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY", "100", true);
 #else
     std::cout << "Running on an unknown OS" << std::endl;
-    return 0;
 #endif
+    // TODO : Add try catch block here
     if (status == 0) {
         char* onednn_kernel_capacity = std::getenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY");
         int num = std::stoi(std::string(onednn_kernel_capacity));
