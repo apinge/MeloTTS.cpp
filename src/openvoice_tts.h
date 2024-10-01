@@ -12,9 +12,9 @@ namespace melo {
         OpenVoiceTTS(std::shared_ptr<ov::Core>& core_ptr, const std::string& model_path, const std::string& device, const std::string& language) :
             AbstractOpenvinoModel(core_ptr, model_path, device), _language(language) {}
         OpenVoiceTTS() = default;
-        std::vector<float> tts_infer(std::vector<int64_t>& phones, std::vector<int64_t>& tones, std::vector<std::vector<float>>& phone_level_feature,
-            std::vector<int64_t>& lang_ids, const int& speaker_id = 1,
-            const float& sdp_ratio = 0.2f, const float& noise_scale = 0.6f, const float& noise_scale_w = 0.8f, const float& speed = 1.0);
+        std::vector<float> tts_infer(std::vector<int64_t>& phones, std::vector<int64_t>& tones, std::vector<int64_t>& lang_ids, 
+            const std::vector<std::vector<float>>& phone_level_feature,
+            const int& speaker_id = 1, const float& sdp_ratio = 0.2f, const float& noise_scale = 0.6f, const float& noise_scale_w = 0.8f, const float& speed = 1.0);
         virtual void ov_infer() override;
         virtual std::vector<float> get_ouput();
         void write_wave(const std::string& filename, int32_t sampling_rate, const float* samples, int32_t n);

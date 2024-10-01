@@ -9,9 +9,13 @@
 #include "logging.h"
 
 namespace melo {
-    std::vector<float> OpenVoiceTTS::tts_infer(std::vector<int64_t>& phones_, std::vector<int64_t>& tones_, std::vector<std::vector<float>>& phone_level_feature,
-        std::vector<int64_t>& lang_ids_, const int& speaker_id_,
-        const float& sdp_ratio_, const float& noise_scale_, const float& noise_scale_w_, const float& speed_) {
+    /* The function 'tts_infer' serves as the entry point for TTS inference.
+       1. The parameters 'phones', 'tones', and 'lang_ids' are not declared with 'const' because they are involved in the construction of ov::Tensor objects. 
+       2.  Additionally, the numeric parameters 'speaker_id', 'spd_ratio', 'noise_scale', and 'noise_scale_w' are explicitly copied to ensure the correct data type and byte length are passed to the ov::Tensor constructor. 
+       This explicit copying is to match the expected data types for the ov::Tensor construction.*/
+    std::vector<float> OpenVoiceTTS::tts_infer(std::vector<int64_t>& phones_, std::vector<int64_t>& tones_, std::vector<int64_t>& lang_ids_, 
+        const std::vector<std::vector<float>>& phone_level_feature,
+        const int& speaker_id_, const float& sdp_ratio_, const float& noise_scale_, const float& noise_scale_w_, const float& speed_) {
         size_t n = phones_.size();
         //calculate ja_bert bert
         size_t row = phone_level_feature.size(), col = phone_level_feature.front().size();

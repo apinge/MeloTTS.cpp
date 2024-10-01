@@ -20,7 +20,7 @@ namespace melo {
         try {
             // structured binding
             auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(text);
-            std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, phone_level_feature, lang_ids);
+            std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature);
             write_wave(output_path.string(), wav_data);
         }
         catch (const std::runtime_error& e) {
