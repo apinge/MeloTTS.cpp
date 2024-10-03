@@ -56,6 +56,7 @@ set(SOURCE_FILES
     src/cmudict.cpp
     src/utils.cpp
     src/bert.cpp
+    src/chinese_mix.cpp
     src/openvoice_tts.cpp
     src/tts.cpp
 )
@@ -71,6 +72,7 @@ set(HEADER_FILES
     src/tokenizer.h
     src/utils.h
     src/bert.h
+    src/chinese_mix.h
     src/openvoice_tts.h
     src/tts.h
 )
@@ -129,4 +131,9 @@ if (${ENABLE_TESTS})
     target_link_libraries(test_openvoice_tts PRIVATE openvino::runtime) 
     target_include_directories(test_openvoice_tts PRIVATE src/openvoice_tts.h src/openvino_model.h src/logging.h src/utils.h src/tokenizer.h src/bert.h src/info_data.h )
 
+    add_executable(test_chinese_mix tests/test_chinese_mix.cpp src/chinese_mix.cpp src/tokenizer.cpp src/utils.cpp)
+    target_include_directories(test_bert PRIVATE src/chinese_mix.h src/tokenizer.h src/tokenizer.h src/logging.h src/utils.h)
+
+    add_executable(test_hanz2piny tests/test_hanz2piny.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny/Hanz2Piny.cpp )
+    target_include_directories(test_hanz2piny PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny)
 endif()

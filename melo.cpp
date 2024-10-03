@@ -12,16 +12,22 @@
 #include <cstdlib>
 #include <filesystem>
 
+#ifdef _WIN32
+//#include <codecvt>
+//#include <fcntl.h>
+//#include <io.h>
+#include <windows.h>
+#endif
 
 //#define DEBUG_MEMORY
-
 #if defined(_WIN32) && defined(DEBUG_MEMORY)
 #define PSAPI_VERSION 1 // PrintMemoryInfo 
-#include <windows.h>
 #include <psapi.h>
 #pragma comment(lib,"psapi.lib") //PrintMemoryInfod
 #include "processthreadsapi.h"
 #endif
+
+
 
 #include "src/openvoice2_processor.h"
 #include "utils.h"
@@ -44,6 +50,10 @@ static void DebugMemoryInfo(const char* header)
 #endif
 int main()
 {
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+#endif
+
     ConfigureOneDNNCache();
 
     melo::MeloTTSProcessor* tts_processor =  new melo::MeloTTSProcessor();
