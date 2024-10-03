@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <filesystem>
 namespace melo {
     /**
      * @brief UTF-8 tokenizer for 'bert-base-multilingual-uncased'.
@@ -32,6 +33,7 @@ namespace melo {
 
     public:
         Tokenizer() = default;
+        Tokenizer(const std::filesystem::path& token_filename);
         Tokenizer(const std::string& token_filename);
         ~Tokenizer() = default;
         //include tokenize bert_tokenizer

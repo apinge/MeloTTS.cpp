@@ -2,17 +2,30 @@
 #include <fstream>
 #include "tts.h"
 #include "info_data.h"
+#include "chinese_mix.h"
 namespace melo {
     TTS::TTS(std::unique_ptr<ov::Core>& core, const std::filesystem::path & tts_ir_path, const std::string & tts_device,
         const std::filesystem::path& bert_ir_path, const std::string& bert_device,
-        const std::filesystem::path& tokenizer_data_path, const std::string language):_language(language),
+        const std::filesystem::path& tokenizer_data_path, const std::filesystem::path& cppjieba_dict, const std::filesystem::path& cmudict_path,
+        const std::string language):cmudict(std::make_shared<CMUDict>(cmudict_path.string())),_language(language),
         tts_model(core,tts_ir_path,tts_device,language), tokenizer(std::make_shared<Tokenizer>(tokenizer_data_path.string())){
 
         assert((core.get() != nullptr) && "core should not be null!");
         assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(bert_ir_path)  && std::filesystem::exists(tokenizer_data_path))
             && "ir files or vocab_bert does not exit!");
-
+        //init bert 
         bert_model = Bert(core,bert_ir_path, bert_device,language, tokenizer);
+        std::cout << "TTS:TTS:init bert_model\n";
+        //init cppjieba
+        std::filesystem::path DICT_PATH = cppjieba_dict /"jieba.dict.utf8";
+        std::filesystem::path HMM_PATH = cppjieba_dict /"hmm_model.utf8";
+        std::filesystem::path USER_DICT_PATH = cppjieba_dict /"user.dict.utf8";
+        std::filesystem::path IDF_PATH = cppjieba_dict /"idf.utf8";
+        std::filesystem::path STOP_WORD_PATH = cppjieba_dict /"stop_words.utf8";
+        assert (std::filesystem::exists(DICT_PATH) && std::filesystem::exists(HMM_PATH)  && std::filesystem::exists(USER_DICT_PATH) && std::filesystem::exists(IDF_PATH) 
+         && std::filesystem::exists(STOP_WORD_PATH) && "cppjieba dict path does not exit!");
+        jieba = std::make_shared<cppjieba::Jieba>(DICT_PATH.string(), HMM_PATH.string(), USER_DICT_PATH.string(), IDF_PATH.string(),STOP_WORD_PATH.string());
+        std::cout << "TTS:TTS:init cppjieba\n";
     }
 
     void TTS::tts_to_file(const std::string& text, const int& speaker_id, const std::filesystem::path& output_path,
@@ -37,6 +50,7 @@ namespace melo {
     std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>> 
         TTS::get_text_for_tts_infer(const std::string& text) {
         try {
+            auto [phones_list, tones_list, word2ph_] = chinese_mix::_g2p_v2("compiler engineer", tokenizer, jieba, cmudict);
             std::string text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
             std::vector<int> word2ph{ 3, 4, 4, 4, 8, 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 14, 20, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 6, 20, 2 };
             std::vector<std::vector<float>> phone_level_feature;

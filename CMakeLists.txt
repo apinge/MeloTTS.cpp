@@ -80,7 +80,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
 
 
 
-
 # Define the executable
 add_executable(meloTTS_ov_old ${SOURCE_FILES_OLD} ${HEADER_FILES_OLD})
 
@@ -99,7 +98,8 @@ add_executable(meloTTS_ov ${SOURCE_FILES} ${HEADER_FILES})
 # Define DEBUG macro for Debug configuration
 target_compile_definitions(meloTTS_ov PRIVATE "$<$<CONFIG:DEBUG>:DEBUG>")
 target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
-
+target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba)
+target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
 
 target_link_libraries(meloTTS_ov
     PRIVATE openvino::runtime  # Link OpenVINO Runtime privately
@@ -132,8 +132,16 @@ if (${ENABLE_TESTS})
     target_include_directories(test_openvoice_tts PRIVATE src/openvoice_tts.h src/openvino_model.h src/logging.h src/utils.h src/tokenizer.h src/bert.h src/info_data.h )
 
     add_executable(test_chinese_mix tests/test_chinese_mix.cpp src/chinese_mix.cpp src/tokenizer.cpp src/utils.cpp)
-    target_include_directories(test_bert PRIVATE src/chinese_mix.h src/tokenizer.h src/tokenizer.h src/logging.h src/utils.h)
+    target_include_directories(test_chinese_mix PRIVATE src/chinese_mix.h src/tokenizer.h src/tokenizer.h src/logging.h src/utils.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba 
+            ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
+
 
     add_executable(test_hanz2piny tests/test_hanz2piny.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny/Hanz2Piny.cpp )
     target_include_directories(test_hanz2piny PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny)
+
+    add_executable(test_cppjieba tests/test_cppjieba.cpp)
+    target_include_directories(test_cppjieba PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba 
+                                                    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
+                                                    #${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
 endif()

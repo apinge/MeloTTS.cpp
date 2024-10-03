@@ -4,12 +4,15 @@
 #include <filesystem>
 #include "bert.h"
 #include "openvoice_tts.h"
+#include "Jieba.hpp"
+#include "cmudict.h"
 namespace melo {
     class TTS {
         public:
             explicit TTS(std::unique_ptr<ov::Core>& core, const std::filesystem::path& tts_ir_path, const std::string& tts_device, 
                 const std::filesystem::path& bert_ir_path, const std::string& bert_device,
-                const std::filesystem::path& tokenizer_data_path, const std::string language);
+                const std::filesystem::path& tokenizer_data_path, const std::filesystem::path& cppjieba_dict, const std::filesystem::path& cmudict_path,
+                const std::string language);
             ~TTS() = default;
             TTS(const TTS&) = delete;
             TTS& operator=(const TTS&) = delete;
@@ -29,6 +32,8 @@ namespace melo {
             //virtual std::tuple<std::string, std::vector<int64_t>, std::vector<int64_t>, std::vector<int>> cleaned_text_to_sequence(const std::string& text);
         private:
             std::shared_ptr<Tokenizer> tokenizer;
+            std::shared_ptr<cppjieba::Jieba> jieba;
+            std::shared_ptr<melo::CMUDict> cmudict;
             Bert bert_model;
             OpenVoiceTTS tts_model;
             std::string _language = "ZH";

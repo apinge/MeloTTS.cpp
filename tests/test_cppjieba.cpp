@@ -1,5 +1,5 @@
 
-#define CRT_
+//#define CRT_
 #ifdef CRT_
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -47,6 +47,12 @@ int main() {
     std::vector<cppjieba::Word> jiebawords;
     std::string s;
     std::string result;
+
+    s = "compiler engineer";
+    std::cout << s << std::endl;
+    std::cout << "[demo] Cut With HMM" << std::endl;
+    jieba.Cut(s, words, true);
+    printVec(words, std::cout);
 
     s = "intel CPU 规格中列出了最大睿频和处理器基本频率";
     std::cout<< s << std::endl;

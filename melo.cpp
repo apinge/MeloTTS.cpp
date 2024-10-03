@@ -68,11 +68,17 @@ int main()
 
     // init tokenizer
     std::filesystem::path vocab_bert_path = "thirdParty/tts_ov/vocab_bert.txt";
+
+    // dict folder for cppjieba
+   std::filesystem::path cppjieba_dict = "thirdParty/cppjieba/dict";
+
+   //dict
+   std::filesystem::path cmudict_path = "thirdParty/tts_ov/cmudict_cache.txt";
     //outputpath
     std::filesystem::path output_path = "newMeloTTS.wav";
     std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     auto startTime = Time::now();
-    melo::TTS model(core_ptr, zh_tts_path,"CPU",zh_bert_path,"CPU",vocab_bert_path,"ZH");
+    melo::TTS model(core_ptr, zh_tts_path,"CPU",zh_bert_path,"CPU",vocab_bert_path, cppjieba_dict, cmudict_path, "ZH");
     auto initTime = get_duration_ms_till_now(startTime);
     std::cout << "model init time is" << initTime <<" ms" << std::endl;
 #if defined(_WIN32) && defined(DEBUG_MEMORY)

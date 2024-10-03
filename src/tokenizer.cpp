@@ -1,10 +1,17 @@
 ﻿#include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <cassert>
 #include "tokenizer.h"
 
 namespace melo
 {
+	Tokenizer::Tokenizer(const std::filesystem::path& token_filename)
+	{
+	    assert(std::filesystem::exists(token_filename) && "[ERROR] vocab_bert.txt does not exit!");
+		ReadTokenFile(token_filename.string());
+	}
+
 	Tokenizer::Tokenizer(const std::string& token_filename)
 	{
 		ReadTokenFile(token_filename);

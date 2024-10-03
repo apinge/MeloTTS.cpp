@@ -12,8 +12,9 @@ namespace melo {
             std::cerr << "Cannot open file " << filename << std::endl;
             return;
         }
-
+        
         std::string line;
+        std::vector<std::vector<std::string>> inner_vec;  // store result of each line
         while (std::getline(file, line)) {
             std::istringstream iss(line);
             std::string key;
@@ -22,13 +23,13 @@ namespace melo {
             }
 
             std::vector<std::vector<std::string>> value;
-            std::string part;
+            std::string segment;
 
-            while (std::getline(iss, part)) {
-                std::istringstream partStream(part);
+            while (std::getline(iss, segment, ',')) {
+                std::istringstream segment_ss(segment);
                 std::vector<std::string> subValues;
                 std::string subValue;
-                while (partStream >> subValue) {
+                while (segment_ss >> subValue) {
                     subValues.push_back(subValue);
                 }
                 if (!subValues.empty()) {
@@ -42,6 +43,7 @@ namespace melo {
         }
 
         file.close();
+        std::cout <<"CMUDict::CMUDict: Construct CMUDict\n";
     }
 
     // Overloads the operator<< to print the contents of a CMUDict object.
