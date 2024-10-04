@@ -1,5 +1,6 @@
 #include <cctype>
 #include <iterator>
+#include <format>
 #include "chinese_mix.h"
 namespace melo {
     namespace chinese_mix {
