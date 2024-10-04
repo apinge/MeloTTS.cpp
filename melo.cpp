@@ -32,6 +32,7 @@
 #include "src/openvoice2_processor.h"
 #include "utils.h"
 #include "tts.h"
+#include "chinese_mix.h"
 
 #if defined(_WIN32) && defined(DEBUG_MEMORY)
 // To ensure correct resolution of symbols, add Psapi.lib to TARGETLIBS
@@ -74,11 +75,19 @@ int main()
 
    //dict
    std::filesystem::path cmudict_path = "thirdParty/tts_ov/cmudict_cache.txt";
+
     //outputpath
     std::filesystem::path output_path = "newMeloTTS.wav";
+
+    //Init lanugage module
+    melo::chinese_mix::cmudict = std::make_shared<melo::CMUDict>(cmudict_path.string());
+    melo::chinese_mix::jieba = std::make_shared<cppjieba::Jieba>(cppjieba_dict);
+    std::cout <<"Init language Module\n";
+
+    // Init core
     std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     auto startTime = Time::now();
-    melo::TTS model(core_ptr, zh_tts_path,"CPU",zh_bert_path,"CPU",vocab_bert_path, cppjieba_dict, cmudict_path, "ZH");
+    melo::TTS model(core_ptr, zh_tts_path,"CPU",zh_bert_path,"CPU",vocab_bert_path, "ZH");
     auto initTime = get_duration_ms_till_now(startTime);
     std::cout << "model init time is" << initTime <<" ms" << std::endl;
 #if defined(_WIN32) && defined(DEBUG_MEMORY)

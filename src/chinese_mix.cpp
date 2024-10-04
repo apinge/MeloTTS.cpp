@@ -3,9 +3,11 @@
 #include "chinese_mix.h"
 namespace melo {
     namespace chinese_mix {
+        // global object
+        std::shared_ptr<CMUDict> cmudict;
+        std::shared_ptr<cppjieba::Jieba> jieba;
         // Only lowercase letters are accepted here!
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment,
-            std::shared_ptr<Tokenizer>& tokenizer, std::shared_ptr<cppjieba::Jieba>& jieba, std::shared_ptr<CMUDict>& cmudict) {
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<Tokenizer>& tokenizer) {
 
             std::vector<std::string> phones_list;
             std::vector<int64_t> tones_list;
@@ -28,14 +30,14 @@ namespace melo {
                     std::vector<int64_t> token_ids;
                     tokenizer->Tokenize(word, tokenized_en, token_ids);
                     for(const auto &x:tokenized_en) std::cout << x << ",";
-                    auto [phones_en, tones_en, word2ph_en] = g2p_en(word, tokenized_en, cmudict);
+                    auto [phones_en, tones_en, word2ph_en] = g2p_en(word, tokenized_en);
                     // TODO change to move_interator
                     phones_list.insert(phones_list.end(), phones_en.begin(), phones_en.end());
                     tones_list.insert(tones_list.end(), tones_en.begin(), tones_en.end());
                     word2ph.insert(word2ph.end(), word2ph_en.begin(), word2ph_en.end());
                 }
                 else { //Chinese character 
-                    auto [phones_zh, tones_zh, word2ph_zh] = _chinese_g2p(word,jieba);
+                    auto [phones_zh, tones_zh, word2ph_zh] = _chinese_g2p(word);
                     // TODO change to move_interator
                     phones_list.insert(phones_list.end(),phones_zh.begin(),phones_zh.end());
                     tones_list.insert(tones_list.end(),tones_zh.begin(),tones_zh.end());
@@ -52,7 +54,7 @@ namespace melo {
             return { phones_list, tones_list, word2ph };
         }
 
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& segment, std::shared_ptr<cppjieba::Jieba>& jieba) {
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& segment) {
             std::vector<std::string> phones_list;
             std::vector<int64_t> tones_list;
             std::vector<int> word2ph;
@@ -76,7 +78,7 @@ namespace melo {
         }
         // The processing here is different from the Python version. 
         // Due to the presence of Jieba segmentation, the input here is actually word by word, without the concept of group
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p_en(const std::string& word, std::vector<std::string>& tokenized_word, std::shared_ptr<CMUDict>& cmudict) {
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p_en(const std::string& word, std::vector<std::string>& tokenized_word) {
             std::vector<std::string> phones_list;
             std::vector<int64_t> tones_list;
             std::vector<int> word2ph;

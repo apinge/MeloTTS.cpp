@@ -1,6 +1,6 @@
 #ifndef CPPJIEAB_JIEBA_H
 #define CPPJIEAB_JIEBA_H
-
+#include <filesystem>
 #include "QuerySegment.hpp"
 #include "KeywordExtractor.hpp"
 
@@ -22,6 +22,23 @@ class Jieba {
       query_seg_(&dict_trie_, &model_),
       extractor(&dict_trie_, &model_, idfPath, stopWordPath) {
   }
+  Jieba(const std::filesystem::path& cppjieba_dict) :
+    Jieba(std::filesystem::path(cppjieba_dict / "jieba.dict.utf8").string(),
+          std::filesystem::path(cppjieba_dict / "hmm_model.utf8").string(),
+          std::filesystem::path(cppjieba_dict / "user.dict.utf8").string(),
+          std::filesystem::path(cppjieba_dict / "idf.utf8").string(),
+          std::filesystem::path(cppjieba_dict / "stop_words.utf8").string())
+      {
+          //init cppjieba
+          std::filesystem::path DICT_PATH = cppjieba_dict / "jieba.dict.utf8";
+          std::filesystem::path HMM_PATH = cppjieba_dict / "hmm_model.utf8";
+          std::filesystem::path USER_DICT_PATH = cppjieba_dict / "user.dict.utf8";
+          std::filesystem::path IDF_PATH = cppjieba_dict / "idf.utf8";
+          std::filesystem::path STOP_WORD_PATH = cppjieba_dict / "stop_words.utf8";
+          assert(std::filesystem::exists(DICT_PATH) && std::filesystem::exists(HMM_PATH) && std::filesystem::exists(USER_DICT_PATH) && std::filesystem::exists(IDF_PATH)
+              && std::filesystem::exists(STOP_WORD_PATH) && "cppjieba dict path does not exit!");
+          std::cout << "init cppjieba\n";
+      }
   ~Jieba() {
   }
 

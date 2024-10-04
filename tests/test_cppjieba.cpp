@@ -26,6 +26,7 @@ std::filesystem::path USER_DICT_PATH = "C:\\Users\\gta\\source\\develop\\MeloTTS
 std::filesystem::path IDF_PATH = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppjieba\\dict\\idf.utf8";
 std::filesystem::path STOP_WORD_PATH = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppjieba\\dict\\stop_words.utf8";
 
+std::filesystem::path cppjieba_dict = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppjieba\\dict";
 auto printVec = [&](const std::vector<std::string>& arr, std::ostream& os) {
         for(const auto &w:arr)  os<< w <<"|"; 
         os <<"\n";
@@ -38,11 +39,12 @@ int main() {
     if(!std::filesystem::exists(DICT_PATH) || !std::filesystem::exists(HMM_PATH) || !std::filesystem::exists(USER_DICT_PATH) || !std::filesystem::exists(IDF_PATH) || 
         !std::filesystem::exists(STOP_WORD_PATH))
         std::cerr <<"input dict does not exit!\n";
-    cppjieba::Jieba jieba(DICT_PATH.string(),
-        HMM_PATH.string(),
-        USER_DICT_PATH.string(),
-        IDF_PATH.string(),
-        STOP_WORD_PATH.string());
+    //cppjieba::Jieba jieba(DICT_PATH.string(),
+    //    HMM_PATH.string(),
+    //    USER_DICT_PATH.string(),
+    //    IDF_PATH.string(),
+    //    STOP_WORD_PATH.string());
+    cppjieba::Jieba jieba(cppjieba_dict);
     std::vector<std::string> words;
     std::vector<cppjieba::Word> jiebawords;
     std::string s;
