@@ -18,35 +18,7 @@ find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-# Source files
-set(SOURCE_FILES_OLD
-    melo_old.cpp
-    src/openvoice2_processor.cpp
-    src/openvino_model.cpp
-    src/logging.cpp
-    src/tokenizer.cpp
-    src/cmudict.cpp
-    src/utils.cpp
-    src/bert.cpp
-    src/openvoice_tts.cpp
-    src/tts.cpp
-)
 
-# Header files
-set(HEADER_FILES_OLD
-    src/cmudict.h
-    src/openvoice2_processor.h
-    src/openvino_model.h
-    src/logging.h
-    src/info_data.h
-    src/status.h
-    src/librosa.h
-    src/tokenizer.h
-    src/utils.h
-    src/bert.h
-    src/openvoice_tts.h
-    src/tts.h
-)
 # Source files
 set(SOURCE_FILES
     melo.cpp
@@ -78,20 +50,6 @@ set(HEADER_FILES
     src/tts.h
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
-
-
-
-# Define the executable
-add_executable(meloTTS_ov_old ${SOURCE_FILES_OLD} ${HEADER_FILES_OLD})
-
-# Define DEBUG macro for Debug configuration
-target_compile_definitions(meloTTS_ov_old PRIVATE "$<$<CONFIG:DEBUG>:DEBUG>")
-target_include_directories(meloTTS_ov_old PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
-
-
-target_link_libraries(meloTTS_ov_old
-    PRIVATE openvino::runtime  # Link OpenVINO Runtime privately
-)
 
 # Define the executable
 add_executable(meloTTS_ov ${SOURCE_FILES} ${HEADER_FILES})
