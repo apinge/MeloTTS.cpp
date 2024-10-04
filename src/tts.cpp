@@ -39,7 +39,7 @@ namespace melo {
     std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>> 
         TTS::get_text_for_tts_infer(const std::string& text) {
         try {
-            auto [phones_list, tones_list, word2ph_] = chinese_mix::_g2p_v2("compiler engineer", tokenizer);
+            auto [phones_list, tones_list, word2ph_] = chinese_mix::_g2p_v2("编译器", tokenizer);
             std::string text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
             std::vector<int> word2ph{ 3, 4, 4, 4, 8, 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 14, 20, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 6, 20, 2 };
             std::vector<std::vector<float>> phone_level_feature;

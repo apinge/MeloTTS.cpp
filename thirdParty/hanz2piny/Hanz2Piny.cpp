@@ -20,7 +20,7 @@ using std::pair;
 
 Hanz2Piny::Hanz2Piny ()
 {
-    ;
+    std::cout << "Init Hanz2Piny;";
 }
 
 // 只处理 unicode 在 [0X4E00, 0X9FA5] 间的汉字，检查是否在此区间。
@@ -140,6 +140,30 @@ Hanz2Piny::isStartWithBom (const string& s) const
 }
 
 const Hanz2Piny::Unicode Hanz2Piny::begin_hanzi_unicode_ = 0X4E00, Hanz2Piny::end_hanzi_unicode_ = 0X9FA5;
+
+const std::unordered_set<char> Hanz2Piny::simple_initials = {
+    'b',
+    'p',
+    'm',
+    'f',
+    'd',
+    't',
+    'n',
+    'l',
+    'g',
+    'k',
+    'h',
+    'j',
+    'q',
+    'x',
+    'r',
+    'z',
+    'c',
+    's',
+    'y',
+    'w',
+};
+const std::unordered_set<std::string>  Hanz2Piny::compound_initials = { "zh", "ch", "sh"};
 
 // 0）基于 unicode 顺序的列表；
 // 1）即便某个 unicode 无对应汉字拼音，也需要保留其位置；

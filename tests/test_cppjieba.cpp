@@ -31,6 +31,10 @@ auto printVec = [&](const std::vector<std::string>& arr, std::ostream& os) {
         for(const auto &w:arr)  os<< w <<"|"; 
         os <<"\n";
     };
+auto printTagres = [&](const std::vector< std::pair<std::string, std::string>>& tagres, std::ostream& os) {
+    for (const auto& [word,pos] : tagres)  os << word<<','<<pos << "|";
+    os << "\n";
+    };
 int main() {
 
 #ifdef _WIN32
@@ -61,6 +65,14 @@ int main() {
     std::cout<< "[demo] Cut With HMM" << std::endl;
     jieba.Cut(s, words, true);
     printVec(words,std::cout);
+
+    std::cout << "[demo] Tagging" << std::endl;
+    std::vector< std::pair<std::string, std::string> > tagres;
+    s = "intel CPU 规格中列出了最大睿频和处理器基本频率";
+    jieba.Tag(s, tagres);
+    printTagres(tagres, std::cout);
+    //std::cout << tagres << std::endl;
+
 
      std::cout<< "[demo] Cut Without HMM " << std::endl;
     jieba.Cut(s, words, false);
@@ -101,7 +113,7 @@ int main() {
      std::cout<< LookupTagres << std::endl;
 
      std::cout<< "[demo] Tagging" << std::endl;
-    std::vector< std::pair<std::string, std::string> > tagres;
+    //std::vector< std::pair<std::string, std::string> > tagres;
     s = "我是拖拉机学院手扶拖拉机专业的。不用多久，我就会升职加薪，当上CEO，走上人生巅峰。";
     jieba.Tag(s, tagres);
     printVec(words, std::cout);

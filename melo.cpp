@@ -76,12 +76,16 @@ int main()
    //dict
    std::filesystem::path cmudict_path = "thirdParty/tts_ov/cmudict_cache.txt";
 
+   //pinyin_to_symbol_map
+   std::filesystem::path pinyin_to_symbol_map_path = "thirdParty/tts_ov/opencpop-strict.txt";
+
     //outputpath
     std::filesystem::path output_path = "newMeloTTS.wav";
 
     //Init lanugage module
     melo::chinese_mix::cmudict = std::make_shared<melo::CMUDict>(cmudict_path.string());
     melo::chinese_mix::jieba = std::make_shared<cppjieba::Jieba>(cppjieba_dict);
+    melo::chinese_mix::pinyin_to_symbol_map = melo::chinese_mix::readPinyinFile(pinyin_to_symbol_map_path);
     std::cout <<"Init language Module\n";
 
     // Init core

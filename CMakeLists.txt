@@ -59,6 +59,7 @@ set(SOURCE_FILES
     src/chinese_mix.cpp
     src/openvoice_tts.cpp
     src/tts.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny/Hanz2Piny.cpp
 )
 
 # Header files
@@ -100,6 +101,7 @@ target_compile_definitions(meloTTS_ov PRIVATE "$<$<CONFIG:DEBUG>:DEBUG>")
 target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
 target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba)
 target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
+target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny)
 
 target_link_libraries(meloTTS_ov
     PRIVATE openvino::runtime  # Link OpenVINO Runtime privately
