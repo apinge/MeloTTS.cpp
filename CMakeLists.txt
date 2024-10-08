@@ -18,6 +18,10 @@ find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> cee7e69966d5570d99f1ec87259a9c62c3c759fc
 # Source files
 set(SOURCE_FILES
     melo.cpp

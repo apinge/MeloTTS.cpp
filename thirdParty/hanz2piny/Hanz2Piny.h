@@ -94,7 +94,7 @@ class Hanz2Piny
                 }
                 else if (pinyin_list.size() > 1) {    // 多音字
 
-                    auto pinyin = pinyin_list[1];
+                    auto pinyin = pinyin_list[0];
                    // std::cout <<  pinyin<< std::endl;
                     auto [c, v] = split_initials_finals(pinyin);
                     //std::cout << c << ' ' << v << std::endl;
@@ -149,7 +149,7 @@ class Hanz2Piny
                                         break;
 
                     case Hanz2Piny::noname: {
-                        auto pinyin = pinyin_list[1];
+                        auto pinyin = pinyin_list[0];
                         if (ok && camel) {
                             pinyin[0] = (char)toupper(pinyin[0]);
                         }
