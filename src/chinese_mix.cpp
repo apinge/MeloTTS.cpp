@@ -1,5 +1,6 @@
 #include <cctype>
 #include <iterator>
+#include <format>
 #include "chinese_mix.h"
 namespace melo {
     namespace chinese_mix {
@@ -30,6 +31,19 @@ namespace melo {
         {"in", "yin"},
         {"u", "wu"},};
         std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> pinyin_to_symbol_map;
+
+        const std::unordered_map<std::string, int64_t> symbol_to_id =
+        {{"_", 0 }, {"AA", 1 }, {"E", 2 }, {"EE", 3 }, {"En", 4 }, {"N", 5 }, {"OO", 6 }, {"V", 7 }, {"a", 8 }, {"a,", 9 }, {"aa", 10 },
+{"ae", 11 }, {"ah", 12 }, {"ai", 13 }, {"an", 14 }, {"ang", 15 }, {"ao", 16 }, {"aw", 17 }, {"ay", 18 }, {"b", 19 }, {"by", 20 },
+{"c", 21 }, {"ch", 22 }, {"d", 23 }, {"dh", 24 }, {"dy", 25 }, {"e", 26 }, {"e,", 27 }, {"eh", 28 }, {"ei", 29 }, {"en", 30 },
+{"eng", 31 }, {"er", 32 }, {"ey", 33 }, {"f", 34 }, {"g", 35 }, {"gy", 36 }, {"h", 37 }, {"hh", 38 }, {"hy", 39 }, {"i", 40 }, 
+{"i0", 41 }, {"i,", 42 }, {"ia", 43 }, {"ian", 44 }, {"iang", 45 }, {"iao", 46 }, {"ie", 47 }, {"ih", 48 }, {"in", 49 }, {"ing", 50 },
+{"iong", 51 }, {"ir", 52 }, {"iu", 53 }, {"iy", 54 }, {"j", 55 }, {"jh", 56 }, {"k", 57 }, {"ky", 58 }, {"l", 59 }, {"m", 60 },
+{"my", 61 }, {"n", 62 }, {"ng", 63 }, {"ny", 64 }, {"o", 65 }, {"o,", 66 }, {"ong", 67 }, {"ou", 68 }, {"ow", 69 }, {"oy", 70 }, 
+{"p", 71 }, {"py", 72 }, {"q", 73 }, {"r", 74 }, {"ry", 75 }, {"s", 76 }, {"sh", 77 }, {"t", 78 }, {"th", 79 }, {"ts", 80 }, 
+{"ty", 81 }, {"u", 82 }, {"u,", 83 }, {"ua", 84 }, {"uai", 85 }, {"uan", 86 }, {"uang", 87 }, {"uh", 88 }, {"ui", 89 }, {"un", 90 },
+{"uo", 91 }, {"uw", 92 }, {"v", 93 }, {"van", 94 }, {"ve", 95 }, {"vn", 96 }, {"w", 97 }, {"x", 98 }, {"y", 99 }, {"z", 100 }, 
+{"zh", 101 }, {"zy", 102 }, {"!", 103 }, {"?", 104 }, {"…", 105 }, {" },", 106 }, {".", 107 }, {"\"", 108 }, {"-", 109 }, {"SP", 110 }, {"UNK", 111}};
 
         // Only lowercase letters are accepted here!
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<Tokenizer>& tokenizer) {
@@ -78,9 +92,9 @@ namespace melo {
         }
 
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag) {
-            std::vector<std::string> phones_list;
-            std::vector<int64_t> tones_list;
-            std::vector<int> word2ph;
+            std::vector<std::string> phones_list{"_"};
+            std::vector<int64_t> tones_list{0};
+            std::vector<int> word2ph{1};
             auto [sub_initials, sub_finals] = hanz2piny._get_initials_finals(word);
             
             printVec(sub_initials,"sub_initials");
@@ -119,7 +133,9 @@ namespace melo {
                tones_list.insert(tones_list.end(),phone.size(), tone);
             }
 
-
+            phones_list.emplace_back("_");
+            tones_list.emplace_back(0);
+            word2ph.emplace_back(1);
             return { phones_list, tones_list, word2ph };
         }
         /**
@@ -200,6 +216,40 @@ namespace melo {
          */
         void modified_tone(const std::string& word, const std::string& tag, std::vector<std::string>& sub_finals) {
             
+        }
+        /*
+        Converts a string of text to a sequence of IDs corresponding to the symbols in the text.
+        Also include the implementation of  hps.data.add_blank=True
+        Note That in this function some constants are used to suit the condition of language == ZH_MIXED_WITH_EN
+        Args:
+        text: string to convert to a sequence
+        Returns:
+        Vector of integers corresponding to the symbols in the text
+        def intersperse(lst, item):
+            result = [item] * (len(lst) * 2 + 1)
+            result[1::2] = lst # 从索引 1 开始，每隔两个位置放置一个 lst 中的元素
+            return result
+        */
+        std::tuple<std::vector<int64_t>,std::vector<int64_t>,std::vector<int64_t>,std::vector<int>> cleaned_text_to_sequence(const std::vector<std::string>& phones_list, const std::vector<int64_t>tones_list, const std::vector<int>&word2ph_list){
+            int n = phones_list.size();
+            std::vector<int64_t> phones(2*n+1,0), tones(2*n+1,0), lang_ids(2*n+1,0);
+            std::vector<int> word2ph(word2ph_list.begin(),word2ph_list.end());
+
+            for(int i =0,j=1;i<n&&j<2*n+1;++i,j+=2){
+                phones[j] = symbol_to_id.at(phones_list[i]);
+                lang_ids[j] = 3; //chinese language id
+                tones[j] = tones_list[i];
+            }
+            for(int i =0;i<word2ph.size();++i)
+                word2ph[i]*=2;
+            ++word2ph[0];
+
+            std::cout << "cleaned_text_to_sequence\n";
+            printVec(phones, "phones");
+            printVec(lang_ids,"lang_ids");
+            printVec(tones,"tones_list");
+            printVec(word2ph,"word2ph");
+            return {phones,tones,lang_ids,word2ph};
         }
 
         std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> readPinyinFile(const std::filesystem::path& filepath) {

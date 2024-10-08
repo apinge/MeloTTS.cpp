@@ -13,10 +13,12 @@ namespace melo {
         extern std::shared_ptr<cppjieba::Jieba> jieba;
         extern const Hanz2Piny hanz2piny;
         extern std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> pinyin_to_symbol_map;
+        extern const std::unordered_map<std::string,int64_t> symbol_to_id;
         // funtion
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<Tokenizer>& tokenized);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& segment, const std::string& tag);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p_en(const std::string& word, std::vector<std::string>& tokenized);
+        std::tuple<std::vector<int64_t>,std::vector<int64_t>,std::vector<int64_t>,std::vector<int>> cleaned_text_to_sequence(const std::vector<std::string>& phones_list, const std::vector<int64_t>tones_list, const std::vector<int>&word2ph_list);
         std::tuple<std::vector<std::string>, std::vector<int64_t>> refine_syllables(const std::vector<std::vector<std::string>>& syllables);
         std::vector<int> distribute_phone(const int& n_phone, const int& n_word);
         void modified_tone(const std::string& word, const std::string& tag, std::vector<std::string>& sub_finals);
