@@ -15,7 +15,7 @@ namespace melo {
         // global object
         std::shared_ptr<CMUDict> cmudict;
         std::shared_ptr<cppjieba::Jieba> jieba;
-        const Hanz2Piny hanz2piny;
+        std::shared_ptr<cppinyin::PinyinEncoder> pinyin;
         const std::unordered_map<std::string, std::string> v_rep_map = {
         {"uei", "ui"},
         {"iou", "iu"},
@@ -95,8 +95,8 @@ namespace melo {
             std::vector<std::string> phones_list{"_"};
             std::vector<int64_t> tones_list{0};
             std::vector<int> word2ph{1};
-            auto [sub_initials, sub_finals] = hanz2piny._get_initials_finals(word);
-            
+            //auto [sub_initials, sub_finals] = hanz2piny._get_initials_finals(word);
+            auto [sub_initials, sub_finals] = _get_initials_finals(word);
             printVec(sub_initials,"sub_initials");
             printVec(sub_finals,"sub_initials");
             modified_tone(word,tag,sub_finals);
@@ -282,8 +282,46 @@ namespace melo {
             std::cout << std::format("load opencpop-strict.txt to pinyin_to_symbol_map, containing {} keys\n", pinyin_to_symbol_map->size());
             return pinyin_to_symbol_map;
         }
+        // @brief This function returns the initials(声母) and finals(韵母),e.g. bian1 -> "b" + "ian1"
+        // This function is essentially the same as the pypinyin.lazy_pinyin function, but it retains the initials 'y' and 'w' 
+        inline std::pair<std::string, std::string> split_initials_finals(const std::string& raw_pinyin) {
+            int n = raw_pinyin.length();
+            if (n == 0) return{};
+            //check compound_initials
+            if (n > 2 && compound_initials.contains(raw_pinyin.substr(0, 2))) {
+                return { raw_pinyin.substr(0, 2) , raw_pinyin.substr(2) };
+            }
+            else if (simple_initials.contains(raw_pinyin.front())) {
+                // remove w y as initials refer to https://pydigger.com/pypi/pypinyin
+                //>因为根据 `《汉语拼音方案》 <http://www.moe.gov.cn/jyb_sjzl/ziliao/A19/195802/t19580201_186000.html>`__ ，y，w，ü(yu) 都不是声母。
+                if(raw_pinyin.front()=='y' || raw_pinyin.front() == 'w')
+                    return {"",raw_pinyin.substr(1) };
+                else
+                    return { raw_pinyin.substr(0,1), raw_pinyin.substr(1) };
+            }
+            else {
+                //有些字没有声母 比如 玉 鹅
+                return { "", raw_pinyin};
+            }
+            return {};
+        }
+        /*
+        * @brief This function returns the initials(声母) and finals(韵母), corresponding to the Python function of the same name.
+        * https://github.com/zhaohb/MeloTTS-OV/blob/main/melo/text/chinese.py#L80
+        */
+        std::pair<std::vector<std::string>, std::vector<std::string>> _get_initials_finals(const std::string& input) {
+            std::vector<std::string> initials,finals;
+            std::vector<std::string> pieces;
 
+            pinyin->Encode(input, &pieces);
 
+            for (const auto& piece : pieces) {
+                const auto&[orig_initial, orig_final] = split_initials_finals(piece);
+                initials.emplace_back(std::move(orig_initial));
+                finals.emplace_back(std::move(orig_final));
+            }
+            return {initials,finals};
+        }
     }
 
 }

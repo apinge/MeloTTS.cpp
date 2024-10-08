@@ -5,13 +5,15 @@
 #include "tokenizer.h"
 #include "Jieba.hpp"
 #include "cmudict.h"
-#include "Hanz2Piny.h"
+#include "cppinyin.h"
+
+
 namespace melo {
     namespace chinese_mix {
         //global 
         extern std::shared_ptr<CMUDict> cmudict;
         extern std::shared_ptr<cppjieba::Jieba> jieba;
-        extern const Hanz2Piny hanz2piny;
+        extern std::shared_ptr<cppinyin::PinyinEncoder> pinyin;
         extern std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> pinyin_to_symbol_map;
         extern const std::unordered_map<std::string,int64_t> symbol_to_id;
         // funtion
@@ -24,6 +26,7 @@ namespace melo {
         void modified_tone(const std::string& word, const std::string& tag, std::vector<std::string>& sub_finals);
         //load pinyin_to_symbol_map
         std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> readPinyinFile(const std::filesystem::path& filepath);
+        std::pair<std::vector<std::string>, std::vector<std::string>> _get_initials_finals(const std::string& input);
         // print pinyin_to_symbol_map
         [[maybe_unused]] // Define the inline function
         inline void printPinyinMap(const std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>>& pinyin_to_symbol_map) {
@@ -43,6 +46,9 @@ namespace melo {
             }
             return true;
         }
+
+        const std::unordered_set<char> simple_initials = { 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'r', 'z', 'c', 's', 'y', 'w'};
+        const std::unordered_set<std::string>  compound_initials = { "zh", "ch", "sh" };
     }
     
 }

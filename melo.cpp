@@ -73,6 +73,9 @@ int main()
     // dict folder for cppjieba
    std::filesystem::path cppjieba_dict = "thirdParty/cppjieba/dict";
 
+   // cppinyin
+   std::filesystem::path cppinyin_resource = "thirdParty/cppinyin/resources/cpp_pinyin.raw";
+
    //dict
    std::filesystem::path cmudict_path = "thirdParty/tts_ov/cmudict_cache.txt";
 
@@ -86,6 +89,7 @@ int main()
     melo::chinese_mix::cmudict = std::make_shared<melo::CMUDict>(cmudict_path.string());
     melo::chinese_mix::jieba = std::make_shared<cppjieba::Jieba>(cppjieba_dict);
     melo::chinese_mix::pinyin_to_symbol_map = melo::chinese_mix::readPinyinFile(pinyin_to_symbol_map_path);
+    melo::chinese_mix::pinyin = std::make_shared<cppinyin::PinyinEncoder>(cppinyin_resource);
     std::cout <<"Init language Module\n";
 
     // Init core
