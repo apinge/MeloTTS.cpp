@@ -48,9 +48,9 @@ namespace melo {
         // Only lowercase letters are accepted here!
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<Tokenizer>& tokenizer) {
 
-            std::vector<std::string> phones_list;
-            std::vector<int64_t> tones_list;
-            std::vector<int > word2ph;
+            std::vector<std::string> phones_list{ "_" };
+            std::vector<int64_t> tones_list{ 0 };
+            std::vector<int > word2ph{ 1 };
 
             // Cut sentence into words 
             // We assume that the Jieba segmentation result is either pure Chinese or pure English
@@ -84,6 +84,9 @@ namespace melo {
                     word2ph.insert(word2ph.end(),word2ph_zh.begin(),word2ph_zh.end());
                 }
             }
+            phones_list.emplace_back("_");
+            tones_list.emplace_back(0);
+            word2ph.emplace_back(1);
             //std::cout <<phones_list.size() << " "<< tones_list.size() << std::endl;
             printVec(phones_list, "phones_list");
             printVec(tones_list,"tones_list");
@@ -92,9 +95,9 @@ namespace melo {
         }
 
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag) {
-            std::vector<std::string> phones_list{"_"};
-            std::vector<int64_t> tones_list{0};
-            std::vector<int> word2ph{1};
+            std::vector<std::string> phones_list;
+            std::vector<int64_t> tones_list;
+            std::vector<int> word2ph;
             //auto [sub_initials, sub_finals] = hanz2piny._get_initials_finals(word);
             auto [sub_initials, sub_finals] = _get_initials_finals(word);
             printVec(sub_initials,"sub_initials");
@@ -133,9 +136,6 @@ namespace melo {
                tones_list.insert(tones_list.end(),phone.size(), tone);
             }
 
-            phones_list.emplace_back("_");
-            tones_list.emplace_back(0);
-            word2ph.emplace_back(1);
             return { phones_list, tones_list, word2ph };
         }
         /**
