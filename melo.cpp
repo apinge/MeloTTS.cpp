@@ -60,15 +60,15 @@ int main()
     melo::MeloTTSProcessor* tts_processor =  new melo::MeloTTSProcessor();
 
     //fp16 model
-    std::filesystem::path zh_tts_path = "thirdParty/tts_ov/tts_zn_mix_en.xml";
-    std::filesystem::path zh_bert_path = "thirdParty/tts_ov/bert_zn_mix_en.xml";
+    std::filesystem::path zh_tts_path = "ov_models/tts_zn_mix_en.xml";
+    std::filesystem::path zh_bert_path = "ov_models/bert_zn_mix_en.xml";
 
     //int8 model
-    //std::filesystem::path zh_tts_path = "thirdParty/tts_ov/tts_zn_mix_en_int8.xml";
-    //std::filesystem::path zh_bert_path = "thirdParty/tts_ov/bert_zn_mix_en_int8.xml";
+    //std::filesystem::path zh_tts_path = "ov_models/tts_zn_mix_en_int8.xml";
+    //std::filesystem::path zh_bert_path = "ov_models/bert_zn_mix_en_int8.xml";
 
     // init tokenizer
-    std::filesystem::path vocab_bert_path = "thirdParty/tts_ov/vocab_bert.txt";
+    std::filesystem::path vocab_bert_path = "ov_models/vocab_bert.txt";
 
     // dict folder for cppjieba
    std::filesystem::path cppjieba_dict = "thirdParty/cppjieba/dict";
@@ -77,10 +77,10 @@ int main()
    std::filesystem::path cppinyin_resource = "thirdParty/cppinyin/resources/cpp_pinyin.raw";
 
    //dict
-   std::filesystem::path cmudict_path = "thirdParty/tts_ov/cmudict_cache.txt";
+   std::filesystem::path cmudict_path = "ov_models/cmudict_cache.txt";
 
    //pinyin_to_symbol_map
-   std::filesystem::path pinyin_to_symbol_map_path = "thirdParty/tts_ov/opencpop-strict.txt";
+   std::filesystem::path pinyin_to_symbol_map_path = "ov_models/opencpop-strict.txt";
 
     //outputpath
     std::filesystem::path output_path = "newMeloTTS.wav";
