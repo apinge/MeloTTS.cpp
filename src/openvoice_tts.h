@@ -1,7 +1,7 @@
 #pragma once
 #ifndef OPENVOICE_TTS_H
 #define OPENVOICE_TTS_H
-#include "openvino_model.h"
+#include "openvino_model_base.h"
 namespace melo {
     class OpenVoiceTTS : public AbstractOpenvinoModel {
     public:

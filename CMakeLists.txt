@@ -27,8 +27,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 # Source files
 set(SOURCE_FILES
     melo.cpp
-    src/openvino_model.cpp
-    src/logging.cpp
+    src/openvino_model_base.cpp
     src/tokenizer.cpp
     src/cmudict.cpp
     src/utils.cpp
@@ -44,10 +43,8 @@ set(SOURCE_FILES
 # Header files
 set(HEADER_FILES
     src/cmudict.h
-    src/openvino_model.h
-    src/logging.h
+    src/openvino_model_base.h
     src/info_data.h
-    src/status.h
     src/librosa.h
     src/tokenizer.h
     src/utils.h
@@ -88,18 +85,22 @@ if (${ENABLE_TESTS})
     add_executable(test_cmudict tests/test_cmudict.cpp src/cmudict.cpp)
     target_include_directories(test_cmudict PRIVATE src/cmudict.h)
 
-    add_executable(test_bert tests/test_bert.cpp src/tokenizer.cpp src/openvino_model.cpp src/bert.cpp  src/utils.cpp src/logging.cpp)
+    add_executable(test_bert tests/test_bert.cpp src/tokenizer.cpp src/openvino_model_base.cpp src/bert.cpp  src/utils.cpp)
     target_link_libraries(test_bert PRIVATE openvino::runtime) 
-    target_include_directories(test_bert PRIVATE src/tokenizer.h src/openvino_model.h src/bert.h  src/logging.h src/utils.h)
+    target_include_directories(test_bert PRIVATE src/tokenizer.h src/openvino_model_base.h src/bert.h  src/utils.h)
 
-    add_executable(test_openvoice_tts tests/test_openvoice_tts.cpp src/openvino_model.cpp src/openvoice_tts.cpp  src/utils.cpp src/logging.cpp src/tokenizer.cpp src/bert.cpp src/logging.cpp)
+    add_executable(test_openvoice_tts tests/test_openvoice_tts.cpp src/openvino_model_base.cpp src/openvoice_tts.cpp  src/utils.cpp src/tokenizer.cpp src/bert.cpp )
     target_link_libraries(test_openvoice_tts PRIVATE openvino::runtime) 
-    target_include_directories(test_openvoice_tts PRIVATE src/openvoice_tts.h src/openvino_model.h src/logging.h src/utils.h src/tokenizer.h src/bert.h src/info_data.h )
+    target_include_directories(test_openvoice_tts PRIVATE src/openvoice_tts.h src/openvino_model_base.h src/utils.h src/tokenizer.h src/bert.h src/info_data.h )
 
-    add_executable(test_chinese_mix tests/test_chinese_mix.cpp src/chinese_mix.cpp src/tokenizer.cpp src/utils.cpp)
-    target_include_directories(test_chinese_mix PRIVATE src/chinese_mix.h src/tokenizer.h src/tokenizer.h src/logging.h src/utils.h
-            ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba 
-            ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
+    add_executable(test_chinese_mix tests/test_chinese_mix.cpp src/chinese_mix.cpp src/tokenizer.cpp src/utils.cpp 
+                    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.cc 
+                    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.cc
+                    src/chinese_mix.h src/tokenizer.h src/tokenizer.h src/utils.h)
+    target_include_directories(test_chinese_mix PRIVATE 
+                        ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba 
+                        ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include
+                        ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
 
 
     add_executable(test_hanz2piny tests/test_hanz2piny.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny/Hanz2Piny.cpp )

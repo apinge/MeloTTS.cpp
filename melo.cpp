@@ -29,7 +29,6 @@
 
 
 
-#include "src/openvoice2_processor.h"
 #include "utils.h"
 #include "tts.h"
 #include "chinese_mix.h"
@@ -57,7 +56,6 @@ int main()
 
     ConfigureOneDNNCache();
 
-    melo::MeloTTSProcessor* tts_processor =  new melo::MeloTTSProcessor();
 
     //fp16 model
     std::filesystem::path zh_tts_path = "ov_models/tts_zn_mix_en.xml";
@@ -83,7 +81,7 @@ int main()
    std::filesystem::path pinyin_to_symbol_map_path = "ov_models/opencpop-strict.txt";
 
     //outputpath
-    std::filesystem::path output_path = "newMeloTTS.wav";
+    std::filesystem::path output_path = "MeloTTS_ov.wav";
 
     //Init lanugage module
     melo::chinese_mix::cmudict = std::make_shared<melo::CMUDict>(cmudict_path.string());

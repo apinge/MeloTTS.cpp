@@ -25,7 +25,7 @@ std::vector<std::vector<float>> prepare_bert() {
 int main() {
     
     std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
-    std::filesystem::path zh_bert_path = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\tts_zn_mix_en.xml";
+    std::filesystem::path zh_bert_path = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\ov_models\\tts_zn_mix_en.xml";
     melo::OpenVoiceTTS model(core_ptr, zh_bert_path.string(),"CPU", "ZH");
 
     std::vector<std::vector<float>> phone_level_feature = prepare_bert();

@@ -6,7 +6,6 @@
 //#include "openvino/openvino.hpp"
 #include "openvoice_tts.h"
 #include "info_data.h"
-#include "logging.h"
 
 namespace melo {
     /* The function 'tts_infer' serves as the entry point for TTS inference.

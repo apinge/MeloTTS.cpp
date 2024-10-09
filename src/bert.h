@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 #include "tokenizer.h"
-#include "openvino_model.h"
+#include "openvino_model_base.h"
 namespace melo {
     class Bert : public AbstractOpenvinoModel {
     public:
@@ -31,8 +31,6 @@ namespace melo {
         std::string _language;
         std::shared_ptr<Tokenizer> _tokenizer;
         std::vector<int64_t> _input_ids, _attention_mask, _token_type_ids;
-        
-
     };
 }
 #endif // !BERT_H
