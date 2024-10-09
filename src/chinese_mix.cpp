@@ -206,16 +206,55 @@ namespace melo {
             }
             return {phonemes, tones};
         }
+        /**
+         * helper function splits a UTF-8 encoded string containing only Chinese characters
+         * e.g. 右值的生命周期 -> {右,值,的,生,命,周,期,}
+         * (excluding punctuation and English letters) into individual Chinese characters.
+         */
+        std::vector<std::string> split_utf8_chinese(const std::string& str) {
+            std::vector<std::string> res;//chinese characters
+            int strSize = str.size();
+            int i = 0;
 
+            while (i < strSize)
+            {
+                int len = 1;
+                for (int j = 0; j < 6 && (str[i] & (0x80 >> j)); j++)
+                {
+                    len = j + 1;
+                }
+                res.push_back(str.substr(i, len));
+                i += len;
+            }
+            return res;
+        }
         /**
          * Adjusts the tones of Chinese characters based on the given word and tag (part of speech).
          *
          * @param word The input Chinese word whose tones need to be adjusted.
-         * @param tag The part of speech associated with the input word, which influences the tone modification.
-         * @param sub_finals A reference to a vector that will hold the modified tones as strings.
+         * @param tag The part of speech associated with the input word, which influences the tone modification. 
+         * @param sub_finals: 韵母
          */
         void modified_tone(const std::string& word, const std::string& tag, std::vector<std::string>& sub_finals) {
-            
+            //此处需要 汉语分字 假设这里进入的是utf-8纯汉字无标点
+            std::vector<std::string> chinese_characters = split_utf8_chinese(word);
+            _bu_sandhi(word,chinese_characters,sub_finals);
+            _yi_sandhi(word, chinese_characters, sub_finals);
+            _neural_sandhi(word,tag, chinese_characters,sub_finals);
+            _three_sandhi(word,chinese_characters,sub_finals);
+
+        }
+        void _bu_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals) {
+
+        }
+        void _yi_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals) {
+
+        }
+        void _neural_sandhi(const std::string& word, const std::string& tag, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals) {
+
+        }
+        void _three_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals) {
+
         }
         /*
         Converts a string of text to a sequence of IDs corresponding to the symbols in the text.

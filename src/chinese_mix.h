@@ -23,7 +23,7 @@ namespace melo {
         std::tuple<std::vector<int64_t>,std::vector<int64_t>,std::vector<int64_t>,std::vector<int>> cleaned_text_to_sequence(const std::vector<std::string>& phones_list, const std::vector<int64_t>tones_list, const std::vector<int>&word2ph_list);
         std::tuple<std::vector<std::string>, std::vector<int64_t>> refine_syllables(const std::vector<std::vector<std::string>>& syllables);
         std::vector<int> distribute_phone(const int& n_phone, const int& n_word);
-        void modified_tone(const std::string& word, const std::string& tag, std::vector<std::string>& sub_finals);
+        
         //load pinyin_to_symbol_map
         std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> readPinyinFile(const std::filesystem::path& filepath);
         std::pair<std::vector<std::string>, std::vector<std::string>> _get_initials_finals(const std::string& input);
@@ -49,6 +49,13 @@ namespace melo {
 
         const std::unordered_set<char> simple_initials = { 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'r', 'z', 'c', 's', 'y', 'w'};
         const std::unordered_set<std::string>  compound_initials = { "zh", "ch", "sh" };
+
+        void modified_tone(const std::string& word, const std::string& tag, std::vector<std::string>& sub_finals);
+        void _bu_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals);
+        void _yi_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals);
+        void _neural_sandhi(const std::string& word, const std::string& tag, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals);
+        void _three_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals);
+        std::vector<std::string> split_utf8_chinese(const std::string& str);//helper function
     }
     
 }
