@@ -24,6 +24,9 @@ namespace melo {
             auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(text);
             std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature);
             write_wave(output_path.string(), wav_data);
+            //release memory buffer
+            tts_model.release_infer_memory();
+            bert_model.release_infer_memory();
         }
         catch (const std::runtime_error& e) {
             std::cerr << "std::runtime_error: " << e.what() << std::endl;
