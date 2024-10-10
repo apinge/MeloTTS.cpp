@@ -6,7 +6,7 @@ std::vector<std::vector<float>> prepare_bert() {
     std::cout << std::filesystem::absolute(zh_bert_path) << std::endl;
     std::cout << zh_bert_path.string() << std::endl;
 
-    std::shared_ptr<melo::Tokenizer> tokenizer_ptr = std::make_shared<melo::Tokenizer>("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\vocab_bert.txt");
+    std::shared_ptr<melo::Tokenizer> tokenizer_ptr = std::make_shared<melo::Tokenizer>(std::string("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\vocab_bert.txt"));
 
     //std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     std::shared_ptr<ov::Core> core_ptr = std::make_shared<ov::Core>();
@@ -57,7 +57,7 @@ int main() {
      0, 2, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 7, 0, 9, 0, 7, 0, 7, 0, 7,
      0, 8, 0, 7, 0, 9, 0, 7, 0, 7, 0, 7, 0, 8, 0, 7, 0, 8, 0, 7, 0, 7, 0, 7,
      0, 0, 0 };
-     std::vector<float> wav_data = model.tts_infer(phones_ids, tones, phone_level_feature, lang_ids);
+     std::vector<float> wav_data = model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature);
      std::cout << "wav infer ok\n";
      model.write_wave("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\test_openvoice_tts.wav", 44100, wav_data.data(), wav_data.size());
      std::cout << "write wav ok\n";

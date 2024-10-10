@@ -17,8 +17,8 @@ namespace melo {
             TTS& operator=(const TTS&) = delete;
             TTS(TTS&&) = delete;
             TTS& operator=(TTS&& other) = delete;
-            void tts_to_file(const std::string& text, const int& speaker_id, const std::filesystem::path& output_path, 
-                const float& sdp_ratio = 0.2f, const float& noise_scale = 0.6f, const float& noise_scale_w = 0.8f, const float& speed = 1.0f);
+            void tts_to_file(const std::string& text, const int& speaker_id, const std::filesystem::path& output_path, const float& speed = 1.0f,
+                const float& sdp_ratio = 0.2f, const float& noise_scale = 0.6f, const float& noise_scale_w = 0.8f);
             static void write_wave(const std::filesystem::path& output_path, const std::vector<float>& wave, const int32_t& sampling_rate = 44100);
 
 

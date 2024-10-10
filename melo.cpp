@@ -103,7 +103,7 @@ int main()
 
     std::string text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
     startTime = Time::now();
-    model.tts_to_file(text,1,output_path);
+    model.tts_to_file(text,1,output_path,0.8);
     auto inferTime = get_duration_ms_till_now(startTime);
     std::cout << "model infer time is" << inferTime << " ms"<< std::endl;
 #if defined(_WIN32) && defined(DEBUG_MEMORY)
