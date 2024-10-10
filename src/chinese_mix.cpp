@@ -20,30 +20,30 @@ namespace melo {
         {"uei", "ui"},
         {"iou", "iu"},
         {"uen", "un"},};
-        const std::unordered_map<char, std::string> single_rep_map = {
-        {'v', "yu"},
-        {'e', "e"},
-        {'i', "y"},
-        {'u', "w"},};
-        const std::unordered_map<std::string, std::string> pinyin_rep_map = {
-        {"ing", "ying"},
-        {"i", "yi"},
-        {"in", "yin"},
-        {"u", "wu"},};
+        //const std::unordered_map<char, std::string> single_rep_map = {
+        //{'v', "yu"},
+        //{'e', "e"},
+        //{'i', "y"},
+        //{'u', "w"},};
+        //const std::unordered_map<std::string, std::string> pinyin_rep_map = {
+        //{"ing", "ying"},
+        //{"i", "yi"},
+        //{"in", "yin"},
+        //{"u", "wu"},};
         std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> pinyin_to_symbol_map;
 
         const std::unordered_map<std::string, int64_t> symbol_to_id =
         {{"_", 0 }, {"AA", 1 }, {"E", 2 }, {"EE", 3 }, {"En", 4 }, {"N", 5 }, {"OO", 6 }, {"V", 7 }, {"a", 8 }, {"a,", 9 }, {"aa", 10 },
-{"ae", 11 }, {"ah", 12 }, {"ai", 13 }, {"an", 14 }, {"ang", 15 }, {"ao", 16 }, {"aw", 17 }, {"ay", 18 }, {"b", 19 }, {"by", 20 },
-{"c", 21 }, {"ch", 22 }, {"d", 23 }, {"dh", 24 }, {"dy", 25 }, {"e", 26 }, {"e,", 27 }, {"eh", 28 }, {"ei", 29 }, {"en", 30 },
-{"eng", 31 }, {"er", 32 }, {"ey", 33 }, {"f", 34 }, {"g", 35 }, {"gy", 36 }, {"h", 37 }, {"hh", 38 }, {"hy", 39 }, {"i", 40 }, 
-{"i0", 41 }, {"i,", 42 }, {"ia", 43 }, {"ian", 44 }, {"iang", 45 }, {"iao", 46 }, {"ie", 47 }, {"ih", 48 }, {"in", 49 }, {"ing", 50 },
-{"iong", 51 }, {"ir", 52 }, {"iu", 53 }, {"iy", 54 }, {"j", 55 }, {"jh", 56 }, {"k", 57 }, {"ky", 58 }, {"l", 59 }, {"m", 60 },
-{"my", 61 }, {"n", 62 }, {"ng", 63 }, {"ny", 64 }, {"o", 65 }, {"o,", 66 }, {"ong", 67 }, {"ou", 68 }, {"ow", 69 }, {"oy", 70 }, 
-{"p", 71 }, {"py", 72 }, {"q", 73 }, {"r", 74 }, {"ry", 75 }, {"s", 76 }, {"sh", 77 }, {"t", 78 }, {"th", 79 }, {"ts", 80 }, 
-{"ty", 81 }, {"u", 82 }, {"u,", 83 }, {"ua", 84 }, {"uai", 85 }, {"uan", 86 }, {"uang", 87 }, {"uh", 88 }, {"ui", 89 }, {"un", 90 },
-{"uo", 91 }, {"uw", 92 }, {"v", 93 }, {"van", 94 }, {"ve", 95 }, {"vn", 96 }, {"w", 97 }, {"x", 98 }, {"y", 99 }, {"z", 100 }, 
-{"zh", 101 }, {"zy", 102 }, {"!", 103 }, {"?", 104 }, {"…", 105 }, {" },", 106 }, {".", 107 }, {"\"", 108 }, {"-", 109 }, {"SP", 110 }, {"UNK", 111}};
+        {"ae", 11 }, {"ah", 12 }, {"ai", 13 }, {"an", 14 }, {"ang", 15 }, {"ao", 16 }, {"aw", 17 }, {"ay", 18 }, {"b", 19 }, {"by", 20 },
+        {"c", 21 }, {"ch", 22 }, {"d", 23 }, {"dh", 24 }, {"dy", 25 }, {"e", 26 }, {"e,", 27 }, {"eh", 28 }, {"ei", 29 }, {"en", 30 },
+        {"eng", 31 }, {"er", 32 }, {"ey", 33 }, {"f", 34 }, {"g", 35 }, {"gy", 36 }, {"h", 37 }, {"hh", 38 }, {"hy", 39 }, {"i", 40 }, 
+        {"i0", 41 }, {"i,", 42 }, {"ia", 43 }, {"ian", 44 }, {"iang", 45 }, {"iao", 46 }, {"ie", 47 }, {"ih", 48 }, {"in", 49 }, {"ing", 50 },
+        {"iong", 51 }, {"ir", 52 }, {"iu", 53 }, {"iy", 54 }, {"j", 55 }, {"jh", 56 }, {"k", 57 }, {"ky", 58 }, {"l", 59 }, {"m", 60 },
+        {"my", 61 }, {"n", 62 }, {"ng", 63 }, {"ny", 64 }, {"o", 65 }, {"o,", 66 }, {"ong", 67 }, {"ou", 68 }, {"ow", 69 }, {"oy", 70 }, 
+        {"p", 71 }, {"py", 72 }, {"q", 73 }, {"r", 74 }, {"ry", 75 }, {"s", 76 }, {"sh", 77 }, {"t", 78 }, {"th", 79 }, {"ts", 80 }, 
+        {"ty", 81 }, {"u", 82 }, {"u,", 83 }, {"ua", 84 }, {"uai", 85 }, {"uan", 86 }, {"uang", 87 }, {"uh", 88 }, {"ui", 89 }, {"un", 90 },
+        {"uo", 91 }, {"uw", 92 }, {"v", 93 }, {"van", 94 }, {"ve", 95 }, {"vn", 96 }, {"w", 97 }, {"x", 98 }, {"y", 99 }, {"z", 100 }, 
+        {"zh", 101 }, {"zy", 102 }, {"!", 103 }, {"?", 104 }, {"…", 105 }, {" },", 106 }, {".", 107 }, {"\"", 108 }, {"-", 109 }, {"SP", 110 }, {"UNK", 111}};
 
         // Only lowercase letters are accepted here!
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<Tokenizer>& tokenizer) {
@@ -58,10 +58,11 @@ namespace melo {
             std::vector<std::pair<std::string, std::string>> tagres;
             //jieba->Cut(segment, words, true); // Cut with HMM
             jieba->Tag(segment, tagres); //Use Jieba tokenizer to split the sentence into words and parts of speech
+
             for (const auto & [word, tag]:tagres) {
-                //std::cout << word << ":";
-                // jieba result may contain space, xx represent "非语素词（包含标点符号)"
-                if (word == " "|| tag== "x") {
+                //  Note that you cannot use the tag 'x' (非语素词包含标点符号) in the Jieba result to skip meaningless words, such as spaces, 
+                //  because we found that Jieba's 'x' tagging may be incorrect. For example, 乌鹊南飞 -> (乌鹊,x)(南飞,x)
+                if (word == " ") {
                     //std::cout << "space"<< std::endl;
                     continue;
                 }
@@ -98,10 +99,10 @@ namespace melo {
             std::vector<std::string> phones_list;
             std::vector<int64_t> tones_list;
             std::vector<int> word2ph;
-            //auto [sub_initials, sub_finals] = hanz2piny._get_initials_finals(word);
+
             auto [sub_initials, sub_finals] = _get_initials_finals(word);
-            printVec(sub_initials,"sub_initials");
-            printVec(sub_finals,"sub_initials");
+            //printVec(sub_initials,"sub_initials");
+            //printVec(sub_finals,"sub_initials");
             modified_tone(word,tag,sub_finals);
 
             int n = sub_initials.size();
@@ -122,12 +123,6 @@ namespace melo {
                // 多音节
                if (v_rep_map.contains(v)) {
                    pinyin = c+v_rep_map.at(v);
-               } 
-               else{//单音节
-                   if (pinyin_rep_map.contains(pinyin))
-                        pinyin = pinyin_rep_map.at(pinyin);
-                    else if(single_rep_map.contains(pinyin.front()))
-                        pinyin = single_rep_map.at(pinyin.front())+pinyin.substr(1);
                }
                assert(pinyin_to_symbol_map->contains(pinyin)&&std::format("{} not in map,{}",pinyin,word).c_str());
                const auto & phone = pinyin_to_symbol_map->at(pinyin);
@@ -331,11 +326,6 @@ namespace melo {
                 return { raw_pinyin.substr(0, 2) , raw_pinyin.substr(2) };
             }
             else if (simple_initials.contains(raw_pinyin.front())) {
-                // remove w y as initials refer to https://pydigger.com/pypi/pypinyin
-                //>因为根据 `《汉语拼音方案》 <http://www.moe.gov.cn/jyb_sjzl/ziliao/A19/195802/t19580201_186000.html>`__ ，y，w，ü(yu) 都不是声母。
-                if(raw_pinyin.front()=='y' || raw_pinyin.front() == 'w')
-                    return {"",raw_pinyin.substr(1) };
-                else
                     return { raw_pinyin.substr(0,1), raw_pinyin.substr(1) };
             }
             else {
