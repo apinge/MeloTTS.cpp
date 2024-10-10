@@ -6,7 +6,7 @@ std::vector<std::vector<float>> prepare_bert() {
     std::cout << std::filesystem::absolute(zh_bert_path) << std::endl;
     std::cout << zh_bert_path.string() << std::endl;
 
-    std::shared_ptr<melo::Tokenizer> tokenizer_ptr = std::make_shared<melo::Tokenizer>(std::string("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\vocab_bert.txt"));
+    std::shared_ptr<melo::Tokenizer> tokenizer_ptr = std::make_shared<melo::Tokenizer>("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\vocab_bert.txt");
 
     //std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     std::shared_ptr<ov::Core> core_ptr = std::make_shared<ov::Core>();

@@ -7,7 +7,7 @@ namespace melo {
     TTS::TTS(std::unique_ptr<ov::Core>& core, const std::filesystem::path & tts_ir_path, const std::string & tts_device,
         const std::filesystem::path& bert_ir_path, const std::string& bert_device, const std::filesystem::path& tokenizer_data_path,
         const std::string language):_language(language),
-        tts_model(core,tts_ir_path,tts_device,language), tokenizer(std::make_shared<Tokenizer>(tokenizer_data_path.string())){
+        tts_model(core,tts_ir_path,tts_device,language), tokenizer(std::make_shared<Tokenizer>(tokenizer_data_path)){
 
         assert((core.get() != nullptr) && "core should not be null!");
         assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(bert_ir_path)  && std::filesystem::exists(tokenizer_data_path))
@@ -54,7 +54,6 @@ namespace melo {
           0, 0, 0 };
             std::vector<std::vector<float>> phone_level_feature;
             bert_model.get_bert_feature(text, word2ph, phone_level_feature);
-
             return { phone_level_feature, phones_ids, tones, lang_ids };
         }
         catch (const std::runtime_error& e) {

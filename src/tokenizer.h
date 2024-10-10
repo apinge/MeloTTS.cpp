@@ -34,7 +34,7 @@ namespace melo {
     public:
         Tokenizer() = default;
         Tokenizer(const std::filesystem::path& token_filename);
-        Tokenizer(const std::string& token_filename);
+        //Tokenizer(const std::string& token_filename);
         ~Tokenizer() = default;
         //include tokenize bert_tokenizer
         void Tokenize(const std::string& str_info, std::vector<std::string>& str_out, std::vector<int64_t>& id_out);
