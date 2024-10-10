@@ -33,4 +33,4 @@ namespace melo {
         std::vector<int64_t> _input_ids, _attention_mask, _token_type_ids;
     };
 }
-#endif // !BERT_H
+#endif // BERT_H

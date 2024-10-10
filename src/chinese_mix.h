@@ -59,4 +59,4 @@ namespace melo {
     }
     
 }
-#endif
+#endif // CHINESE_MIX_H

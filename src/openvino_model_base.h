@@ -88,4 +88,4 @@ namespace melo
 
 } // namespace melo
 
-#endif // MELO_MODEL_OPENVINO_MODEL_H_
+#endif // OPENVINO_MODEL_BASE_H_
