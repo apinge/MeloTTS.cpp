@@ -49,6 +49,7 @@ namespace melo {
 
         const std::unordered_set<char> simple_initials = { 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'r', 'z', 'c', 's', 'y', 'w'};
         const std::unordered_set<std::string>  compound_initials = { "zh", "ch", "sh" };
+        static constexpr int64_t language_tone_start_map_for_en = 7; // language_tone_start_map['EN'] in python version
 
         void modified_tone(const std::string& word, const std::string& tag, std::vector<std::string>& sub_finals);
         void _bu_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals);

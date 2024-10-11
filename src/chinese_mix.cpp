@@ -72,6 +72,7 @@ namespace melo {
                     tokenizer->Tokenize(word, tokenized_en, token_ids);
                     //for(const auto &x:tokenized_en) std::cout << x << ",";
                     auto [phones_en, tones_en, word2ph_en] = g2p_en(word, tokenized_en);
+                    std::for_each(tones_en.begin(),tones_en.end(),[&](auto& x){ x+= language_tone_start_map_for_en; });// regulate english tone
                     // TODO change to move_interator
                     phones_list.insert(phones_list.end(), phones_en.begin(), phones_en.end());
                     tones_list.insert(tones_list.end(), tones_en.begin(), tones_en.end());
