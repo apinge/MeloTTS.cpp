@@ -1,5 +1,6 @@
 #include <cassert>
 #include <fstream>
+#include <cmath>
 #include "tts.h"
 #include "info_data.h"
 #include "chinese_mix.h"
@@ -19,11 +20,16 @@ namespace melo {
 
     void TTS::tts_to_file(const std::string& text, const int& speaker_id, const std::filesystem::path& output_path, const float& speed,
         const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w ){
+        std::vector<float> audio;
         try {
-            // structured binding
-            auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(text);
-            std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature, speed);
-            write_wave(output_path.string(), wav_data);
+            std::vector<std::string> texts = {"我最近在学习machine learning","希望能够在未来的artificial intelligence领域有所建树"};
+            for(const auto & t:texts){
+                // structured binding
+                auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(t);
+                std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature, speed);
+                audio_concat(audio,wav_data,speed, sampling_rate_);
+            }
+            write_wave(output_path.string(), audio, sampling_rate_);
             //release memory buffer
             tts_model.release_infer_memory();
             bert_model.release_infer_memory();
@@ -67,7 +73,17 @@ namespace melo {
             std::cerr << "Unknown exception caught" << std::endl;
         }
     }
-
+    /**
+     * @brief Concatenates audio segments with silence intervals, similar to Python's `audio_numpy_concat`.
+     *
+     * @param output The concatenated audio data.
+     * @param inserted The audio segments to be inserted with silence intervals.
+     */
+    void TTS::audio_concat(std::vector<float>& output, std::vector<float>& segment, const float& speed, const int32_t& sampling_rate) {
+        output.insert(output.end(),segment.begin(),segment.end());
+        int interval = static_cast<int>(std::lroundf(0.05f*sampling_rate/speed));// Insert 0.05 seconds of silent audio
+        output.insert(output.end(),interval,0.0);
+    }
     void TTS::write_wave(const std::filesystem::path& output_path, const std::vector<float>& wave, const int32_t& sampling_rate) {
         try {
             size_t n = wave.size();

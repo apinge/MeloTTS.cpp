@@ -19,16 +19,14 @@ namespace melo {
             TTS& operator=(TTS&& other) = delete;
             void tts_to_file(const std::string& text, const int& speaker_id, const std::filesystem::path& output_path, const float& speed = 1.0f,
                 const float& sdp_ratio = 0.2f, const float& noise_scale = 0.6f, const float& noise_scale_w = 0.8f);
-            static void write_wave(const std::filesystem::path& output_path, const std::vector<float>& wave, const int32_t& sampling_rate = 44100);
-
+            std::vector<std::string> split_sentences_into_pieces(const std::string& text, bool quiet = false);
+            static void audio_concat(std::vector<float>& output, std::vector<float>& segment, const float& speed = 1.0f,const int32_t& sampling_rate);
+            static void write_wave(const std::filesystem::path& output_path, const std::vector<float>& wave, const int32_t& sampling_rate);
+            static constexpr int32_t sampling_rate_ = 44100; 
 
         protected:
             std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
                 get_text_for_tts_infer(const std::string& text);
-            //virtual void audio_concat();
-            //virtual std::string text_nomorlize(const std::string&);
-            //virtual std::vector<std::vector<std::string>> split_sentences_into_pieces(const std::string& texts);
-            //virtual std::tuple<std::string, std::vector<int64_t>, std::vector<int64_t>, std::vector<int>> cleaned_text_to_sequence(const std::string& text);
         private:
             std::shared_ptr<Tokenizer> tokenizer;
             Bert bert_model;
