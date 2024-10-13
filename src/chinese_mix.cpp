@@ -60,10 +60,10 @@ namespace melo {
             jieba->Tag(segment, tagres); //Use Jieba tokenizer to split the sentence into words and parts of speech
 
             for (const auto & [word, tag]:tagres) {
+                //  The space may come from the result of jieba of english e.g. "artificial intelligence" -> "artificial" + " " + "intelligence"
                 //  Note that you cannot use the tag 'x' (非语素词包含标点符号) in the Jieba result to skip meaningless words, such as spaces, 
                 //  because we found that Jieba's 'x' tagging may be incorrect. For example, 乌鹊南飞 -> (乌鹊,x)(南飞,x)
                 if (word == " ") {
-                    //std::cout << "space"<< std::endl;
                     continue;
                 }
                 else if(tag == "eng" || is_english(word)) {
@@ -73,14 +73,12 @@ namespace melo {
                     //for(const auto &x:tokenized_en) std::cout << x << ",";
                     auto [phones_en, tones_en, word2ph_en] = g2p_en(word, tokenized_en);
                     std::for_each(tones_en.begin(),tones_en.end(),[&](auto& x){ x+= language_tone_start_map_for_en; });// regulate english tone
-                    // TODO change to move_interator
                     phones_list.insert(phones_list.end(), phones_en.begin(), phones_en.end());
                     tones_list.insert(tones_list.end(), tones_en.begin(), tones_en.end());
                     word2ph.insert(word2ph.end(), word2ph_en.begin(), word2ph_en.end());
                 }
                 else { //Chinese character 
                     auto [phones_zh, tones_zh, word2ph_zh] = _chinese_g2p(word, tag);
-                    // TODO change to move_interator
                     phones_list.insert(phones_list.end(),phones_zh.begin(),phones_zh.end());
                     tones_list.insert(tones_list.end(),tones_zh.begin(),tones_zh.end());
                     word2ph.insert(word2ph.end(),word2ph_zh.begin(),word2ph_zh.end());
@@ -89,7 +87,7 @@ namespace melo {
             phones_list.emplace_back("_");
             tones_list.emplace_back(0);
             word2ph.emplace_back(1);
-            //std::cout <<phones_list.size() << " "<< tones_list.size() << std::endl;
+
             printVec(phones_list, "phones_list");
             printVec(tones_list,"tones_list");
             printVec(word2ph,"word2ph");
@@ -115,10 +113,10 @@ namespace melo {
             // iteration word by word in C++23 std::views::zip(initials, finals)
             for (int i = 0; i < n; ++i) {
                pinyin.clear(); tone = 0;phone.clear();
-               auto c= sub_initials[i];
-               auto v= sub_finals[i];
-               tone = v.back() - '0';
-               v.pop_back();// v without tone
+               auto c= sub_initials[i]; // 声母 e.g. "w"
+               auto v= sub_finals[i]; // 韵母+声调 "eng2"
+               tone = v.back() - '0'; // number for 声调
+               v.pop_back();// 韵母 without tone(声调)
                pinyin = c+v;
                assert(tone>0&&tone<=5);
                // 多音节
@@ -169,7 +167,6 @@ namespace melo {
             if (syllables.has_value()) {
                 auto [phones, tones] = refine_syllables(syllables.value().get());
                 phone_len = phones.size();
-                // TODO change to move_interator
                 phones_list.insert(phones_list.end(), phones.begin(), phones.end());
                 tones_list.insert(tones_list.end(), tones.begin(), tones.end());
             }
@@ -187,7 +184,6 @@ namespace melo {
             std::vector<int64_t> tones;
             for (const auto& phn_list : syllables) {
                 for (const auto& phn : phn_list) {
-                //std::cout <<"phn:" << phn << std::endl;
                     if (phn.size() > 0 && isdigit(phn.back())) {
                         std::string tmp = phn.substr(0,phn.length()-1);
                         phonemes.emplace_back(std::move(tmp));
