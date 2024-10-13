@@ -7,7 +7,7 @@
 namespace melo {
     TTS::TTS(std::unique_ptr<ov::Core>& core, const std::filesystem::path & tts_ir_path, const std::string & tts_device,
         const std::filesystem::path& bert_ir_path, const std::string& bert_device, const std::filesystem::path& tokenizer_data_path,
-        const std::string language):_language(language),
+        const std::filesystem::path& punctuation_dict_path, const std::string language):_language(language),
         tts_model(core,tts_ir_path,tts_device,language), tokenizer(std::make_shared<Tokenizer>(tokenizer_data_path)){
 
         assert((core.get() != nullptr) && "core should not be null!");
@@ -15,14 +15,19 @@ namespace melo {
             && "ir files or vocab_bert does not exit!");
         //init bert 
         bert_model = Bert(core,bert_ir_path, bert_device,language, tokenizer);
-        std::cout << "TTS:TTS:init bert_model\n";
+        std::cout << "TTS::TTS : init bert_model\n";
+        
+        // init punctuation dict
+        assert(std::filesystem::exists(punctuation_dict_path) && "punctuation dictionary does not exit!");
+        _da.open(punctuation_dict_path.string().c_str());
+        std::cout << "TTS::TTS : open puncuation dict.\n";
     }
 
     void TTS::tts_to_file(const std::string& text, const int& speaker_id, const std::filesystem::path& output_path, const float& speed,
         const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w ){
         std::vector<float> audio;
         try {
-            std::vector<std::string> texts = {"我最近在学习machine learning","希望能够在未来的artificial intelligence领域有所建树"};
+            std::vector<std::string> texts = split_sentences_into_pieces(text,false);
             for(const auto & t:texts){
                 // structured binding
                 auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(t);
@@ -72,6 +77,39 @@ namespace melo {
         catch (...) {
             std::cerr << "Unknown exception caught" << std::endl;
         }
+    }
+    /*
+     * @brief Splits a given text into pieces based on Chinese and English punctuation marks.
+    */
+    std::vector<std::string> TTS::split_sentences_into_pieces(const std::string& text, bool quiet) {
+        std::vector<std::string> pieces;
+        int n = text.length();
+        int MAX_HIT = n;
+        int left = 0;
+
+        for (int right = 0; right < n;) {
+            const char* query = text.data() + right;
+            std::vector<Darts::DoubleArray::result_pair_type> results(MAX_HIT);
+            size_t num_matches = _da.commonPrefixSearch(query, results.data(), MAX_HIT);
+            if (!num_matches) {
+                ++right;
+                continue;
+            }
+            pieces.emplace_back(text.substr(left, right - left));
+            right += results[0].length;
+            left = right;
+        }
+        if (left != n) //Text without punctuation at the end
+            pieces.emplace_back(text.substr(left, n - left));
+
+        if (!quiet) {
+            std::cout << " > Text split to sentences." << std::endl;
+            for (const auto& piece : pieces) {
+                std::cout << "   " << piece << std::endl;
+            }
+            std::cout << " > ===========================" << std::endl;
+        }
+        return pieces;
     }
     /**
      * @brief Concatenates audio segments with silence intervals, similar to Python's `audio_numpy_concat`.

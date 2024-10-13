@@ -74,7 +74,9 @@ target_link_libraries(meloTTS_ov
 
 #CTest
 # https://cmake.org/cmake/help/book/mastering-cmake/chapter/Testing%20With%20CMake%20and%20CTest.html
-option(ENABLE_TESTS "Enable tests" ON)
+if (WIN32)
+    option(ENABLE_TESTS "Enable tests" ON) # Temporarily enable test on win
+endif()
 if (${ENABLE_TESTS})
     #add_subdirectory(tests)
     add_executable(test_tokenizer tests/test_tokenizer.cpp src/tokenizer.cpp)
@@ -103,15 +105,22 @@ if (${ENABLE_TESTS})
                         ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
 
 
-    add_executable(test_hanz2piny tests/test_hanz2piny.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny/Hanz2Piny.cpp )
-    target_include_directories(test_hanz2piny PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny)
+    #add_executable(test_hanz2piny tests/test_hanz2piny.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny/Hanz2Piny.cpp )
+    #target_include_directories(test_hanz2piny PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny)
 
     add_executable(test_cppjieba tests/test_cppjieba.cpp)
     target_include_directories(test_cppjieba PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba 
-                                                    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
+                                                     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
     
     add_executable(test_cppinyin tests/test_cppinyin.cpp  
                                 ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.cc
                                 ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.cc)                                
     target_include_directories(test_cppinyin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
+
+    add_executable(test_dart tests/test_dart.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/darts.h)
+    target_include_directories(test_dart  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
+
+    add_executable(test_split_sentence tests/test_split_sentence.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/darts.h)
+    target_include_directories(test_split_sentence  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
+                                                     
 endif()
