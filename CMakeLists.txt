@@ -117,8 +117,8 @@ if (${ENABLE_TESTS})
                                 ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.cc)                                
     target_include_directories(test_cppinyin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
 
-    add_executable(test_dart tests/test_dart.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/darts.h)
-    target_include_directories(test_dart  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
+    add_executable(test_darts tests/test_darts.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/darts.h)
+    target_include_directories(test_darts  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
 
     add_executable(test_split_sentence tests/test_split_sentence.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/darts.h)
     target_include_directories(test_split_sentence  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)

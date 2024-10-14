@@ -24,7 +24,7 @@ Darts::DoubleArray da;
 std::vector<std::string> split_sentences_into_pieces(const std::string& text, bool quiet = false) {
     std::vector<std::string> pieces;
     int n = text.length();
-    int MAX_HIT = n;
+    int MAX_HIT = 1;
     int left = 0;
    
     for (int right = 0; right < n;) {
@@ -35,12 +35,13 @@ std::vector<std::string> split_sentences_into_pieces(const std::string& text, bo
             ++right ;
             continue;
         }
-        pieces.emplace_back(text.substr(left,right-left));
+        if(left<right)
+            pieces.emplace_back(text.substr(left,right-left));
         right += results[0].length;
         left = right;
     }
     if(left!=n) 
-        pieces.emplace_back(text.substr(left,n-left));
+        pieces.emplace_back(text.substr(left));
     if (!quiet) {
         std::cout << " > Text split to sentences." << std::endl;
         for (const auto& piece : pieces) {
@@ -83,11 +84,13 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     system("chcp 65001"); //Using UTF-8 Encoding
 #endif
+   std::string a = ", ";
+    std::cout << a.size() << std::endl;
     da.open("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\ov_models\\punc.dic");
     std::cout << "open dict\n";
-    auto res = split_sentences_into_pieces("我最近在学习machine learning, 希望能够在未来的artificial intelligence领域有所建树");
+    auto res = split_sentences_into_pieces("，\n我最近在学习machine learning, 希望,\n能够在未来的artificial intelligence领域有所建树");
 
-    auto res1= splitTextByPunctuation("我最近在学习machine learning, 希望能够在未来的artificial intelligence领域有所建树");
+   // auto res1= splitTextByPunctuation("我最近在学习machine learning, 希望能够在未来的artificial intelligence领域有所建树");
 
 #ifdef CRT_
 #define _CRTDBG_MAP_ALLOC

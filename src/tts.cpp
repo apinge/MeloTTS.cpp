@@ -80,11 +80,18 @@ namespace melo {
     }
     /*
      * @brief Splits a given text into pieces based on Chinese and English punctuation marks.
+     * punctuation marks inlucde {
+        "，", "。", "！", "？", "、", "；", "：", "“", "”", "‘", "’", "（", "）", "【", "】", "《", "》", "——", "……", "·",
+        ",", ".", "!", "?", ";", ":", "\"", "\"", "'", "'", "(", ")", "[", "]", "<", ">", "-", "...", ".", "\n", "\t", "\r",
+        };
+     * 1. all above punctuation marks are filtered.
+     * 2. In order to keep English word segmentation, whitespace is not included in punctuation marks.
+     * 3. If you want to update the puncuation, please use darts.h file (see tests/test_darts.cpp as an example)
     */
     std::vector<std::string> TTS::split_sentences_into_pieces(const std::string& text, bool quiet) {
         std::vector<std::string> pieces;
         int n = text.length();
-        int MAX_HIT = n;
+        int MAX_HIT = 1; // only hit one punctuation marks each time
         int left = 0;
 
         for (int right = 0; right < n;) {
@@ -95,7 +102,9 @@ namespace melo {
                 ++right;
                 continue;
             }
-            pieces.emplace_back(text.substr(left, right - left));
+            // Avoid including the punctuation marks themselves.
+            if (left < right)
+                pieces.emplace_back(text.substr(left, right - left));
             right += results[0].length;
             left = right;
         }

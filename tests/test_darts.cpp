@@ -25,7 +25,7 @@ int main(int argc, char** argv)
   //  const Darts::DoubleArray::key_type* str[] = { "ALGOL", "ANSI", "ARCO",  "ARPA", "ARPANET", "ASCII" }; // same as char*
     std::vector<std::string>punctuation = {
     "，", "。", "！", "？", "、", "；", "：", "“", "”", "‘", "’", "（", "）", "【", "】", "《", "》", "——", "……", "·",
-    ",", ".", "!", "?", ";", ":", "\"", "\"", "'", "'", "(", ")", "[", "]", "<", ">", "-", "...", "."
+    ",", ".", "!", "?", ";", ":", "\"", "\"", "'", "'", "(", ")", "[", "]", "<", ">", "-", "...", ".", "\n", "\t", "\r",
     };
     //std::cout << punctuation[1].size()<<std::endl;
    // std::vector<std::string>chinese_punctuation = { "，", "。" };
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
     // commonPrefixSearch
     Darts::DoubleArray::result_pair_type  result_pair[1024];
-    size_t num = da.commonPrefixSearch("。逗号这种都不要了", result_pair, sizeof(result_pair));
+    size_t num = da.commonPrefixSearch("，逗号这种都不要了", result_pair, sizeof(result_pair));
     std::cout << "found:" << num << endl;
     for (size_t i = 0; i < num; ++i) {
         cout << "\tvalue:" << result_pair[i].value << " matched key length:" << result_pair[i].length << endl;
