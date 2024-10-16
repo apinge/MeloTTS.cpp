@@ -12,7 +12,7 @@ namespace melo {
         public:
             explicit TTS(std::unique_ptr<ov::Core>& core, const std::filesystem::path& tts_ir_path, const std::string& tts_device, 
                 const std::filesystem::path& bert_ir_path, const std::string& bert_device,
-                const std::filesystem::path& tokenizer_data_path, const std::filesystem::path& punctuation_dict_path, const std::string language);
+                const std::filesystem::path& tokenizer_data_path, const std::filesystem::path& punctuation_dict_path, const std::string language, bool disable_bert = false);
             ~TTS() = default;
             TTS(const TTS&) = delete;
             TTS& operator=(const TTS&) = delete;
@@ -34,6 +34,7 @@ namespace melo {
             OpenVoiceTTS tts_model;
             std::string _language = "ZH";
             Darts::DoubleArray _da;// punctuation dict use to split sentence
+            bool _disable_bert = false;
 
     };
 }

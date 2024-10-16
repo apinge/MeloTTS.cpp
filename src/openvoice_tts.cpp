@@ -14,24 +14,28 @@ namespace melo {
        This explicit copying is to match the expected data types for the ov::Tensor construction.*/
     std::vector<float> OpenVoiceTTS::tts_infer(std::vector<int64_t>& phones_, std::vector<int64_t>& tones_, std::vector<int64_t>& lang_ids_, 
         const std::vector<std::vector<float>>& phone_level_feature, const float& speed_,
-        const int& speaker_id_, const float& sdp_ratio_, const float& noise_scale_, const float& noise_scale_w_) {
+        const int& speaker_id_, bool disable_bert, const float& sdp_ratio_, const float& noise_scale_, const float& noise_scale_w_) {
         size_t n = phones_.size();
         //calculate ja_bert bert
-        size_t row = phone_level_feature.size(), col = phone_level_feature.front().size();
-        assert(row==n&&row==tones_.size()&&row==lang_ids_.size() && "phones_.size()==tones_.size()==phone_level_feature.size()");
-        assert(col==768&&"phone_level_feature.front().size()==768");
-
+        size_t row = n, col = 768;
+        assert(row==tones_.size()&&row==lang_ids_.size() && "phones_.size()==tones_.size()==phone_level_feature.size()");
+        
         std::vector<float>ja_bert_data, bert_data(1024*row, 0.0f);
-        ja_bert_data.reserve(row*col);
-        std::cout << "[" << row << "," << col << "]" << std::endl;
-        // jabert.resize(col * row);
-        for (int k = 0; k < col; ++k)
-        {
-            for (int j = 0; j < row; ++j)
+        if(!disable_bert){
+            assert(phone_level_feature.front().size() == col && "phone_level_feature.front().size()==768");
+            assert(phone_level_feature.size() == row && "phone_level_feature.size() should be equal to phones.size");
+            ja_bert_data.reserve(row*col);
+            std::cout << "[" << row << "," << col << "]" << std::endl;
+            for (int k = 0; k < col; ++k)
             {
-                ja_bert_data.emplace_back(phone_level_feature[j][k]);
+                for (int j = 0; j < row; ++j)
+                {
+                    ja_bert_data.emplace_back(phone_level_feature[j][k]);
+                }
             }
         }
+        else
+            ja_bert_data.resize(row * col,0.0f);
         //tts infer
         /*  0 phones
             1 phones_length
@@ -63,7 +67,7 @@ namespace melo {
         ov::Tensor noise_scale_w(ov::element::f32, { BATCH_SIZE }, &_noise_scale_w);
         _sdp_ration = sdp_ratio_;
         ov::Tensor sdp_ratio(ov::element::f32, { BATCH_SIZE }, &_sdp_ration);
-        std::cout << "tts set_input_tensor\n";
+        //std::cout << "tts set_input_tensor\n";
         assert((_infer_request.get()!=nullptr) && "openvoice_tts::_infer_request should not be null!");
         _infer_request->set_input_tensor(0, phones);
         _infer_request->set_input_tensor(1, phones_length);
@@ -82,9 +86,9 @@ namespace melo {
         return get_ouput();
     }
     void OpenVoiceTTS::ov_infer() {
-        std::cout << "tts infer begin\n";
+        //std::cout << "tts infer begin\n";
             _infer_request->infer();
-        std::cout << "tts inferok\n";
+        //std::cout << "tts inferok\n";
     }
     std::vector<float> OpenVoiceTTS::get_ouput() {
         const float* output = _infer_request->get_output_tensor(0).data<float>();

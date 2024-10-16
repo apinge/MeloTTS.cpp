@@ -7,16 +7,21 @@
 namespace melo {
     TTS::TTS(std::unique_ptr<ov::Core>& core, const std::filesystem::path & tts_ir_path, const std::string & tts_device,
         const std::filesystem::path& bert_ir_path, const std::string& bert_device, const std::filesystem::path& tokenizer_data_path,
-        const std::filesystem::path& punctuation_dict_path, const std::string language):_language(language),
+        const std::filesystem::path& punctuation_dict_path, const std::string language, bool disable_bert):_language(language),_disable_bert(disable_bert),
         tts_model(core,tts_ir_path,tts_device,language), tokenizer(std::make_shared<Tokenizer>(tokenizer_data_path)){
 
         assert((core.get() != nullptr) && "core should not be null!");
-        assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(bert_ir_path)  && std::filesystem::exists(tokenizer_data_path))
+        assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(tokenizer_data_path))
             && "ir files or vocab_bert does not exit!");
+
         //init bert 
-        bert_model = Bert(core,bert_ir_path, bert_device,language, tokenizer);
-        std::cout << "TTS::TTS : init bert_model\n";
-        
+        if(!_disable_bert){
+            assert(std::filesystem::exists(bert_ir_path) && "bert_ir_path does not exist!\n");
+            bert_model = Bert(core,bert_ir_path, bert_device,language, tokenizer);
+            std::cout << "TTS::TTS : init bert_model\n";
+        }
+        else
+            std::cout << "TTS::TTS : disable bert_model\n";
         // init punctuation dict
         assert(std::filesystem::exists(punctuation_dict_path) && "punctuation dictionary does not exit!");
         _da.open(punctuation_dict_path.string().c_str());
@@ -30,14 +35,20 @@ namespace melo {
             std::vector<std::string> texts = split_sentences_into_pieces(text,false);
             for(const auto & t:texts){
                 // structured binding
+                auto startTime = Time::now();
                 auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(t);
-                std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature, speed);
+                auto preProcess = get_duration_ms_till_now(startTime);
+                startTime = Time::now();
+                std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature, speed, speaker_id, this->_disable_bert);
+                auto ttsInferTime = get_duration_ms_till_now(startTime);
                 audio_concat(audio,wav_data,speed, sampling_rate_);
+                std::cout << "preProcess Time: " << preProcess << "ms\t"<< "ttsInferTime: "<< ttsInferTime << "ms\n";
             }
             write_wave(output_path.string(), audio, sampling_rate_);
             //release memory buffer
             tts_model.release_infer_memory();
-            bert_model.release_infer_memory();
+            if(!_disable_bert)
+                bert_model.release_infer_memory();
         }
         catch (const std::runtime_error& e) {
             std::cerr << "std::runtime_error: " << e.what() << std::endl;
@@ -64,7 +75,14 @@ namespace melo {
           //0, 8, 0, 7, 0, 9, 0, 7, 0, 7, 0, 7, 0, 8, 0, 7, 0, 8, 0, 7, 0, 7, 0, 7,
           //0, 0, 0 };
             std::vector<std::vector<float>> phone_level_feature;
-            bert_model.get_bert_feature(text, word2ph, phone_level_feature);
+            if(!_disable_bert){
+                auto startTime = Time::now();
+                bert_model.get_bert_feature(text, word2ph, phone_level_feature);
+                auto inferTime = get_duration_ms_till_now(startTime);
+                std::cout << "bert infer time" <<  inferTime << "ms"<<  std::endl;
+            }
+            else
+                std::cout << " TTS::get_text_for_tts_infer:disable bert infer\n";
             return { phone_level_feature, phones_ids, tones, lang_ids };
         }
         catch (const std::runtime_error& e) {

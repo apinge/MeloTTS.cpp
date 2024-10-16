@@ -96,16 +96,16 @@ int main()
     // Init core
     std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     auto startTime = Time::now();
-    melo::TTS model(core_ptr, zh_tts_path,"CPU",zh_bert_path,"CPU",vocab_bert_path, punc_dict_path, "ZH");
+    melo::TTS model(core_ptr, zh_tts_path,"CPU",zh_bert_path,"CPU",vocab_bert_path, punc_dict_path, "ZH", false);
     auto initTime = get_duration_ms_till_now(startTime);
     std::cout << "model init time is" << initTime <<" ms" << std::endl;
 #if defined(_WIN32) && defined(DEBUG_MEMORY)
     DebugMemoryInfo("Memory after model loading");
 #endif 
-    //std::vector<float> addit_param = { 0.2f, 0.6f, 1.0f, 0.80f };
 
     //std::string text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
     std::string text = "我最近在学习machine learning, 希望能够在未来的artificial intelligence领域有所建树";
+    //std::string text = "我家门口有很多柳树,这儿也有 那儿也有"; This example are different with or without bert
     for(int i = 0;i<1;++i){
         startTime = Time::now();
         model.tts_to_file(text,1,output_path,0.8);
