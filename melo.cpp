@@ -56,14 +56,18 @@ int main()
 
     ConfigureOneDNNCache();
 
-
+    //fp32 model
+    //std::filesystem::path zh_tts_path = "ov_models/tts_ZH_fp32.xml";
+    //std::filesystem::path zh_bert_path = "ov_models/bert_ZH_fp32.xml";
     //fp16 model
-    std::filesystem::path zh_tts_path = "ov_models/tts_zn_mix_en.xml";
-    std::filesystem::path zh_bert_path = "ov_models/bert_zn_mix_en.xml";
+    /*std::filesystem::path zh_tts_path = "ov_models/tts_zn_mix_en.xml";
+    std::filesystem::path zh_bert_path = "ov_models/bert_zn_mix_en.xml";*/
 
     //int8 model
-    //std::filesystem::path zh_tts_path = "ov_models/tts_zn_mix_en_int8.xml";
-    //std::filesystem::path zh_bert_path = "ov_models/bert_zn_mix_en_int8.xml";
+    std::filesystem::path zh_tts_path = "ov_models/tts_zn_mix_en_int8.xml"; //fp16 to int8
+    //std::filesystem::path zh_tts_path = "ov_models/tts_ZH_int8.xml"; //fp32 to int8
+    std::filesystem::path zh_bert_path = "ov_models/bert_zn_mix_en_int8.xml";
+    //std::filesystem::path zh_bert_path = "ov_models/bert_int8_ZH.xml";// model in python repo
 
     // init tokenizer
     std::filesystem::path vocab_bert_path = "ov_models/vocab_bert.txt";
@@ -84,7 +88,7 @@ int main()
    std::filesystem::path pinyin_to_symbol_map_path = "ov_models/opencpop-strict.txt";
 
     //outputpath
-    std::filesystem::path output_path = "MeloTTS_ov.wav";
+    std::filesystem::path output_path = "audio_ov.wav";
 
     //Init lanugage module
     melo::chinese_mix::cmudict = std::make_shared<melo::CMUDict>(cmudict_path.string());
@@ -103,14 +107,18 @@ int main()
     DebugMemoryInfo("Memory after model loading");
 #endif 
 
-    //std::string text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
-    std::string text = "我最近在学习machine learning, 希望能够在未来的artificial intelligence领域有所建树";
-    //std::string text = "我家门口有很多柳树,这儿也有 那儿也有"; This example are different with or without bert
+
+    std::vector<std::string> texts = {
+        "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments",
+        "我最近在学习machine learning, 希望能够在未来的artificial intelligence领域有所建树",
+        "我家门口有很多柳树,这儿也有 那儿也有", //This example are different with or without bert
+        "早就听闻阿勒泰的秋色绝美，真正看到时才知道是多么震撼。白桦林的风光真美。",
+    };
     for(int i = 0;i<1;++i){
         startTime = Time::now();
-        model.tts_to_file(text,1,output_path,0.8);
+        model.tts_to_file(texts,output_path,1, 1.0);
         auto inferTime = get_duration_ms_till_now(startTime);
-        std::cout << "model infer time is" << inferTime << " ms"<< std::endl;
+        std::cout << "model infer time:" << inferTime << " ms"<< std::endl;
     }
 #if defined(_WIN32) && defined(DEBUG_MEMORY)
    for (int i = 0; i < 50; ++i) {

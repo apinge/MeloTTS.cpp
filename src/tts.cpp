@@ -28,7 +28,7 @@ namespace melo {
         std::cout << "TTS::TTS : open puncuation dict.\n";
     }
 
-    void TTS::tts_to_file(const std::string& text, const int& speaker_id, const std::filesystem::path& output_path, const float& speed,
+    void TTS::tts_to_file(const std::string& text, const std::filesystem::path& output_path, const int& speaker_id, const float& speed,
         const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w ){
         std::vector<float> audio;
         try {
@@ -60,6 +60,48 @@ namespace melo {
         catch (...) {
             std::cerr << "Unknown exception caught" << std::endl;
         }
+    }
+
+    void TTS::tts_to_file(const std::string& text, std::vector<float>& output_audio, const int& speaker_id, const float& speed,
+        const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w) {
+        try {
+            std::vector<std::string> texts = split_sentences_into_pieces(text, false);
+            for (const auto& t : texts) {
+                // structured binding
+                auto startTime = Time::now();
+                auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(t);
+                auto preProcess = get_duration_ms_till_now(startTime);
+                startTime = Time::now();
+                std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature, speed, speaker_id, this->_disable_bert);
+                auto ttsInferTime = get_duration_ms_till_now(startTime);
+                audio_concat(output_audio, wav_data, speed, sampling_rate_);
+                std::cout << "preProcess Time: " << preProcess << "ms\t" << "ttsInferTime: " << ttsInferTime << "ms\n";
+            }
+            //release memory buffer
+            tts_model.release_infer_memory();
+            if (!_disable_bert)
+                bert_model.release_infer_memory();
+        }
+        catch (const std::runtime_error& e) {
+            std::cerr << "std::runtime_error: " << e.what() << std::endl;
+
+        }
+        catch (const std::exception& e) {
+            std::cerr << "std::exception: " << e.what() << std::endl;
+        }
+        catch (...) {
+            std::cerr << "Unknown exception caught" << std::endl;
+        }
+    }
+
+    void TTS::tts_to_file(const std::vector<std::string>& texts,const std::filesystem::path& output_path, const int& speaker_id, const float& speed,
+        const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w) {
+        std::vector<float> audio;
+        for (const auto& text : texts) {
+            if(text.empty()) continue;
+            tts_to_file(text,audio, speaker_id, speed,sdp_ratio,noise_scale,noise_scale_w);
+        }
+        write_wave(output_path.string(), audio, sampling_rate_);
     }
     std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
         TTS::get_text_for_tts_infer(const std::string& text) {
