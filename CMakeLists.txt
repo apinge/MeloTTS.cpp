@@ -37,7 +37,6 @@ set(SOURCE_FILES
     src/tts.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.cc
-    #${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny/Hanz2Piny.cpp
 )
 
 # Header files
@@ -65,7 +64,6 @@ target_compile_definitions(meloTTS_ov PRIVATE "$<$<CONFIG:DEBUG>:DEBUG>")
 target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/eigen)
 target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba)
 target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
-#target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny)
 target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
 target_link_libraries(meloTTS_ov
     PRIVATE openvino::runtime  # Link OpenVINO Runtime privately
@@ -104,9 +102,6 @@ if (${ENABLE_TESTS})
                         ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include
                         ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
 
-
-    #add_executable(test_hanz2piny tests/test_hanz2piny.cpp ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny/Hanz2Piny.cpp )
-    #target_include_directories(test_hanz2piny PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/hanz2piny)
 
     add_executable(test_cppjieba tests/test_cppjieba.cpp)
     target_include_directories(test_cppjieba PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba 
