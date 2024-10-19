@@ -4,6 +4,7 @@
 #include <format>
 #include <chrono>
 #include <numeric>
+#include <filesystem>
 
 // This utils module defines a collection of utility functions that are
 // used throughout the program
@@ -49,5 +50,7 @@ const auto printVec = [](const auto& vec, const std::string& vecName) {
     }
     std::cout << std::endl;
     };
+
+std::vector<std::string> read_file_lines(const std::filesystem::path& file_path);
 
 #endif //  UTILS_H

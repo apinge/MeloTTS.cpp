@@ -87,6 +87,8 @@ int main()
    //pinyin_to_symbol_map
    std::filesystem::path pinyin_to_symbol_map_path = "ov_models/opencpop-strict.txt";
 
+    // input files
+   std::filesystem::path input_path = "inputs.txt";
     //outputpath
     std::filesystem::path output_path = "audio.wav";
 
@@ -107,16 +109,7 @@ int main()
     DebugMemoryInfo("Memory after model loading");
 #endif 
 
-
-    std::vector<std::string> texts = {
-        "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments",
-        "我最近在学习machine learning, 希望能够在未来的artificial intelligence领域有所建树",
-        "我家门口有很多柳树,这儿也有 那儿也有", //This example are different with or without bert
-        "早就听闻阿勒泰的秋色绝美，真正看到时才知道是多么震撼。白桦林的风光真美。",
-        "升级 pavilion laptop 硬盘的步骤是什么",
-        "在很久很久以前，有一个国王，他把他的国家治理得非常好。国家不大，但百姓们丰衣足食，安居乐业，十分幸福。",
-        "今天我太高兴了！我爸爸妈妈竟然让我挑一个地方玩，以示对我前阶段进步的鼓励！一大早，我就早早醒来，开始了我们的快乐之旅。",
-    };
+    std::vector<std::string> texts = read_file_lines(input_path);
     for(int i = 0;i<1;++i){
         startTime = Time::now();
         model.tts_to_file(texts, output_path, 1, 0.95);
