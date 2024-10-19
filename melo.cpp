@@ -88,7 +88,7 @@ int main()
    std::filesystem::path pinyin_to_symbol_map_path = "ov_models/opencpop-strict.txt";
 
     //outputpath
-    std::filesystem::path output_path = "audio_ov.wav";
+    std::filesystem::path output_path = "audio.wav";
 
     //Init lanugage module
     melo::chinese_mix::cmudict = std::make_shared<melo::CMUDict>(cmudict_path.string());
@@ -113,10 +113,13 @@ int main()
         "我最近在学习machine learning, 希望能够在未来的artificial intelligence领域有所建树",
         "我家门口有很多柳树,这儿也有 那儿也有", //This example are different with or without bert
         "早就听闻阿勒泰的秋色绝美，真正看到时才知道是多么震撼。白桦林的风光真美。",
+        "升级 pavilion laptop 硬盘的步骤是什么",
+        "在很久很久以前，有一个国王，他把他的国家治理得非常好。国家不大，但百姓们丰衣足食，安居乐业，十分幸福。",
+        "今天我太高兴了！我爸爸妈妈竟然让我挑一个地方玩，以示对我前阶段进步的鼓励！一大早，我就早早醒来，开始了我们的快乐之旅。",
     };
     for(int i = 0;i<1;++i){
         startTime = Time::now();
-        model.tts_to_file(texts,output_path,1, 1.0);
+        model.tts_to_file(texts, output_path, 1, 0.95);
         auto inferTime = get_duration_ms_till_now(startTime);
         std::cout << "model infer time:" << inferTime << " ms"<< std::endl;
     }
