@@ -26,14 +26,14 @@ git clone https://github.com/apinge/MeloTTS.cpp.git
 <OpenVINO_DIR>\setupvars.bat
 cd MeloTTS.cpp 
 cmake -S . -B build && cmake --build . --config Release
-.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_file audio.wav --tts_device CPU --bert_device CPU --quantize false --disable_bert false
+.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_file audio.wav --speed 0.95 --tts_device CPU --bert_device CPU --quantize false --disable_bert false
 ```
 #### 3.2 Linux Build and Run
 ```
 source <OpenVINO_DIR>/setupvars.sh
 cd MeloTTS.cpp 
 cmake -S . -B build && cmake --build . --config Release
-./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_file audio.wav --tts_device CPU --bert_device CPU --quantize false --disable_bert false
+./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_file audio.wav --speed 0.95 --tts_device CPU --bert_device CPU --quantize false --disable_bert false
 ```
 ### 4. Arguments Description
 You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. Below are the meanings of the arguments you can use with these scripts:
@@ -43,6 +43,7 @@ You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. B
 - `--bert_device`: Specifies the OpenVINO device to be used for the BERT model. The default device is CPU.
 - `--input_file`: Specifies the input text file to be processed.
 - `--output_file`: Specifies the output audio file to be generated.
+- `--speed`: Specifies the speed of output audio. The default is 1.0.
 - `--quantize`: Indicates whether to use an int8 quantized model. The default is false, meaning an fp16 model is used by default.
 - `--disable_bert`: Indicates whether to disable the BERT model inference. The default is false.
 - `--language`: Specifies the language for TTS. The default language is Chinese (`ZH`).

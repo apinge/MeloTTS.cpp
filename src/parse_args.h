@@ -20,6 +20,7 @@ struct Args
     std::string bert_device = "CPU";
     std::string input_file = "inputs.txt";
     std::string output_file = "audio.wav";
+    float speed = 1.0;
     bool quantize = false;
     bool disable_bert = false;
     std::string language = "ZH";
@@ -47,6 +48,7 @@ inline void usage(const std::string& prog)
         << "  --bert_device           Specifies the OpenVINO device to be used for the BERT model (default: CPU).\n"
         << "  --input_file            Specifies the input text file to be processed.\n"
         << "  --output_file           Specifies the output audio file to be generated.\n"
+        << "  --speed                 Specifies the speed of output audio (default: 1.0).\n"
         << "  --quantize              Indicates whether to use an int8 quantized model (default: false, use fp16 model by default).\n"
         << "  --disable_bert          Indicates whether to disable the BERT model inference (default: false).\n"
         << "  --language              Specifies the language for TTS (default: ZH).\n";
@@ -90,6 +92,10 @@ inline Args parse_args(const std::vector<std::string>& argv)
         else if (arg == "--output_file")
         {
             args.output_file = argv[++i];
+        }
+        else if (arg == "--speed")
+        {
+            args.speed = std::stof(argv[++i]);
         }
         else if (arg == "--disable_bert")
         {

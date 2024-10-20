@@ -82,11 +82,10 @@ int main(int argc, char** argv)
     std::cout << "model init time is" << initTime <<" ms" << std::endl;
 
     std::vector<std::string> texts = read_file_lines(input_path);
-    for(int i = 0;i<1;++i){
-        startTime = Time::now();
-        model.tts_to_file(texts, output_path, 1, 0.95);
-        auto inferTime = get_duration_ms_till_now(startTime);
-        std::cout << "model infer time:" << inferTime << " ms"<< std::endl;
-    }
+
+    startTime = Time::now();
+    model.tts_to_file(texts, output_path, 1, args.speed);
+    auto inferTime = get_duration_ms_till_now(startTime);
+    std::cout << "model infer time:" << inferTime << " ms"<< std::endl;
 
 }
