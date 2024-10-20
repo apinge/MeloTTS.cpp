@@ -26,17 +26,17 @@ git clone https://github.com/apinge/MeloTTS.cpp.git
 <OpenVINO_DIR>\setupvars.bat
 cd MeloTTS.cpp 
 cmake -S . -B build && cmake --build . --config Release
-.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_file audio.wav --speed 0.95 --tts_device CPU --bert_device CPU --quantize false --disable_bert false
+.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_file audio.wav
 ```
 #### 3.2 Linux Build and Run
 ```
 source <OpenVINO_DIR>/setupvars.sh
 cd MeloTTS.cpp 
 cmake -S . -B build && cmake --build . --config Release
-./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_file audio.wav --speed 0.95 --tts_device CPU --bert_device CPU --quantize false --disable_bert false
+./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_file audio.wav
 ```
 ### 4. Arguments Description
-You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. Below are the meanings of the arguments you can use with these scripts:
+You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. Below are the meanings of all the arguments you can use with these scripts:
 
 - `--model_dir`: Specifies the folder containing the model files, dictionary files, and third-party resource files.
 - `--tts_device`: Specifies the OpenVINO device to be used for the TTS model. The default device is CPU.
@@ -49,7 +49,7 @@ You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. B
 - `--language`: Specifies the language for TTS. The default language is Chinese (`ZH`).
 
 ## Supported Versions
-- **Operating System**: Windows, Ubuntu 
+- **Operating System**: Windows, Linux
 - **CPU Architecture**: Metor Lake,  Lunar Lake
 - **GPU Architecture**: Intel® Arc™ Graphics (Intel Xe, including iGPU)
 - **C++ Version**: >=C++20
