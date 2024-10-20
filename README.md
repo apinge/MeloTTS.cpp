@@ -54,3 +54,13 @@ You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. B
 
 
 We have also successfully performed inference on other platforms, such as Xeon. However, we do not provide regular testing environments for these platforms and cannot guarantee the performance.
+
+# Third-Party Code
+This repository includes third-party code and libraries for Chinese word segmentation and pinyin processing.
+
+- [cppjieba](https://github.com/yanyiwu/cppjieba)
+    - Description: A Chinese text segmentation library.
+- [cppinyin](https://github.com/pkufool/cppinyin)
+    - Description: A C++ library supporting conversion between Chinese characters and pinyin
+
+
