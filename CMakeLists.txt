@@ -41,6 +41,7 @@ set(SOURCE_FILES
 
 # Header files
 set(HEADER_FILES
+    src/parse_args.h
     src/cmudict.h
     src/openvino_model_base.h
     src/info_data.h
