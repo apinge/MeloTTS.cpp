@@ -38,14 +38,14 @@ inline void usage(const std::string& prog)
     std::cout << "Usage: " << prog << " [options]\n"
         << "\n"
         << "options:\n"
-        << "  --model_dir             the model folder\n"
-        << "  --tts_device            OpenVINO Device for tts model (default: CPU)\n"
-        << "  --bert_device           OpenVINO Device for bert model (default: CPU)\n"
-        << "  --input_file            input text file\n"
-        << "  --output_file           output audio file\n"
-        << "  --quantize              whether to use int8 model or not  (default: false, use fp16 model by default)\n"
-        << "  --disable_bert          whether to disable bert model infer (default: false)\n"
-        << "  --language              specify the language of TTS (default: ZH)\n";
+        << "  --model_dir             Specifies the folder containing the model files, dictionary files, and third-party resource files. \n"
+        << "  --tts_device            Specifies the OpenVINO device to be used for the TTS model (default: CPU).\n"
+        << "  --bert_device           Specifies the OpenVINO device to be used for the BERT model (default: CPU).\n"
+        << "  --input_file            Specifies the input text file to be processed.\n"
+        << "  --output_file           Specifies the output audio file to be generated.\n"
+        << "  --quantize              Indicates whether to use an int8 quantized model (default: false, use fp16 model by default).\n"
+        << "  --disable_bert          Indicates whether to disable the BERT model inference (default: false).\n"
+        << "  --language              Specifies the language for TTS (default: ZH).\n";
 }
 
 static bool to_bool(const std::string& s) {
