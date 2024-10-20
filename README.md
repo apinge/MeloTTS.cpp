@@ -2,7 +2,6 @@
 
 This repository primarily offers a pure C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO. Currently, this repository is limited to supporting Chinese mixed with English. Support for English is planned for future releases.
 
-Project Owner: Tong Qiu (tong.qiu@intel.com)
 
 ## Setup and Execution Guide
 
@@ -10,6 +9,8 @@ Project Owner: Tong Qiu (tong.qiu@intel.com)
 
 To download the OpenVINO C++ package for Windows, please refer to the following link: [Install OpenVINO for Windows]( https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-windows.html).
 For Linux, you can download the C++ package from this link: [Install OpenVINO for Linux](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-linux.html).
+
+For OpenVINO 2024.4, you can simply download it from https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4 and unzip the package.
 
 For additional versions and more information about OpenVINO, visit the official OpenVINO Toolkit page: [OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html).
 
@@ -54,8 +55,19 @@ You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. B
 
 
 We have also successfully performed inference on other platforms, such as Xeon. However, we do not provide regular testing environments for these platforms and cannot guarantee the performance.
+## Future Development Plan
+Here are some features and improvements planned for future releases:
 
-# Third-Party Code
+1. **Add English language TTS support**: 
+   - Enable English text-to-speech (TTS) functionality, but tokenization for English language input is not yet implemented.
+   
+2. **Support for NPU device**:
+   - Implement NPU device compatibility for the BERT model within the pipeline.
+
+## Python Version
+The Python version of this repository (MeloTTS integrated with OpenVINO) is provided in [MeloTTS-OV](https://github.com/zhaohb/MeloTTS-OV/tree/speech-enhancement-and-npu). The Python version includes methods to convert the model into OpenVINO IR.
+
+## Third-Party Code
 This repository includes third-party code and libraries for Chinese word segmentation and pinyin processing.
 
 - [cppjieba](https://github.com/yanyiwu/cppjieba)

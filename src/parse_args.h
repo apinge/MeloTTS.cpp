@@ -1,3 +1,7 @@
+/*
+ * Licensed under the Apache License, Version 2.0.
+ * See the LICENSE file for more information.
+ */
 #pragma once
 #ifndef PARSE_ARGS_H
 #define PARSE_ARGS_H
