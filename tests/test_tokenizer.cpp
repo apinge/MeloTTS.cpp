@@ -14,7 +14,7 @@ int main() {
 #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
 #endif
-    std::filesystem::path vocab_dir = std::filesystem::path(OV_MODEL_PATH) \ "vocab_bert.txt";
+    std::filesystem::path vocab_dir = std::filesystem::path(OV_MODEL_PATH) / "vocab_bert.txt";
     melo::Tokenizer tokenizer(vocab_dir);
     //std::string text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
     //std::string text = "一千五百二十九年一月九日";
