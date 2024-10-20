@@ -123,7 +123,8 @@ namespace melo {
                if (v_rep_map.contains(v)) {
                    pinyin = c+v_rep_map.at(v);
                }
-               assert(pinyin_to_symbol_map->contains(pinyin)&&std::format("{} not in map,{}",pinyin,word).c_str());
+               if(!pinyin_to_symbol_map->contains(pinyin))
+                 std::cerr<< std::format("{} not in map,{}\n",pinyin,word);
                const auto & phone = pinyin_to_symbol_map->at(pinyin);
                word2ph.emplace_back(phone.size());
                phones_list.insert(phones_list.end(),phone.begin(),phone.end());

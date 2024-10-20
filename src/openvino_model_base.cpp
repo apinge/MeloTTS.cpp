@@ -26,7 +26,7 @@ namespace melo
     }
     // Constuctor 
     AbstractOpenvinoModel::AbstractOpenvinoModel(std::unique_ptr<ov::Core>& core_ptr, const std::filesystem::path& model_path, const std::string& device) {
-        assert(std::filesystem::exists(model_path) && std::format("{} model_path does not exit!",model_path.string()).c_str());
+        assert(std::filesystem::exists(model_path) && "model_path does not exit!");
         _device = device;
         // Reduce CPU infer memory
         if (device.find("CPU") != std::string::npos) {
