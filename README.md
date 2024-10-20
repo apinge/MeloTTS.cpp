@@ -1,6 +1,6 @@
 # MeloTTS.cpp
 
-This repository offers a pure C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO. Currently, this repository is limited to supporting Chinese mixed with English. Support for English is planned for future releases.
+This repository offers a C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO. Currently, this repository is limited to supporting Chinese mixed with English. Support for English is planned for future releases.
 
 
 ## Setup and Execution Guide
@@ -10,7 +10,12 @@ This repository offers a pure C++ implementation of [meloTTS](https://github.com
 To download the OpenVINO C++ package for Windows, please refer to the following link: [Install OpenVINO for Windows]( https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-windows.html).
 For Linux, you can download the C++ package from this link: [Install OpenVINO for Linux](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-linux.html).
 
-For OpenVINO 2024.4, you can simply download it from https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4 and unzip the package.
+For OpenVINO 2024.4 on Windows, you can run the command line in the command prompt (cmd).
+```
+curl -O https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/windows/w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip --ssl-no-revoke
+tar -xvf w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip
+```
+On Linux, you can simply download it from https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/linux and follow similar steps.
 
 For additional versions and more information about OpenVINO, visit the official OpenVINO Toolkit page: [OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html).
 
