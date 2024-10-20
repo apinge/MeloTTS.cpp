@@ -38,8 +38,8 @@ int main(int argc, char** argv)
         length.emplace_back(punctuation[i].size());
     }
 
-    std::vector<Darts::DoubleArray::result_type> values(n,0);
-    std::iota(values.begin(),values.end(),1);
+    std::vector<Darts::DoubleArray::result_type> values(n,1);
+    //std::iota(values.begin(),values.end(),1);
     // build 
     Darts::DoubleArray da;
     da.build(keys.size(), keys.data(), length.data(), values.data());

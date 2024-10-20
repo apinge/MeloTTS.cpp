@@ -4,15 +4,17 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 #endif
-
-
 #include <iostream>
 #include <cassert>
+#include <filesystem>
 #include "CMUDict.h"
+
+#define OV_MODEL_PATH "ov_models"
+
 
 auto print_result = [](const auto& result) {
     if (result.has_value()) {
-        const auto& vec = result.value().get();  // 获取引用
+        const auto& vec = result.value().get();  // get the ref
         for (const auto& inner_vec : vec) {
             for (const auto& str : inner_vec) {
                 std::cout << str << ".";
@@ -27,7 +29,8 @@ auto print_result = [](const auto& result) {
     };
 
 int main() {
-    melo::CMUDict dict("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\cmudict_cache.txt");
+    std::filesystem::path file_dir = std::filesystem::path(OV_MODEL_PATH) / "cmudict_cache.txt";
+    melo::CMUDict dict(file_dir.string());
 
 
 

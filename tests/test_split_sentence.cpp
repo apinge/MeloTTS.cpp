@@ -1,9 +1,10 @@
-#define CRT_
+//#define CRT_
 #ifdef CRT_
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
 #endif
+#define OV_MODEL_PATH "ov_models"
 #include <iostream>
 #include <vector>
 #include <numeric>
@@ -11,6 +12,7 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <filesystem>
 #ifdef _WIN32
 #include <codecvt>
 #include <fcntl.h>
@@ -86,7 +88,9 @@ int main() {
 #endif
    std::string a = ", ";
     std::cout << a.size() << std::endl;
-    da.open("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\ov_models\\punc.dic");
+    std::filesystem::path model_dir = OV_MODEL_PATH;
+    std::filesystem::path punc_dir = model_dir / "punc.dic";
+    da.open(punc_dir.string().c_str());
     std::cout << "open dict\n";
     auto res = split_sentences_into_pieces("，\n我最近在学习machine learning, 希望,\n能够在未来的artificial intelligence领域有所建树");
 

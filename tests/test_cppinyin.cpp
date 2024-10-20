@@ -8,15 +8,18 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <filesystem>
 #include "cppinyin.h"
+#define OV_MODEL_PATH "ov_models"
 
 int main() {
     system("chcp 65001"); //Using UTF-8 Encoding
-    std::string vocab_path = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppinyin\\resources\\cpp_pinyin.raw";
-    cppinyin::PinyinEncoder processor(vocab_path);
+    std::filesystem::path vocab_path = std::filesystem::path(OV_MODEL_PATH) / "cppinyin\\cpp_pinyin.raw";
+    cppinyin::PinyinEncoder processor(vocab_path.string());
 
-    std::string str = "于谦参加了会计培训班 虽然他的会计基础参差不齐，但他仍然会努力学习, 于谦有头驴";
-
+    //std::string str = "于谦参加了会计培训班 虽然他的会计基础参差不齐，但他仍然会努力学习, 于谦有头驴";
+    //std::string str = "明月几时有";
+    std::string str = "乌鹊南飞";
     std::ostringstream oss;
     std::vector<std::string> pieces;
 

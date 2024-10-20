@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include <locale>
-
+#include <filesystem>
 #ifdef _WIN32
 #include <codecvt>
 #include <fcntl.h>
@@ -9,12 +9,13 @@
 #endif
 
 #include "tokenizer.h"
+#define OV_MODEL_PATH "ov_models"
 int main() {
 #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
 #endif
-
-    melo::Tokenizer tokenizer("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\ov_models\\vocab_bert.txt");
+    std::filesystem::path vocab_dir = std::filesystem::path(OV_MODEL_PATH) \ "vocab_bert.txt";
+    melo::Tokenizer tokenizer(vocab_dir);
     //std::string text = "编译器compiler会尽可能从函数实参function arguments推导缺失的模板实参template arguments";
     //std::string text = "一千五百二十九年一月九日";
     std::string text = "Hello 世界";

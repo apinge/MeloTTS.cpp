@@ -1,6 +1,6 @@
 # MeloTTS.cpp
 
-This repository primarily offers a pure C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO. Currently, this repository is limited to supporting Chinese mixed with English. Support for English is planned for future releases.
+This repository offers a pure C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO. Currently, this repository is limited to supporting Chinese mixed with English. Support for English is planned for future releases.
 
 
 ## Setup and Execution Guide
@@ -71,8 +71,8 @@ The Python version of this repository (MeloTTS integrated with OpenVINO) is prov
 This repository includes third-party code and libraries for Chinese word segmentation and pinyin processing.
 
 - [cppjieba](https://github.com/yanyiwu/cppjieba)
-    - Description: A Chinese text segmentation library.
+    - A Chinese text segmentation library.
 - [cppinyin](https://github.com/pkufool/cppinyin)
-    - Description: A C++ library supporting conversion between Chinese characters and pinyin
+    - A C++ library supporting conversion between Chinese characters and pinyin
 
 

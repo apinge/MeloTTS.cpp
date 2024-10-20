@@ -45,7 +45,6 @@ set(HEADER_FILES
     src/cmudict.h
     src/openvino_model_base.h
     src/info_data.h
-    src/librosa.h
     src/tokenizer.h
     src/utils.h
     src/bert.h
@@ -74,11 +73,9 @@ if (UNIX)
 endif()
 
 
-#CTest
-# https://cmake.org/cmake/help/book/mastering-cmake/chapter/Testing%20With%20CMake%20and%20CTest.html
-if (WIN32)
-    option(ENABLE_TESTS "Enable tests" ON) # Temporarily enable test on win
-endif()
+
+#option(ENABLE_TESTS "Enable tests" ON) # Disable the tests by default
+
 if (${ENABLE_TESTS})
     #add_subdirectory(tests)
     add_executable(test_tokenizer tests/test_tokenizer.cpp src/tokenizer.cpp)

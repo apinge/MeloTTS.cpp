@@ -1,12 +1,15 @@
 #include <filesystem>
 #include "bert.h"
 #include "openvoice_tts.h"
+#define OV_MODEL_PATH "ov_models"
+
+std::filesystem::path model_dir = OV_MODEL_PATH;
 std::vector<std::vector<float>> prepare_bert() {
-    std::filesystem::path zh_bert_path = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\bert_zn_mix_en.xml";
+    std::filesystem::path zh_bert_path = model_dir / "bert_zn_mix_en.xml";
     std::cout << std::filesystem::absolute(zh_bert_path) << std::endl;
     std::cout << zh_bert_path.string() << std::endl;
 
-    std::shared_ptr<melo::Tokenizer> tokenizer_ptr = std::make_shared<melo::Tokenizer>("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\vocab_bert.txt");
+    std::shared_ptr<melo::Tokenizer> tokenizer_ptr = std::make_shared<melo::Tokenizer>(model_dir / "vocab_bert.txt");
 
     //std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     std::shared_ptr<ov::Core> core_ptr = std::make_shared<ov::Core>();
@@ -25,7 +28,7 @@ std::vector<std::vector<float>> prepare_bert() {
 int main() {
     
     std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
-    std::filesystem::path zh_bert_path = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\ov_models\\tts_zn_mix_en.xml";
+    std::filesystem::path zh_bert_path = model_dir / "tts_zn_mix_en.xml";
     melo::OpenVoiceTTS model(core_ptr, zh_bert_path.string(),"CPU", "ZH");
 
     std::vector<std::vector<float>> phone_level_feature = prepare_bert();
@@ -59,7 +62,7 @@ int main() {
      0, 0, 0 };
      std::vector<float> wav_data = model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature);
      std::cout << "wav infer ok\n";
-     model.write_wave("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\test_openvoice_tts.wav", 44100, wav_data.data(), wav_data.size());
+     model.write_wave("test_openvoice_tts.wav", 44100, wav_data.data(), wav_data.size());
      std::cout << "write wav ok\n";
     //word2ph.push_back({ 3, 4, 4, 4, 8, 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 14, 20, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 6, 20, 2 });
 

@@ -18,15 +18,17 @@
 #endif
 
 #include "Jieba.hpp"
+#define OV_MODEL_PATH "ov_models"
 
+std::filesystem::path model_dir = OV_MODEL_PATH;
 
-std::filesystem::path DICT_PATH = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppjieba\\dict\\jieba.dict.utf8";
-std::filesystem::path HMM_PATH = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppjieba\\dict\\hmm_model.utf8";
-std::filesystem::path USER_DICT_PATH = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppjieba\\dict\\user.dict.utf8";
-std::filesystem::path IDF_PATH = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppjieba\\dict\\idf.utf8";
-std::filesystem::path STOP_WORD_PATH = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppjieba\\dict\\stop_words.utf8";
+std::filesystem::path DICT_PATH = model_dir / "cppjieba\\dict\\jieba.dict.utf8";
+std::filesystem::path HMM_PATH = model_dir / "cppjieba\\dict\\hmm_model.utf8";
+std::filesystem::path USER_DICT_PATH = model_dir / "cppjieba\\dict\\user.dict.utf8";
+std::filesystem::path IDF_PATH = model_dir / "cppjieba\\dict\\idf.utf8";
+std::filesystem::path STOP_WORD_PATH = model_dir / "cppjieba\\dict\\stop_words.utf8";
 
-std::filesystem::path cppjieba_dict = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\cppjieba\\dict";
+std::filesystem::path cppjieba_dict = model_dir / "cppjieba\\dict";
 auto printVec = [&](const std::vector<std::string>& arr, std::ostream& os) {
         for(const auto &w:arr)  os<< w <<"|"; 
         os <<"\n";
@@ -68,7 +70,7 @@ int main() {
 
     std::cout << "[demo] Tagging" << std::endl;
     std::vector< std::pair<std::string, std::string> > tagres;
-    s = "intel CPU 规格中列出了最大睿频和处理器基本频率";
+    s = "乌鹊南飞";
     jieba.Tag(s, tagres);
     printTagres(tagres, std::cout);
     //std::cout << tagres << std::endl;

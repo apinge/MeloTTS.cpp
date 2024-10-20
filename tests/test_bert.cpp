@@ -1,12 +1,13 @@
 #include <filesystem>
 #include "bert.h"
+#define OV_MODEL_PATH "ov_models"
 int main() {
-    //std::filesystem::path zh_bert_path = "thirdParty/tts_ov/bert_zn_mix_en.xml";
-    std::filesystem::path zh_bert_path = "C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\bert_zn_mix_en.xml";
+    std::filesystem::path model_dir = OV_MODEL_PATH;
+    std::filesystem::path zh_bert_path = model_dir / "bert_zn_mix_en.xml";
     std::cout << std::filesystem::absolute(zh_bert_path) << std::endl;
     std::cout << zh_bert_path.string() << std::endl;
 
-    std::shared_ptr<melo::Tokenizer> tokenizer_ptr = std::make_shared<melo::Tokenizer>("C:\\Users\\gta\\source\\develop\\MeloTTS.cpp.current\\thirdParty\\tts_ov\\vocab_bert.txt");
+    std::shared_ptr<melo::Tokenizer> tokenizer_ptr = std::make_shared<melo::Tokenizer>((model_dir / "vocab_bert.txt"));
 
     //std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     std::shared_ptr<ov::Core> core_ptr = std::make_shared<ov::Core>();
