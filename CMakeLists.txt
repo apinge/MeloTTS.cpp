@@ -69,7 +69,10 @@ target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdP
 target_link_libraries(meloTTS_ov
     PRIVATE openvino::runtime  # Link OpenVINO Runtime privately
 )
- 
+if (UNIX)
+    target_link_libraries(meloTTS_ov PRIVATE pthread)
+endif()
+
 
 #CTest
 # https://cmake.org/cmake/help/book/mastering-cmake/chapter/Testing%20With%20CMake%20and%20CTest.html
