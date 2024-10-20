@@ -26,7 +26,7 @@ namespace melo {
     CMUDict::CMUDict(const std::string& filename) {
         std::ifstream file(filename);
         if (!file.is_open()) {
-            std::cerr << "Cannot open file " << filename << std::endl;
+            std::cerr << "CMUDict::CMUDict: Cannot open file " << filename << std::endl;
             return;
         }
         

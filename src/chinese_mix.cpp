@@ -104,10 +104,11 @@ namespace melo {
             phones_list.emplace_back("_");
             tones_list.emplace_back(0);
             word2ph.emplace_back(1);
-
+#ifdef MELO_DEBUG
             printVec(phones_list, "phones_list");
             printVec(tones_list,"tones_list");
             printVec(word2ph,"word2ph");
+#endif
             return { phones_list, tones_list, word2ph };
         }
 
@@ -292,12 +293,13 @@ namespace melo {
             for(int i =0;i<word2ph.size();++i)
                 word2ph[i]*=2;
             ++word2ph[0];
-
+#ifdef MELO_DEBUG
             std::cout << "cleaned_text_to_sequence\n";
             printVec(phones, "phones");
             printVec(lang_ids,"lang_ids");
             printVec(tones,"tones_list");
             printVec(word2ph,"word2ph");
+#endif
             return {phones,tones,lang_ids,word2ph};
         }
 
@@ -361,8 +363,8 @@ namespace melo {
 
             for (const auto& piece : pieces) {
                 const auto&[orig_initial, orig_final] = split_initials_finals(piece);
-                initials.emplace_back(std::move(orig_initial));
-                finals.emplace_back(std::move(orig_final));
+                initials.emplace_back(orig_initial);
+                finals.emplace_back(orig_final);
             }
             return {initials,finals};
         }

@@ -46,7 +46,9 @@ namespace melo {
     }
 
     void Bert::ov_infer() {
-        std::cout << "ov_infer begin\n";
+#ifdef MELO_DEBUG
+        std::cout << "Bert::ov_infer:ov_infer begin\n";
+#endif //DEBUG_PRINT
         size_t n = _input_ids.size();
        
         // set input tensor
@@ -65,7 +67,9 @@ namespace melo {
         _infer_request->set_input_tensor(2, attention_mask);
 
         _infer_request->infer();
-        std::cout <<"infer ok\n";
+#ifdef MELO_DEBUG
+        std::cout <<"bert infer ok\n";
+#endif 
     }
 
     void Bert::get_output(const std::vector<int>& word2ph, std::vector<std::vector<float>>& phone_level_feature) {
@@ -112,7 +116,9 @@ namespace melo {
         ov::Shape output_tensor_shape = output_tensor.get_shape();
         size_t frame_num = output_tensor_shape[0];
         assert(frame_num == _input_ids.size() && "[ERROR] Should be frame_num == _input_ids.size()");
+#ifdef MELO_DEBUG
         std::cout << " output_tensor_shape" << output_tensor_shape << std::endl;
+#endif
         res.clear();
         res.resize(frame_num, std::vector<float>(768, 0.0));
         for (int i = 0; i < frame_num; ++i)

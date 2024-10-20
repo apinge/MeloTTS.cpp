@@ -29,10 +29,6 @@ namespace melo
 		ReadTokenFile(token_filename.string());
 	}
 
-	//Tokenizer::Tokenizer(const std::string& token_filename)
-	//{
-	//	ReadTokenFile(token_filename);
-	//}
 
 	void Tokenizer::ReadTokenFile(const std::string& token_filename) {
 		std::ifstream file(token_filename);

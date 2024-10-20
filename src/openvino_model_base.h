@@ -86,17 +86,7 @@ namespace melo
 			 return  device_config;
 		 }
 		 void print_input_names() const;
-	 protected:
-		 template<typename T>
-		 void process_vector(const std::any& arg) {
-			 if (arg.type() == typeid(std::vector<T>)) {
-				 const auto& vec = std::any_cast<const std::vector<T>&>(arg);
-				 //std::cout << "Processing vector of type " << typeid(T).name() << " with size " << vec.size() << std::endl;
-			 }
-			 else {
-				 std::cerr << "Type mismatch!" << std::endl;
-			 }
-		 }
+	 protected:		 
 		 std::unique_ptr<ov::InferRequest> _infer_request;
 		 std::unique_ptr<ov::CompiledModel> _compiled_model;
 		 std::string _device;

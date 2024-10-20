@@ -125,14 +125,7 @@ namespace melo {
         try {
             auto [phones_list, tones_list, word2ph_list] = chinese_mix::_g2p_v2(text, tokenizer);
             auto [phones_ids, tones, lang_ids, word2ph] = chinese_mix::cleaned_text_to_sequence(phones_list, tones_list, word2ph_list);
-          //  std::vector <int64_t> tones{ 0, 0, 0, 1, 0, 1, 0, 4, 0, 4, 0, 4, 0, 4, 0, 7, 0, 8, 0, 7, 0, 7, 0, 9,
-          //0, 7, 0, 8, 0, 4, 0, 4, 0, 4, 0, 4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 2, 0, 2,
-          //0, 2, 0, 2, 0, 4, 0, 4, 0, 2, 0, 2, 0, 1, 0, 1, 0, 7, 0, 9, 0, 7, 0, 7,
-          //0, 7, 0, 8, 0, 7, 0, 9, 0, 7, 0, 7, 0, 7, 0, 8, 0, 7, 0, 8, 0, 7, 0, 7,
-          //0, 7, 0, 1, 0, 1, 0, 3, 0, 3, 0, 1, 0, 1, 0, 1, 0, 1, 0, 5, 0, 5, 0, 2,
-          //0, 2, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 7, 0, 9, 0, 7, 0, 7, 0, 7,
-          //0, 8, 0, 7, 0, 9, 0, 7, 0, 7, 0, 7, 0, 8, 0, 7, 0, 8, 0, 7, 0, 7, 0, 7,
-          //0, 0, 0 };
+
             std::vector<std::vector<float>> phone_level_feature;
             if(!_disable_bert){
                 auto startTime = Time::now();
@@ -239,9 +232,8 @@ namespace melo {
             std::ofstream os(output_path.string(), std::ios::binary);
             if (!os)
             {
-                std::string msg = "Failed to create " + output_path.string();
-                /* MELO_LOG(MELO_ERROR) << msg;
-                 MELO_ERROR_RETURN(msg);*/
+                std::cout << "Failed to create " + output_path.string();
+
             }
 
             os.write(reinterpret_cast<const char*>(&header), sizeof(header));
@@ -250,9 +242,8 @@ namespace melo {
 
             if (!os)
             {
-                std::string msg = "Write " + output_path.string() + " failed.";
-                /* MELO_LOG(MELO_ERROR) << msg;
-                 MELO_ERROR_RETURN(msg);*/
+                std::cout << "Write " + output_path.string() + " failed.";
+
             }
             std::cout << "write wav to " << output_path.string() << std::endl;
             return;

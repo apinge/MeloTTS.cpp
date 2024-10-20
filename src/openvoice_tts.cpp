@@ -40,7 +40,9 @@ namespace melo {
             assert(phone_level_feature.front().size() == col && "phone_level_feature.front().size()==768");
             assert(phone_level_feature.size() == row && "phone_level_feature.size() should be equal to phones.size");
             ja_bert_data.reserve(row*col);
+#ifdef MELO_DEBUG
             std::cout << "[" << row << "," << col << "]" << std::endl;
+#endif
             for (int k = 0; k < col; ++k)
             {
                 for (int j = 0; j < row; ++j)
@@ -108,7 +110,9 @@ namespace melo {
     std::vector<float> OpenVoiceTTS::get_ouput() {
         const float* output = _infer_request->get_output_tensor(0).data<float>();
         size_t output_size = _infer_request->get_output_tensor(0).get_byte_size()/sizeof(float);
+#ifdef MELO_DEBUG
         std::cout <<"OpenVoiceTTS::get_ouput output_size"<<  output_size << std::endl;
+#endif
         std::vector<float> wavs(output, output+output_size);
         /*memcpy(wavs.data(), output, output_size * sizeof(float));*/
         return wavs;
