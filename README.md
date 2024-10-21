@@ -8,14 +8,12 @@ This repository offers a C++ implementation of [meloTTS](https://github.com/mysh
 ### 1. Download OpenVINO C++ Package
 
 To download the OpenVINO C++ package for Windows, please refer to the following link: [Install OpenVINO for Windows]( https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-windows.html).
-For Linux, you can download the C++ package from this link: [Install OpenVINO for Linux](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-linux.html).
-
-For OpenVINO 2024.4 on Windows, you can run the command line in the command prompt (cmd).
+For **OpenVINO 2024.4** on Windows, you can run the command line in the command prompt (cmd).
 ```
 curl -O https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/windows/w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip --ssl-no-revoke
 tar -xvf w_openvino_toolkit_windows_2024.4.0.16579.c3152d32c9c_x86_64.zip
 ```
-On Linux, you can simply download it from https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/linux and follow similar steps.
+For Linux, you can download the C++ package from this link: [Install OpenVINO for Linux](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-linux.html). For **OpenVINO 2024.4** on Linux, simply download it from https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/linux and unzip the package.
 
 For additional versions and more information about OpenVINO, visit the official OpenVINO Toolkit page: [OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html).
 
@@ -30,14 +28,14 @@ git clone https://github.com/apinge/MeloTTS.cpp.git
 ```
 <OpenVINO_DIR>\setupvars.bat
 cd MeloTTS.cpp 
-cmake -S . -B build && cmake --build . --config Release
+cmake -S . -B build && cmake --build build --config Release
 .\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_file audio.wav
 ```
 #### 3.2 Linux Build and Run
 ```
 source <OpenVINO_DIR>/setupvars.sh
 cd MeloTTS.cpp 
-cmake -S . -B build && cmake --build . --config Release
+cmake -S . -B build && cmake --build build --config Release
 ./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_file audio.wav
 ```
 ### 4. Arguments Description
