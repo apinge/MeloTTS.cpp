@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     // Init core
     std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     auto startTime = Time::now();
-    melo::TTS model(core_ptr, args.zh_tts_path,"CPU",args.zh_bert_path,"CPU",args.vocab_bert_path, args.punc_dict_path, args.language, false);
+    melo::TTS model(core_ptr, args.zh_tts_path,args.tts_device,args.zh_bert_path, args.bert_device,args.vocab_bert_path, args.punc_dict_path, args.language, args.disable_bert);
     auto initTime = get_duration_ms_till_now(startTime);
     std::cout << "model init time is" << initTime <<" ms" << std::endl;
 

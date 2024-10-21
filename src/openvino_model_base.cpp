@@ -28,7 +28,7 @@ namespace melo
         _device = device;
         // Reduce CPU infer memory
         if(device.find("CPU") != std::string::npos){
-            core_ptr->set_property(device, { {"CPU_RUNTIME_CACHE_CAPACITY", "0"} });
+            core_ptr->set_property("CPU", {{"CPU_RUNTIME_CACHE_CAPACITY", "0"}});
             std::cout << "Set CPU_RUNTIME_CACHE_CAPACITY 0\n";
         }
 
@@ -47,7 +47,7 @@ namespace melo
         _device = device;
         // Reduce CPU infer memory
         if (device.find("CPU") != std::string::npos) {
-            core_ptr->set_property(device, { {"CPU_RUNTIME_CACHE_CAPACITY", "0"} });
+            core_ptr->set_property("CPU", { {"CPU_RUNTIME_CACHE_CAPACITY", "0"} });
             std::cout << "Set CPU_RUNTIME_CACHE_CAPACITY 0\n";
         }
 
@@ -67,7 +67,7 @@ namespace melo
         _device = device;
         // Reduce CPU infer memory
         if (device.find("CPU") != std::string::npos) {
-            core_ptr->set_property(device, { {"CPU_RUNTIME_CACHE_CAPACITY", "0"} });
+            core_ptr->set_property("CPU", { {"CPU_RUNTIME_CACHE_CAPACITY", "0"} });
             std::cout << "Set CPU_RUNTIME_CACHE_CAPACITY 0\n";
         }
 
