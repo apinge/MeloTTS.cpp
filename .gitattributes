@@ -1,8 +1,6 @@
 ov_models/tts_zn_mix_en.xml filter=lfs diff=lfs merge=lfs -text
-#ov_models/bert_zn_mix_en.bin filter=lfs diff=lfs merge=lfs -text
-#ov_models/bert_zn_mix_en.xml filter=lfs diff=lfs merge=lfs -text
 ov_models/tts_zn_mix_en.bin filter=lfs diff=lfs merge=lfs -text
 ov_models/tts_zn_mix_en_int8.bin filter=lfs diff=lfs merge=lfs -text
 ov_models/tts_zn_mix_en_int8.xml filter=lfs diff=lfs merge=lfs -text
-#ov_models/bert_zn_mix_en_int8.bin filter=lfs diff=lfs merge=lfs -text
-#ov_models/bert_zn_mix_en_int8.xml filter=lfs diff=lfs merge=lfs -text
+ov_models/bert_ZH.bin filter=lfs diff=lfs merge=lfs -text
+ov_models/bert_ZH_int8.bin filter=lfs diff=lfs merge=lfs -text
