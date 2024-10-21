@@ -36,7 +36,8 @@ namespace melo {
         for (const auto& word : strs) std::cout << word << " ";
         std::cout << std::endl;
         for (const auto& id :_input_ids) std::cout << id << " ";
-        std::cout << std::endl;    
+        std::cout << std::endl;
+        print_input_names();
 #endif
         ov_infer();
  
@@ -62,9 +63,10 @@ namespace melo {
         std::cout << attention_mask.get_shape() << " "<< attention_mask.get_byte_size() << std::endl;
         //_infer_request->set_input_tensors({ input_ids,token_type_id,attention_mask });
 #endif
+
+        _infer_request->set_input_tensor(2, token_type_ids);
+        _infer_request->set_input_tensor(1, attention_mask);
         _infer_request->set_input_tensor(0, input_ids);
-        _infer_request->set_input_tensor(1, token_type_ids);
-        _infer_request->set_input_tensor(2, attention_mask);
 
         _infer_request->infer();
 #ifdef MELO_DEBUG

@@ -147,12 +147,12 @@ inline Args parse_args(int argc, char** argv)
 inline void Args::generate_init_file_paths() {
     if (quantize) {
         zh_tts_path = model_dir / "tts_zn_mix_en_int8.xml";
-        zh_bert_path = model_dir / "bert_zn_mix_en_int8.xml";
+        zh_bert_path = model_dir / "bert_ZH_int8.xml";
     }
     else {
         //fp16 model
         zh_tts_path = model_dir / "tts_zn_mix_en.xml";
-        zh_bert_path = model_dir / "bert_zn_mix_en.xml";
+        zh_bert_path = model_dir / "bert_ZH.xml";
     }
 
     // init tokenizer
