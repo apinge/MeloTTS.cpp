@@ -19,6 +19,10 @@
 #include <cstring>
 #include <cassert>
 #include "openvino_model_base.h"
+#ifdef MELO_DEBUG
+ // dump exectuation graph
+#include "openvino/core/graph_util.hpp"
+#endif
 
 namespace melo
 {
@@ -59,7 +63,11 @@ namespace melo
         std::cout << std::format("compile model {} on {}", model_path.string(), device) << std::endl;
         get_ov_info(core_ptr, device);
 
-
+#ifdef MELO_DEBUG
+        // dump exectuation graph
+        auto runtime_model = _compiled_model->get_runtime_model();
+        ov::serialize(runtime_model, "exec_graph.xml");
+#endif // MELO_DEBUG
     }
 
     // Constuctor 

@@ -82,6 +82,7 @@ namespace melo
 				 device_config[ov::hint::enable_cpu_pinning.name()] = true;
 				 device_config[ov::enable_profiling.name()] = false;
 				 device_config[ov::intel_gpu::hint::enable_kernels_reuse.name()] = true;
+				 //device_config[ov::hint::inference_precision.name()] = ov::element::f32;
 			 }
 			 return  device_config;
 		 }
