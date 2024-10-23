@@ -19,6 +19,7 @@
 #include <iterator>
 #include <format>
 #include "chinese_mix.h"
+#include "tone_sandhi.h"
 namespace melo {
     namespace chinese_mix {
         auto printVec = [](const auto& vec, const std::string& vecName) {
@@ -76,7 +77,15 @@ namespace melo {
             //jieba->Cut(segment, words, true); // Cut with HMM
             jieba->Tag(segment, tagres); //Use Jieba tokenizer to split the sentence into words and parts of speech
 
-            for (const auto & [word, tag]:tagres) {
+            std::vector<std::pair<std::string, std::string>> tmp_chinese_segment;
+            auto process_chinese_segments = [&](std::vector<std::pair<std::string, std::string>>& str) {
+                //Chinese characters
+                auto [phones_zh, tones_zh, word2ph_zh] = _chinese_g2p(str);
+                phones_list.insert(phones_list.end(), phones_zh.begin(), phones_zh.end());
+                tones_list.insert(tones_list.end(), tones_zh.begin(), tones_zh.end());
+                word2ph.insert(word2ph.end(), word2ph_zh.begin(), word2ph_zh.end());
+             };
+            for (auto & [word, tag]:tagres) {
                 //  The space may come from the result of jieba of english e.g. "artificial intelligence" -> "artificial" + " " + "intelligence"
                 //  Note that you cannot use the tag 'x' (非语素词包含标点符号) in the Jieba result to skip meaningless words, such as spaces, 
                 //  because we found that Jieba's 'x' tagging may be incorrect. For example, 乌鹊南飞 -> (乌鹊,x)(南飞,x)
@@ -84,6 +93,11 @@ namespace melo {
                     continue;
                 }
                 else if(tag == "eng" || is_english(word)) {
+                    if (tmp_chinese_segment.size()) {
+                        process_chinese_segments(tmp_chinese_segment);
+                        tmp_chinese_segment.clear();
+                    }
+                    //process english word
                     std::vector<std::string> tokenized_en;
                     std::vector<int64_t> token_ids;
                     tokenizer->Tokenize(word, tokenized_en, token_ids);
@@ -94,13 +108,13 @@ namespace melo {
                     tones_list.insert(tones_list.end(), tones_en.begin(), tones_en.end());
                     word2ph.insert(word2ph.end(), word2ph_en.begin(), word2ph_en.end());
                 }
-                else { //Chinese character 
-                    auto [phones_zh, tones_zh, word2ph_zh] = _chinese_g2p(word, tag);
-                    phones_list.insert(phones_list.end(),phones_zh.begin(),phones_zh.end());
-                    tones_list.insert(tones_list.end(),tones_zh.begin(),tones_zh.end());
-                    word2ph.insert(word2ph.end(),word2ph_zh.begin(),word2ph_zh.end());
+                else { 
+                    tmp_chinese_segment.emplace_back(std::move(word),std::move(tag));
                 }
             }
+            if(tmp_chinese_segment.size())
+                process_chinese_segments(tmp_chinese_segment);
+
             phones_list.emplace_back("_");
             tones_list.emplace_back(0);
             word2ph.emplace_back(1);
@@ -111,7 +125,44 @@ namespace melo {
 #endif
             return { phones_list, tones_list, word2ph };
         }
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(std::vector<std::pair<std::string, std::string>>& segments) {
+            auto new_segments = ToneSandhi::pre_merge_for_modify(segments,jieba); //adjust word segmentation
+            std::vector<std::string> phones_list;
+            std::vector<int64_t> tones_list;
+            std::vector<int> word2ph;
 
+            for (const auto& [word, tag] : new_segments) {
+                auto [sub_initials, sub_finals] = _get_initials_finals(word);
+                ToneSandhi::modified_tone(word, tag, jieba, sub_finals);
+                int n = sub_initials.size();
+                assert(n == sub_finals.size());
+
+                std::string pinyin;
+                int tone = 0;
+                std::vector<std::string> phone;
+                // iteration word by word in C++23 std::views::zip(initials, finals)
+                for (int i = 0; i < n; ++i) {
+                    pinyin.clear(); tone = 0; phone.clear();
+                    auto c = sub_initials[i]; // 声母 e.g. "w"
+                    auto v = sub_finals[i]; // 韵母+声调 "eng2"
+                    tone = v.back() - '0'; // number for 声调
+                    v.pop_back();// 韵母 without tone(声调)
+                    pinyin = c + v;
+                    assert(tone > 0 && tone <= 5);
+                    // 多音节
+                    if (v_rep_map.contains(v)) {
+                        pinyin = c + v_rep_map.at(v);
+                    }
+                    if (!pinyin_to_symbol_map->contains(pinyin))
+                        std::cerr << std::format("{} not in map,{}\n", pinyin, word);
+                    const auto& phone = pinyin_to_symbol_map->at(pinyin);
+                    word2ph.emplace_back(phone.size());
+                    phones_list.insert(phones_list.end(), phone.begin(), phone.end());
+                    tones_list.insert(tones_list.end(), phone.size(), tone);
+                }
+            }
+            return { phones_list, tones_list, word2ph };
+        }
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag) {
             std::vector<std::string> phones_list;
             std::vector<int64_t> tones_list;
@@ -120,7 +171,7 @@ namespace melo {
             auto [sub_initials, sub_finals] = _get_initials_finals(word);
             //printVec(sub_initials,"sub_initials");
             //printVec(sub_finals,"sub_initials");
-            modified_tone(word,tag,sub_finals);
+            //ToneSandhi::modified_tone(word,tag,jieba, sub_finals);
 
             int n = sub_initials.size();
             assert(n==sub_finals.size());
@@ -217,56 +268,9 @@ namespace melo {
             }
             return {phonemes, tones};
         }
-        /**
-         * helper function splits a UTF-8 encoded string containing only Chinese characters
-         * e.g. 右值的生命周期 -> {右,值,的,生,命,周,期,}
-         * (excluding punctuation and English letters) into individual Chinese characters.
-         */
-        std::vector<std::string> split_utf8_chinese(const std::string& str) {
-            std::vector<std::string> res;//chinese characters
-            int strSize = str.size();
-            int i = 0;
 
-            while (i < strSize)
-            {
-                int len = 1;
-                for (int j = 0; j < 6 && (str[i] & (0x80 >> j)); j++)
-                {
-                    len = j + 1;
-                }
-                res.push_back(str.substr(i, len));
-                i += len;
-            }
-            return res;
-        }
-        /**
-         * Adjusts the tones of Chinese characters based on the given word and tag (part of speech).
-         *
-         * @param word The input Chinese word whose tones need to be adjusted.
-         * @param tag The part of speech associated with the input word, which influences the tone modification. 
-         * @param sub_finals: 韵母
-         */
-        void modified_tone(const std::string& word, const std::string& tag, std::vector<std::string>& sub_finals) {
-            //此处需要 汉语分字 假设这里进入的是utf-8纯汉字无标点
-            std::vector<std::string> chinese_characters = split_utf8_chinese(word);
-            _bu_sandhi(word,chinese_characters,sub_finals);
-            _yi_sandhi(word, chinese_characters, sub_finals);
-            _neural_sandhi(word,tag, chinese_characters,sub_finals);
-            _three_sandhi(word,chinese_characters,sub_finals);
 
-        }
-        void _bu_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals) {
 
-        }
-        void _yi_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals) {
-
-        }
-        void _neural_sandhi(const std::string& word, const std::string& tag, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals) {
-
-        }
-        void _three_sandhi(const std::string& word, const std::vector<std::string>& chinese_characters, std::vector<std::string>& sub_finals) {
-
-        }
         /*
         Converts a string of text to a sequence of IDs corresponding to the symbols in the text.
         Also include the implementation of  hps.data.add_blank=True

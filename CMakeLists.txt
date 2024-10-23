@@ -35,6 +35,7 @@ set(SOURCE_FILES
     src/chinese_mix.cpp
     src/openvoice_tts.cpp
     src/tts.cpp
+    src/tone_sandhi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.cc
 )
@@ -51,6 +52,7 @@ set(HEADER_FILES
     src/chinese_mix.h
     src/openvoice_tts.h
     src/tts.h
+    src/tone_sandhi.h
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.h
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.h
 )
@@ -74,7 +76,7 @@ endif()
 
 
 
-#option(ENABLE_TESTS "Enable tests" ON) # Disable the tests by default
+option(ENABLE_TESTS "Enable tests" ON) # Disable the tests by default
 
 if (${ENABLE_TESTS})
     #add_subdirectory(tests)

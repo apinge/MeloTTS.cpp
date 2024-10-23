@@ -46,3 +46,26 @@ std::vector<std::string> read_file_lines(const std::filesystem::path& file_path)
     std::cout << "Info: Read input path successfully!\n";
     return lines;
 }
+
+/**
+ * helper function splits a UTF-8 encoded string containing only Chinese characters
+ * e.g. 右值的生命周期 -> {右,值,的,生,命,周,期,}
+ * (excluding punctuation and English letters) into individual Chinese characters.
+ */
+std::vector<std::string> split_utf8_chinese(const std::string& str) {
+    std::vector<std::string> res;//chinese characters
+    int strSize = str.size();
+    int i = 0;
+
+    while (i < strSize)
+    {
+        int len = 1;
+        for (int j = 0; j < 6 && (str[i] & (0x80 >> j)); j++)
+        {
+            len = j + 1;
+        }
+        res.push_back(str.substr(i, len));
+        i += len;
+    }
+    return res;
+}

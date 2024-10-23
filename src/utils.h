@@ -57,4 +57,5 @@ const auto printVec = [](const auto& vec, const std::string& vecName) {
 
 std::vector<std::string> read_file_lines(const std::filesystem::path& file_path);
 
+std::vector<std::string> split_utf8_chinese(const std::string& str);
 #endif //  UTILS_H
