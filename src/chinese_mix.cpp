@@ -126,7 +126,7 @@ namespace melo {
             return { phones_list, tones_list, word2ph };
         }
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(std::vector<std::pair<std::string, std::string>>& segments) {
-            auto new_segments = ToneSandhi::pre_merge_for_modify(segments,jieba); //adjust word segmentation
+            auto new_segments = ToneSandhi::pre_merge_for_modify(segments); //adjust word segmentation
             std::vector<std::string> phones_list;
             std::vector<int64_t> tones_list;
             std::vector<int> word2ph;

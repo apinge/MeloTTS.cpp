@@ -21,31 +21,48 @@
 
 namespace melo {
     namespace ToneSandhi {
-        std::vector<std::pair<std::string, std::string>> pre_merge_for_modify(std::vector<std::pair<std::string, std::string>>& seg, const std::shared_ptr<cppjieba::Jieba>& jieba) {
-            auto seg1 = _merge_bu(seg);
-      
-            auto seg2 = _merge_yi(seg1);
-        return seg2;
-            auto seg3 = _merge_reduplication(seg2);
-        
-            return _merge_er(seg3);
+        std::vector<std::pair<std::string, std::string>> pre_merge_for_modify(std::vector<std::pair<std::string, std::string>>& seg) {
+            auto seg1 = _merge_yi(seg);
+            return _merge_chinese_patterns(seg1);
+        }
+        /**
+         * @brief This function combines the logic of three Python functions:
+         * _merge_bu, _merge_er, and _merge_reduplication.
+         */
+        std::vector<std::pair<std::string, std::string>> _merge_chinese_patterns(std::vector<std::pair<std::string, std::string>>& seg) {
+            std::vector<std::pair<std::string, std::string>> new_seg;
+            for(auto &[word,pos]:seg){
+                //_merge_reduplication and _merge_bu
+                if (new_seg.size() && (word == new_seg.back().first || new_seg.back().first == "不"))
+                    new_seg.back().first += word;
+                else if (new_seg.size() && word == "儿") //_merge_er
+                    new_seg.back().first += "儿";
+                else
+                    new_seg.emplace_back(std::move(word),std::move(pos));
+            }
+#ifdef MELO_DEBUG
+            std::cout << "_merge_chinese_patterns:";
+            for (const auto& [word, _] : new_seg) std::cout << word << ' ';
+            std::cout << std::endl;
+#endif
+            return new_seg;
         }
         // merge "不" and the word behind it
         // if don't merge, "不" sometimes appears alone according to jieba, which may occur sandhi error
-        std::vector<std::pair<std::string, std::string>> _merge_bu(std::vector<std::pair<std::string, std::string>>& seg) {
-            std::vector<std::pair<std::string, std::string>> new_seg;
-            std::string last_word;
-            for (auto& [word, pos] : seg) {
-                if (last_word == "不")
-                    word = last_word+word;
-                if(word!= "不")
-                    new_seg.emplace_back(word,pos);
-                 last_word = word;
-            }
-            if(last_word == "不")
-                new_seg.emplace_back(last_word,"d");
-            return new_seg;
-        }
+        //std::vector<std::pair<std::string, std::string>> _merge_bu(std::vector<std::pair<std::string, std::string>>& seg) {
+        //    std::vector<std::pair<std::string, std::string>> new_seg;
+        //    std::string last_word;
+        //    for (auto& [word, pos] : seg) {
+        //        if (last_word == "不")
+        //            word = last_word+word;
+        //        if(word!= "不")
+        //            new_seg.emplace_back(word,pos);
+        //         last_word = word;
+        //    }
+        //    if(last_word == "不")
+        //        new_seg.emplace_back(last_word,"d");
+        //    return new_seg;
+        //}
         /* function 1: merge "一" and reduplication words in it's left and right, e.g. "听","一","听" ->"听一听"
           function 2: merge single  "一" and the word behind it
           if don't merge, "一" sometimes appears alone according to jieba, which may occur sandhi error
@@ -81,29 +98,29 @@ namespace melo {
             return new_seg;
         }
 
-        std::vector<std::pair<std::string, std::string>> _merge_er(std::vector<std::pair<std::string, std::string>>& seg) {
-            std::vector<std::pair<std::string, std::string>> new_seg;
-            int n = seg.size();
-            for (auto& [word, pos] : seg) {
-                if (new_seg.size() && word == "儿") {
-                    new_seg.back().first += "儿";
-                }
-                else
-                    new_seg.emplace_back(std::move(word),std::move(pos));
-            }
-            return new_seg;
-        }
-        std::vector<std::pair<std::string, std::string>> _merge_reduplication(std::vector<std::pair<std::string, std::string>>& seg) {
-            std::vector<std::pair<std::string, std::string>> new_seg;
-            int n = seg.size();
-            for (auto& [word, pos]:seg) {
-                if (new_seg.size() && word == new_seg.back().first) 
-                    new_seg.back().first += word;
-                else
-                    new_seg.emplace_back(std::move(word),std::move(pos));
-            }
-            return new_seg;
-        }
+        //std::vector<std::pair<std::string, std::string>> _merge_er(std::vector<std::pair<std::string, std::string>>& seg) {
+        //    std::vector<std::pair<std::string, std::string>> new_seg;
+        //    int n = seg.size();
+        //    for (auto& [word, pos] : seg) {
+        //        if (new_seg.size() && word == "儿") {
+        //            new_seg.back().first += "儿";
+        //        }
+        //        else
+        //            new_seg.emplace_back(std::move(word),std::move(pos));
+        //    }
+        //    return new_seg;
+        //}
+        //std::vector<std::pair<std::string, std::string>> _merge_reduplication(std::vector<std::pair<std::string, std::string>>& seg) {
+        //    std::vector<std::pair<std::string, std::string>> new_seg;
+        //    int n = seg.size();
+        //    for (auto& [word, pos]:seg) {
+        //        if (new_seg.size() && word == new_seg.back().first) 
+        //            new_seg.back().first += word;
+        //        else
+        //            new_seg.emplace_back(std::move(word),std::move(pos));
+        //    }
+        //    return new_seg;
+        //}
         /**
          * Adjusts the tones of Chinese characters based on the given word and tag (part of speech).
          *

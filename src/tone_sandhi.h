@@ -24,13 +24,11 @@
 #include "Jieba.hpp"
 namespace melo {
     namespace ToneSandhi {
-        std::vector<std::pair<std::string, std::string>> pre_merge_for_modify(std::vector<std::pair<std::string, std::string>>& seg, const std::shared_ptr<cppjieba::Jieba>& jieba);
-        std::vector<std::pair<std::string, std::string>> _merge_bu(std::vector<std::pair<std::string, std::string>>& seg);
-        std::vector<std::pair<std::string, std::string>> _merge_yi( std::vector<std::pair<std::string, std::string>>& seg);
-        std::vector<std::pair<std::string, std::string>> _merge_reduplication(std::vector<std::pair<std::string, std::string>>& seg);
+        std::vector<std::pair<std::string, std::string>> pre_merge_for_modify(std::vector<std::pair<std::string, std::string>>& seg);
     /*    void _merge_continuous_three_tones(std::vector<std::pair<std::string, std::string>>& seg);
         void _merge_continuous_three_tones_2(std::vector<std::pair<std::string, std::string>>&seg);*/
-        std::vector<std::pair<std::string, std::string>> _merge_er(std::vector<std::pair<std::string, std::string>>& seg);
+        std::vector<std::pair<std::string, std::string>> _merge_yi(std::vector<std::pair<std::string, std::string>>& seg);
+        std::vector<std::pair<std::string, std::string>> _merge_chinese_patterns (std::vector<std::pair<std::string, std::string>>& seg);
 
         
         void modified_tone(const std::string& word, const std::string& tag, const std::shared_ptr<cppjieba::Jieba>& jieba, std::vector<std::string>& sub_finals);// input is word by word
