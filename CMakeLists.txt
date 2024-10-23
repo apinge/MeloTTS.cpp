@@ -76,7 +76,7 @@ endif()
 
 
 
-option(ENABLE_TESTS "Enable tests" ON) # Disable the tests by default
+#option(ENABLE_TESTS "Enable tests" ON) # Disable the tests by default
 
 if (${ENABLE_TESTS})
     #add_subdirectory(tests)
