@@ -1,6 +1,6 @@
 # MeloTTS.cpp
 
-This repository offers a C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO. Currently, this repository is limited to supporting Chinese mixed with English. Support for English is planned for future releases.
+This repository offers a C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO. Currently, this repository only supports Chinese mixed with English. Support for [English model](https://huggingface.co/myshell-ai/MeloTTS-English) is coming next.
 
 
 ## Setup and Execution Guide
@@ -41,11 +41,11 @@ cmake -S . -B build && cmake --build build --config Release
 ### 4. Arguments Description
 You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. Below are the meanings of all the arguments you can use with these scripts:
 
-- `--model_dir`: Specifies the folder containing the model files, dictionary files, and third-party resource files.
+- `--model_dir`: Specifies the folder containing the model files, dictionary files, and third-party resource files, which is `ov_models` folder within the repo. You may need to adjust the relative path based on your current working directory.
 - `--tts_device`: Specifies the OpenVINO device to be used for the TTS model. The default device is CPU.
 - `--bert_device`: Specifies the OpenVINO device to be used for the BERT model. The default device is CPU.
-- `--input_file`: Specifies the input text file to be processed.
-- `--output_file`: Specifies the output audio file to be generated.
+- `--input_file`: Specifies the input text file to be processed. Make sure that the text is in **UTF-8** format.
+- `--output_file`: Specifies the output *.wav audio file to be generated.
 - `--speed`: Specifies the speed of output audio. The default is 1.0.
 - `--quantize`: Indicates whether to use an int8 quantized model. The default is false, meaning an fp16 model is used by default.
 - `--disable_bert`: Indicates whether to disable the BERT model inference. The default is false.
@@ -53,12 +53,13 @@ You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. B
 
 ## Supported Versions
 - **Operating System**: Windows, Linux
-- **CPU Architecture**: Metor Lake,  Lunar Lake
+- **CPU Architecture**: Metor Lake, Lunar Lake, and most Intel CPUs
 - **GPU Architecture**: Intel® Arc™ Graphics (Intel Xe, including iGPU)
 - **C++ Version**: >=C++20
 
+If you specify GPU as the device, please refer to [Configurations for Intel® Processor Graphics (GPU) with OpenVINO™](https://docs.openvino.ai/2024/get-started/configurations/configurations-intel-gpu.html) to install the GPU driver.
 
-We have also successfully performed inference on other platforms, such as Xeon. However, we do not provide regular testing environments for these platforms and cannot guarantee the performance.
+
 ## Future Development Plan
 Here are some features and improvements planned for future releases:
 
