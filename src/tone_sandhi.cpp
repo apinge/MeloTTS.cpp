@@ -40,6 +40,8 @@ namespace melo {
                 else
                     new_seg.emplace_back(std::move(word),std::move(pos));
             }
+            if(new_seg.size()&&new_seg.back().first == "不")
+                new_seg.back().second = "d";
 #ifdef MELO_DEBUG
             std::cout << "_merge_chinese_patterns:";
             for (const auto& [word, _] : new_seg) std::cout << word << ' ';
