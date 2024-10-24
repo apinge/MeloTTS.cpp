@@ -123,7 +123,8 @@ namespace melo {
     std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
         TTS::get_text_for_tts_infer(const std::string& text) {
         try {
-            auto [phones_list, tones_list, word2ph_list] = chinese_mix::_g2p_v2(text, tokenizer);
+            std::string norm_text = chinese_mix::text_normalize(text);
+            auto [phones_list, tones_list, word2ph_list] = chinese_mix::_g2p_v2(norm_text, tokenizer);
             auto [phones_ids, tones, lang_ids, word2ph] = chinese_mix::cleaned_text_to_sequence(phones_list, tones_list, word2ph_list);
 
             std::vector<std::vector<float>> phone_level_feature;

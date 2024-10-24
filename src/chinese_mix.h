@@ -34,8 +34,9 @@ namespace melo {
         extern std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> pinyin_to_symbol_map;
         extern const std::unordered_map<std::string,int64_t> symbol_to_id;
         // funtion
+        std::string text_normalize(const std::string& text);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<Tokenizer>& tokenized);
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag);
+        [[maybe_unused]] std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(std::vector<std::pair<std::string,std::string>>& segment);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p_en(const std::string& word, std::vector<std::string>& tokenized);
         std::tuple<std::vector<int64_t>,std::vector<int64_t>,std::vector<int64_t>,std::vector<int>> cleaned_text_to_sequence(const std::vector<std::string>& phones_list, const std::vector<int64_t>tones_list, const std::vector<int>&word2ph_list);

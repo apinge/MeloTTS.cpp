@@ -372,6 +372,18 @@ namespace melo {
             }
             return {initials,finals};
         }
+
+        // Convert uppercase to lowercase
+        std::string text_normalize(const std::string& text) {
+            std::string norm_text;
+            for (const auto& ch : text) {
+                if (ch <= 'Z' && ch >= 'A')
+                    norm_text.push_back(ch + 'a' - 'A');
+                else
+                    norm_text += ch;
+            }
+            return norm_text;
+        }
     }
 
 }
