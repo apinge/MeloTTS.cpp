@@ -67,13 +67,7 @@ int main(int argc, char** argv)
 
     std::filesystem::path input_path = args.input_file;
     std::filesystem::path output_path = args.output_file;
-
-    //Init lanugage module
-    melo::chinese_mix::cmudict = std::make_shared<melo::CMUDict>(args.cmudict_path.string());
-    melo::chinese_mix::jieba = std::make_shared<cppjieba::Jieba>(args.cppjieba_dict);
-    melo::chinese_mix::pinyin_to_symbol_map = melo::chinese_mix::readPinyinFile(args.pinyin_to_symbol_map_path);
-    melo::chinese_mix::pinyin = std::make_shared<cppinyin::PinyinEncoder>(args.cppinyin_resource);
-    std::cout <<"Init language Module\n";
+  
     //Text Normalizer
     melo::TTS::normalizer = std::make_shared<text_normalization::TextNormalizer>(args.model_dir);
     // Init core

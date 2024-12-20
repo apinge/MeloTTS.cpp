@@ -21,7 +21,7 @@
 #include "chinese_mix.h"
 #include "tone_sandhi.h"
 namespace melo {
-    namespace chinese_mix {
+    //namespace chinese_mix {
         auto printVec = [](const auto& vec, const std::string& vecName) {
             std::cout << vecName <<":";
             if(vec.size()==0) return;
@@ -30,10 +30,10 @@ namespace melo {
             }
             std::cout << std::endl;
             };
-        // global object
-        std::shared_ptr<CMUDict> cmudict;
-        std::shared_ptr<cppjieba::Jieba> jieba;
-        std::shared_ptr<cppinyin::PinyinEncoder> pinyin;
+        //// global object
+        //std::shared_ptr<CMUDict> cmudict;
+        //std::shared_ptr<cppjieba::Jieba> jieba;
+        //std::shared_ptr<cppinyin::PinyinEncoder> pinyin;
         const std::unordered_map<std::string, std::string> v_rep_map = {
         {"uei", "ui"},
         {"iou", "iu"},
@@ -48,7 +48,7 @@ namespace melo {
         //{"i", "yi"},
         //{"in", "yin"},
         //{"u", "wu"},};
-        std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> pinyin_to_symbol_map;
+        //std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> pinyin_to_symbol_map;
 
         const std::unordered_map<std::string, int64_t> symbol_to_id =
         { { "_", 0 }, { "AA", 1 }, { "E", 2 }, { "EE", 3 }, { "En", 4 }, { "N", 5 }, { "OO", 6 }, { "V", 7 }, { "a", 8 }, { "a,", 9 }, { "aa", 10 }, 
@@ -64,8 +64,48 @@ namespace melo {
         { "zh", 101 }, { "zy", 102 }, { "!", 103 }, { "?", 104 }, { "…", 105 }, { ",", 106 }, { ".", 107 }, { "\'", 108},{ "-", 109},{ "SP", 110},{ "UNK", 111}};
 
         const std::unordered_set<std::string> rep_map = {".", "...", "?", ",", "!", "-", "'"};
-        // Only lowercase letters are accepted here!
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer) {
+
+        // Constructor
+        ChineseMix::ChineseMix(const std::filesystem::path& data_folder) {
+            //english pronounciation dict
+            auto cmudict_path = data_folder / "cmudict_cache.txt";
+
+            //pinyin_to_symbol_map
+            auto pinyin_to_symbol_map_path = data_folder / "opencpop-strict.txt";
+
+            // These two folders should ideally belong to the thirdParty directory.
+            // However, for convenience, they are placed under model_dir here.
+            // dict folder for cppjieba
+            auto cppjieba_dict = data_folder / "cppjieba/dict";
+            // cppinyin
+            auto cppinyin_resource = data_folder / "cppinyin/cpp_pinyin.raw";
+#ifdef MELO_DEBUG
+            if (!std::filesystem::exists(pinyin_to_symbol_map_path)) {
+                std::cerr << "[ERROR] ChineseMix::file does not exists: " << std::filesystem::absolute(pinyin_to_symbol_map_path) << "\n";
+            }
+            if (!std::filesystem::exists(cppjieba_dict)) {
+                std::cerr << "[ERROR] ChineseMix::file does not exists: " << std::filesystem::absolute(cppjieba_dict) << "\n";
+            }
+            if (!std::filesystem::exists(cppinyin_resource)) {
+                std::cerr << "[ERROR] ChineseMix::file does not exists: " << std::filesystem::absolute(cppinyin_resource) << "\n";
+            }
+            if (!std::filesystem::exists(cmudict_path)) {
+                std::cerr << "[ERROR] ChineseMix::file does not exists: " << std::filesystem::absolute(cmudict_path) << "\n";
+            }
+#endif
+            if (!std::filesystem::exists(pinyin_to_symbol_map_path) || !std::filesystem::exists(cppjieba_dict)
+                || !std::filesystem::exists(cppinyin_resource) || !std::filesystem::exists(cmudict_path))
+                std::cerr << "[ERROR] ChineseMix::file does not exists!\n";
+            cmudict = std::make_shared<melo::CMUDict>(cmudict_path.string());
+            jieba = std::make_shared<cppjieba::Jieba>(cppjieba_dict);
+            pinyin_to_symbol_map = readPinyinFile(pinyin_to_symbol_map_path);
+            pinyin = std::make_shared<cppinyin::PinyinEncoder>(cppinyin_resource);
+            std::cout << "[INFO] Init language Module Succeed!\n";
+        }
+
+        // Only lowercase letters are accepted here! 
+        // Corresponds to the python version of chinsese_mix._g2p_v2 function
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> ChineseMix::g2p(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer) {
 
             std::vector<std::string> phones_list{ "_" };
             std::vector<int64_t> tones_list{ 0 };
@@ -129,7 +169,7 @@ namespace melo {
             return { phones_list, tones_list, word2ph };
         }
         std::unordered_set<char> spaces = {'\n',' ','\r','\t','\0'};
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(std::vector<std::pair<std::string, std::string>>& segments) {
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> ChineseMix::_chinese_g2p(std::vector<std::pair<std::string, std::string>>& segments) {
             auto new_segments = ToneSandhi::pre_merge_for_modify(segments); //adjust word segmentation
             std::vector<std::string> phones_list;
             std::vector<int64_t> tones_list;
@@ -181,7 +221,7 @@ namespace melo {
 #endif
             return { phones_list, tones_list, word2ph };
         }
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag) {
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> ChineseMix::_chinese_g2p(const std::string& word, const std::string& tag) {
             std::vector<std::string> phones_list;
             std::vector<int64_t> tones_list;
             std::vector<int> word2ph;
@@ -225,7 +265,7 @@ namespace melo {
          * ensuring that each word receives as evenly distributed phonemes as possible.
          * The function returns a list where each element represents the number of phonemes assigned to the corresponding word.
          */
-        std::vector<int> distribute_phone(const int& n_phone, const int& n_word) {
+        std::vector<int> ChineseMix::distribute_phone(const int& n_phone, const int& n_word) {
             if(n_word==1)
                 return {n_phone};
             std::vector<int> phones_per_word(n_word,0);
@@ -237,7 +277,7 @@ namespace melo {
         }
         // The processing here is different from the Python version. 
         // Due to the presence of Jieba segmentation, the input here is actually word by word, without the concept of group
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p_en(const std::string& word, std::vector<std::string>& tokenized_word) {
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> ChineseMix::g2p_en(const std::string& word, std::vector<std::string>& tokenized_word) {
             std::vector<std::string> phones_list;
             std::vector<int64_t> tones_list;
             std::vector<int> word2ph;
@@ -297,7 +337,7 @@ namespace melo {
         }
 
         
-        std::tuple<std::vector<std::string>, std::vector<int64_t>> refine_syllables(const std::vector<std::vector<std::string>>& syllables) {
+        std::tuple<std::vector<std::string>, std::vector<int64_t>> ChineseMix::refine_syllables(const std::vector<std::vector<std::string>>& syllables) {
             std::vector<std::string> phonemes; 
             std::vector<int64_t> tones;
             for (const auto& phn_list : syllables) {
@@ -332,7 +372,7 @@ namespace melo {
             result[1::2] = lst # 从索引 1 开始，每隔两个位置放置一个 lst 中的元素
             return result
         */
-        std::tuple<std::vector<int64_t>,std::vector<int64_t>,std::vector<int64_t>,std::vector<int>> cleaned_text_to_sequence(const std::vector<std::string>& phones_list, const std::vector<int64_t>tones_list, const std::vector<int>&word2ph_list){
+        std::tuple<std::vector<int64_t>,std::vector<int64_t>,std::vector<int64_t>,std::vector<int>> ChineseMix::cleaned_text_to_sequence(const std::vector<std::string>& phones_list, const std::vector<int64_t>tones_list, const std::vector<int>&word2ph_list){
             int n = phones_list.size();
             std::vector<int64_t> phones(2*n+1,0), tones(2*n+1,0), lang_ids(2*n+1,0);
             std::vector<int> word2ph(word2ph_list.begin(),word2ph_list.end());
@@ -355,7 +395,7 @@ namespace melo {
             return {phones,tones,lang_ids,word2ph};
         }
 
-        std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> readPinyinFile(const std::filesystem::path& filepath) {
+        std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> ChineseMix::readPinyinFile(const std::filesystem::path& filepath) {
             assert(std::filesystem::exists(filepath) && "opencpop-strict.txt does not exits!");
             auto pinyin_to_symbol_map = std::make_shared<std::unordered_map<std::string, std::vector<std::string>>>();
             std::ifstream file(filepath);
@@ -387,7 +427,7 @@ namespace melo {
         }
         // @brief This function returns the initials(声母) and finals(韵母),e.g. bian1 -> "b" + "ian1"
         // This function is essentially the same as the pypinyin.lazy_pinyin function, but it retains the initials 'y' and 'w' 
-        inline std::pair<std::string, std::string> split_initials_finals(const std::string& raw_pinyin) {
+        std::pair<std::string, std::string> ChineseMix::split_initials_finals(const std::string& raw_pinyin) {
             int n = raw_pinyin.length();
             if (n == 0) return{};
             //check compound_initials
@@ -407,7 +447,7 @@ namespace melo {
         * @brief This function returns the initials(声母) and finals(韵母), corresponding to the Python function of the same name.
         * https://github.com/zhaohb/MeloTTS-OV/blob/main/melo/text/chinese.py#L80
         */
-        std::pair<std::vector<std::string>, std::vector<std::string>> _get_initials_finals(const std::string& input) {
+        std::pair<std::vector<std::string>, std::vector<std::string>> ChineseMix::_get_initials_finals(const std::string& input) {
             std::vector<std::string> initials,finals;
             std::vector<std::string> pieces;
 
@@ -429,7 +469,7 @@ namespace melo {
         }
 
         // Convert uppercase to lowercase
-        std::string text_normalize(const std::string& text) {
+        std::string ChineseMix::text_normalize(const std::string& text) {
             std::string norm_text;
             for (const auto& ch : text) {
                 if (ch <= 'Z' && ch >= 'A')
@@ -470,7 +510,7 @@ namespace melo {
         // Ref
         //https://www.freecodecamp.org/chinese/news/what-is-utf-8-character-encoding/
         //https://sf-zhou.github.io/programming/chinese_encoding.html
-        std::string filter_text(const std::string& input) {
+        std::string ChineseMix::filter_text(const std::string& input) {
             std::string output;
             size_t i = 0;
             while (i < input.size()) {
@@ -515,6 +555,5 @@ namespace melo {
             }
             return output;
         }
-    }
 
 }

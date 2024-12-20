@@ -36,6 +36,16 @@ namespace melo {
         assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(tokenizer_runtime_path) && std::filesystem::exists(tokenizer_model_folder))
             && "ir files or vocab_bert does not exit!");
 
+        //init language module
+        if (language == "ZH") {
+            // We temporarily assume that the initialization data files used by the language module are all located in the tts_ir_path folder.
+            _language_module = std::make_shared<ChineseMix>(tts_ir_path.parent_path());
+        }
+        else if (language == "EN") {
+        }
+        else
+            std::cerr <<"[ERROR] Unsupported Language!\n";
+
         //init bert 
         if(!_disable_bert){
             assert(std::filesystem::exists(bert_ir_path) && "bert_ir_path does not exist!\n");
@@ -165,9 +175,9 @@ namespace melo {
     std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
         TTS::get_text_for_tts_infer(const std::string& text) {
         try {
-            std::string norm_text = chinese_mix::text_normalize(text);
-            auto [phones_list, tones_list, word2ph_list] = chinese_mix::_g2p_v2(norm_text, ov_tokenizer);
-            auto [phones_ids, tones, lang_ids, word2ph] = chinese_mix::cleaned_text_to_sequence(phones_list, tones_list, word2ph_list);
+            std::string norm_text = _language_module->text_normalize(text);
+            auto [phones_list, tones_list, word2ph_list] = _language_module->g2p(norm_text, ov_tokenizer);
+            auto [phones_ids, tones, lang_ids, word2ph] = _language_module->cleaned_text_to_sequence(phones_list, tones_list, word2ph_list);
 
             std::vector<std::vector<float>> phone_level_feature;
             if(!_disable_bert){

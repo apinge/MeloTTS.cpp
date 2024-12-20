@@ -192,18 +192,6 @@ inline void Args::generate_init_file_paths() {
     // punctuation dict
     punc_dict_path = model_dir / "punc.dic";
 
-    //dict
-    cmudict_path = model_dir / "cmudict_cache.txt";
-
-    //pinyin_to_symbol_map
-    pinyin_to_symbol_map_path = model_dir / "opencpop-strict.txt";
-
-    // These two folders should ideally belong to the thirdParty directory.
-    // However, for convenience, they are placed under model_dir here.
-    // dict folder for cppjieba
-    cppjieba_dict = model_dir / "cppjieba/dict";
-    // cppinyin
-    cppinyin_resource = model_dir / "cppinyin/cpp_pinyin.raw";
 #ifdef USE_DEEPFILTERNET
     // nf_df2 model path
     nf_ir_path  = model_dir;
