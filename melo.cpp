@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 #ifdef USE_DEEPFILTERNET
     args.nf_ir_path, args.nf_device,
 #endif // USE_DEEPFILTERNET
-    args.vocab_bert_path, args.punc_dict_path, args.language, args.disable_bert, args.disable_nf);
+    args.tokenizer_runtime_path,args.tokenizer_model_folder, args.punc_dict_path, args.language, args.disable_bert, args.disable_nf);
     auto initTime = get_duration_ms_till_now(startTime);
     std::cout << "model init time is" << initTime <<" ms" << std::endl;
 

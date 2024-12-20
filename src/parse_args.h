@@ -7,6 +7,7 @@
 #define PARSE_ARGS_H
 #include <filesystem>
 #include <iostream>
+#include <unordered_set>
 #ifdef _WIN32
 #include <codecvt>
 #include <fcntl.h>
@@ -28,11 +29,13 @@ struct Args
     std::string language = "ZH";
 
     void generate_init_file_paths();
-
+    const std::unordered_set<std::string> supported_languages = {"ZH","EN"};
  
     std::filesystem::path zh_tts_path; //tts_model
     std::filesystem::path zh_bert_path; //bert_model
-    std::filesystem::path vocab_bert_path;// init tokenizer
+    //std::filesystem::path vocab_bert_path;// init tokenizer
+    std::filesystem::path tokenizer_model_folder; // path of openvino tokenizer folder
+    std::filesystem::path tokenizer_runtime_path; // path of openivno tokenizer runtime 
     std::filesystem::path punc_dict_path;// // punctuation dict
     std::filesystem::path cppjieba_dict;// dict folder for cppjieba
     std::filesystem::path cppinyin_resource; // cppinyin
@@ -179,7 +182,12 @@ inline void Args::generate_init_file_paths() {
     }
 
     // init tokenizer
-    vocab_bert_path = model_dir / "vocab_bert.txt";
+    //vocab_bert_path = model_dir / "vocab_bert.txt";
+    tokenizer_runtime_path = "C:\\Users\\gta\\source\\repos\\openvino_tokenizers_windows_2024.5.0.0_x86_64\\runtime\\bin\\intel64\\Release\\openvino_tokenizers.dll";// Temporarily hardcoded
+    if (language == "ZH")
+        tokenizer_model_folder = model_dir / "bert-base-multilingual-uncased";
+    else if (language == "EN")
+        tokenizer_model_folder = model_dir / "bert-base-uncased";
 
     // punctuation dict
     punc_dict_path = model_dir / "punc.dic";

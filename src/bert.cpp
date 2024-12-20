@@ -28,7 +28,9 @@ namespace melo {
         //get token ids
         std::vector<int64_t> ids;
         std::vector<std::string> strs;
-        _tokenizer->Tokenize(text, strs, _input_ids);
+        //_tokenizer->Tokenize(text, strs, _input_ids);
+        auto _text = text; 
+        _input_ids = _ov_tokenizer->tokenize(std::move(_text));
         size_t n = _input_ids.size();
         _attention_mask = std::vector<int64_t>(n, 1);
         _token_type_ids = std::vector<int64_t>(n, 0);
@@ -48,7 +50,7 @@ namespace melo {
 #endif
         ov_infer();
 
-        get_output(word2ph, berts);
+       get_output(word2ph, berts);
 
     }
 

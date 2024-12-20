@@ -21,6 +21,10 @@
 
 namespace melo {
     namespace ToneSandhi {
+        const std::unordered_set<char> punctuations = {
+          ',', '.', '!', '?', ';','-','\''
+        }; //After filtering, only these punctuation marks are accepted. same as in chinese_ix
+
         std::vector<std::pair<std::string, std::string>> pre_merge_for_modify(std::vector<std::pair<std::string, std::string>>& seg) {
             auto seg1 = _merge_yi(seg);
             return _merge_chinese_patterns(seg1);
@@ -42,7 +46,7 @@ namespace melo {
             for(auto &[word,pos]:seg){
                 //_merge_reduplication and _merge_bu
                 //Here, two consecutive punctuation marks are prevented from being combined within the same word segmentation.
-                if (new_seg.size() && (word == new_seg.back().first && !Tokenizer::punctuations.contains(word.front())|| new_seg.back().first == "不"))
+                if (new_seg.size() && (word == new_seg.back().first && !punctuations.contains(word.front())|| new_seg.back().first == "不"))
                     new_seg.back().first += word;
                 else if (new_seg.size() && word == "儿") //_merge_er
                     new_seg.back().first += "儿";

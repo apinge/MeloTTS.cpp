@@ -11,7 +11,7 @@
 #include <windows.h>
 #endif
 #include <openvino/openvino.hpp>
-#include "../experimental/openvino_tokenizer.h"
+#include "openvino_tokenizer.h"
 
 //#include <openvino/op/transpose.hpp>
 //#include <openvino/core/node.hpp>
@@ -22,21 +22,21 @@ class TokenizerTestSuit : public ::testing::Test {
 public:
     TokenizerTestSuit() {
         std::filesystem::path model_path = "C:\\Users\\gta\\source\\repos\\MeloTTS.cpp\\ov_models";
-        std::filesystem::path zh_bert_subword_tokenizer = model_path / ".." / "experimental" / "bert-base-multilingual-uncased" / "bert_subword" / "bert_subword_tokenizer.xml";
-        std::filesystem::path zh_bert_subword_detokenizer = model_path / ".." / "experimental" / "bert-base-multilingual-uncased" / "bert_subword" / "bert_subword_detokenizer.xml";
-        std::filesystem::path en_bert_subword_tokenizer = model_path / ".." / "experimental" / "bert-base-uncased" /  "bert_subword_tokenizer.xml";
-        std::filesystem::path en_bert_subword_detokenizer = model_path / ".." / "experimental" / "bert-base-uncased" /  "bert_subword_detokenizer.xml";
+        std::filesystem::path zh_bert_subword_tokenizer = model_path / "bert-base-multilingual-uncased" / "bert_subword" / "bert_subword_tokenizer.xml";
+        std::filesystem::path zh_bert_subword_detokenizer = model_path / "bert-base-multilingual-uncased" / "bert_subword" / "bert_subword_detokenizer.xml";
+        std::filesystem::path en_bert_subword_tokenizer = model_path / "bert-base-uncased" /  "bert_subword_tokenizer.xml";
+        std::filesystem::path en_bert_subword_detokenizer = model_path / "bert-base-uncased" /  "bert_subword_detokenizer.xml";
         std::filesystem::path dll_path = "C:\\Users\\gta\\source\\repos\\openvino_tokenizers_windows_2024.5.0.0_x86_64\\runtime\\bin\\intel64\\Release\\openvino_tokenizers.dll";
         core = std::make_unique<ov::Core>();
-        zh_tokenizer = OpenVinoTokenizer(core,dll_path,zh_bert_subword_tokenizer,zh_bert_subword_detokenizer);
-        en_tokenizer = OpenVinoTokenizer(core,dll_path,en_bert_subword_tokenizer,en_bert_subword_detokenizer);
+        zh_tokenizer = melo::OpenVinoTokenizer(core,dll_path,zh_bert_subword_tokenizer,zh_bert_subword_detokenizer);
+        en_tokenizer = melo::OpenVinoTokenizer(core,dll_path,en_bert_subword_tokenizer,en_bert_subword_detokenizer);
 
     }
   
 
 protected:
     std::unique_ptr<ov::Core> core;
-    OpenVinoTokenizer zh_tokenizer, en_tokenizer;
+    melo::OpenVinoTokenizer zh_tokenizer, en_tokenizer;
     //ov::InferRequest zh_subword_tokenizer_infer, zh_subword_detokenizer_infer, en_subword_tokenizer_infer, en_subword_detokenizer_infer;
 
 
@@ -54,7 +54,7 @@ TEST_F(TokenizerTestSuit, ZH_BertSubwordTokenizer) {
     auto startTime = Time::now();
     ov::Tensor res = zh_tokenizer.tokenize_tensor(std::move(text));
     auto execTime = get_duration_ms_till_now(startTime);
-    auto vec = OpenVinoTokenizer::get_output_vec<int64_t>(res);
+    auto vec = melo::OpenVinoTokenizer::get_output_vec<int64_t>(res);
     std::cout << "[INFO] subword_tokenize takes "<< execTime<<"ms\n";
     const std::vector<int64_t> correct_ids = { 101, 6784, 7984, 2693, 85065, 33719, 1817, 3295, 2415, 6990, 1776, 2160, 4270, 3203, 2383, 18958, 59242, 4108, 3259, 6805,
         2981, 5975, 4767, 4508, 3203, 2383, 79947, 20849, 59242, 102 };
@@ -120,7 +120,7 @@ TEST_F(TokenizerTestSuit, EN_BertSubwordDeTokenizer) {
     auto startTime = Time::now();
     ov::Tensor res = en_tokenizer.tokenize_tensor(std::move(text));
     auto execTime = get_duration_ms_till_now(startTime);
-    auto vec = OpenVinoTokenizer::get_output_vec<int64_t>(res);
+    auto vec =melo::OpenVinoTokenizer::get_output_vec<int64_t>(res);
     std::cout << "[INFO] subword_tokenize takes " << execTime << "ms\n";
     const std::vector<int64_t> correct_ids = { 101, 1045, 1005, 2310, 2042, 4083, 3698, 4083, 3728, 1998, 3246, 2000,
          2191, 5857, 1999, 1996, 2492, 1997, 7976, 4454, 1999, 1996, 2925, 1012,

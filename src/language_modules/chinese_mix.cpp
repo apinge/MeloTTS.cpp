@@ -65,7 +65,7 @@ namespace melo {
 
         const std::unordered_set<std::string> rep_map = {".", "...", "?", ",", "!", "-", "'"};
         // Only lowercase letters are accepted here!
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<Tokenizer>& tokenizer) {
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer) {
 
             std::vector<std::string> phones_list{ "_" };
             std::vector<int64_t> tones_list{ 0 };
@@ -99,10 +99,12 @@ namespace melo {
                         tmp_chinese_segment.clear();
                     }
                     //process english word
-                    std::vector<std::string> tokenized_en;
-                    std::vector<int64_t> token_ids;
-                    tokenizer->Tokenize(word, tokenized_en, token_ids);
-                    //for(const auto &x:tokenized_en) std::cout << x << ",";
+                    //tokenizer->Tokenize(word, tokenized_en, token_ids);
+                    std::vector<std::string> tokenized_en = tokenizer->word_segment(word);
+#ifdef MELO_DEBUG
+                    for (std::cout << "tokenizer_en:<<"; const auto & x : tokenized_en) std::cout << word << ",";
+                    std::cout << std::endl;
+#endif
                     auto [phones_en, tones_en, word2ph_en] = g2p_en(word, tokenized_en);
                     std::for_each(tones_en.begin(),tones_en.end(),[&](auto& x){ x+= language_tone_start_map_for_en; });// regulate english tone
                     phones_list.insert(phones_list.end(), phones_en.begin(), phones_en.end());

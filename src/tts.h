@@ -23,8 +23,10 @@
 #include "openvoice_tts.h"
 #include "Jieba.hpp"
 #include "language_modules/cmudict.h"
+#include "language_modules/language_module_base.h"
 #include "darts.h"
 #include "text_normalization/text_normalization.h"
+#include "openvino_tokenizer.h"
 #ifdef USE_DEEPFILTERNET
 #include "deepfilternet/noisefilter.h"
 #endif // USE_DEEPFILTERNET
@@ -32,11 +34,11 @@ namespace melo {
     class TTS {
         public:
             explicit TTS(std::unique_ptr<ov::Core>& core, const std::filesystem::path& tts_ir_path, const std::string& tts_device, const ov::AnyMap& tts_config,
-                const std::filesystem::path& bert_ir_path, const std::string& bert_device, 
+                const std::filesystem::path& bert_ir_path, const std::string& bert_device,
 #ifdef USE_DEEPFILTERNET
                 const std::filesystem::path& nf_ir_path, const std::string& nf_device,
 #endif // USE_DEEPFILTERNET
-                const std::filesystem::path& tokenizer_data_path, const std::filesystem::path& punctuation_dict_path, const std::string language, bool disable_bert = false, bool disable_nf = false);
+                const std::filesystem::path& tokenizer_runtime_path, const std::filesystem::path& tokenizer_model_folder, const std::filesystem::path& punctuation_dict_path, const std::string language, bool disable_bert = false, bool disable_nf = false);
             ~TTS() = default;
             TTS(const TTS&) = delete;
             TTS& operator=(const TTS&) = delete;
@@ -58,7 +60,8 @@ namespace melo {
             std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
                 get_text_for_tts_infer(const std::string& text);
         private:
-            std::shared_ptr<Tokenizer> tokenizer;
+            //std::shared_ptr<Tokenizer> tokenizer;
+            std::shared_ptr<OpenVinoTokenizer> ov_tokenizer;
             Bert bert_model;
             OpenVoiceTTS tts_model;
 #ifdef USE_DEEPFILTERNET
@@ -68,6 +71,7 @@ namespace melo {
             Darts::DoubleArray _da;// punctuation dict use to split sentence
             bool _disable_bert = false;
             bool _disable_nf = false;
+            std::shared_ptr<AbstractLanguageModule> _language_module;
     };
 }
 

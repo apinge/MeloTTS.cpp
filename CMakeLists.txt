@@ -28,7 +28,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 set(SOURCE_FILES
     melo.cpp
     src/openvino_model_base.cpp
-    src/tokenizer.cpp
+    src/openvino_tokenizer.cpp
     src/utils.cpp
     src/bert.cpp
     src/openvoice_tts.cpp
@@ -36,6 +36,7 @@ set(SOURCE_FILES
     src/language_modules/cmudict.cpp
     src/language_modules/chinese_mix.cpp
     src/language_modules/tone_sandhi.cpp
+    src/language_modules/language_module_base.cpp
     src/text_normalization/text_normalization.cpp   
     src/text_normalization/char_convert.cpp     
     src/text_normalization/chronology.cpp     
@@ -65,7 +66,7 @@ set(HEADER_FILES
     src/parse_args.h
     src/openvino_model_base.h
     src/info_data.h
-    src/tokenizer.h
+    src/openvino_tokenizer.h
     src/utils.h
     src/bert.h
     src/openvoice_tts.h
@@ -73,6 +74,7 @@ set(HEADER_FILES
     src/language_modules/cmudict.h
     src/language_modules/chinese_mix.h
     src/language_modules/tone_sandhi.h
+    src/language_modules/language_module_base.h
     src/text_normalization/text_normalization.h
     src/text_normalization/char_convert.h
     src/text_normalization/chronology.h

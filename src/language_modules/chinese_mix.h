@@ -19,7 +19,7 @@
 #ifndef CHINESE_MIX_H
 #define CHINESE_MIX_H
 #include <memory>
-#include "tokenizer.h"
+#include "openvino_tokenizer.h"
 #include "Jieba.hpp"
 #include "cmudict.h"
 #include "cppinyin.h"
@@ -34,7 +34,7 @@ namespace melo {
         extern std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> pinyin_to_symbol_map;
         extern const std::unordered_map<std::string,int64_t> symbol_to_id;
         // funtion
-        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<Tokenizer>& tokenized);
+        std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _g2p_v2(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer);
         [[maybe_unused]] std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(std::vector<std::pair<std::string,std::string>>& segment);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p_en(const std::string& word, std::vector<std::string>& tokenized);
@@ -75,15 +75,21 @@ namespace melo {
             // Unicode in \u4e00 - \u9fa5）
             return (code_point >= 0x4E00 && code_point <= 0x9FA5);
         }
-        inline bool is_valid_punc(char x) {
-            return Tokenizer::punctuations.contains(x);
-        }
+        
         std::string text_normalize(const std::string& text);
         std::string filter_text(const std::string& text);
 
         const std::unordered_set<char> simple_initials = { 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'r', 'z', 'c', 's', 'y', 'w'};
         const std::unordered_set<std::string>  compound_initials = { "zh", "ch", "sh" };
         static constexpr int64_t language_tone_start_map_for_en = 7; // language_tone_start_map['EN'] in python version
+
+        const std::unordered_set<char> punctuations = {
+           ',', '.', '!', '?', ';','-','\''
+        }; //After filtering, only these punctuation marks are accepted.
+
+        inline bool is_valid_punc(char x) {
+            return punctuations.contains(x);
+        }
 
     }
     

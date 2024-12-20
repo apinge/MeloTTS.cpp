@@ -28,18 +28,18 @@ namespace melo {
 #ifdef USE_DEEPFILTERNET
         const std::filesystem::path& nf_ir_path, const std::string& nf_device, 
 #endif // USE_DEEPFILTERNET
-        const std::filesystem::path& tokenizer_data_path,
+        const std::filesystem::path& tokenizer_runtime_path, const std::filesystem::path& tokenizer_model_folder,
         const std::filesystem::path& punctuation_dict_path, const std::string language, bool disable_bert, bool disable_nf):_language(language),_disable_bert(disable_bert),_disable_nf(disable_nf),
-        tts_model(core,tts_ir_path,tts_device,tts_config, language), tokenizer(std::make_shared<Tokenizer>(tokenizer_data_path)){
+        tts_model(core,tts_ir_path,tts_device,tts_config, language), ov_tokenizer(std::make_shared<OpenVinoTokenizer>(core, tokenizer_runtime_path, tokenizer_model_folder)){
 
         assert((core.get() != nullptr) && "core should not be null!");
-        assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(tokenizer_data_path))
+        assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(tokenizer_runtime_path) && std::filesystem::exists(tokenizer_model_folder))
             && "ir files or vocab_bert does not exit!");
 
         //init bert 
         if(!_disable_bert){
             assert(std::filesystem::exists(bert_ir_path) && "bert_ir_path does not exist!\n");
-            bert_model = Bert(core,bert_ir_path, bert_device,language, tokenizer);
+            bert_model = Bert(core,bert_ir_path, bert_device,language, ov_tokenizer);
             std::cout << "TTS::TTS : init bert_model\n";
         }
         else
@@ -166,7 +166,7 @@ namespace melo {
         TTS::get_text_for_tts_infer(const std::string& text) {
         try {
             std::string norm_text = chinese_mix::text_normalize(text);
-            auto [phones_list, tones_list, word2ph_list] = chinese_mix::_g2p_v2(norm_text, tokenizer);
+            auto [phones_list, tones_list, word2ph_list] = chinese_mix::_g2p_v2(norm_text, ov_tokenizer);
             auto [phones_ids, tones, lang_ids, word2ph] = chinese_mix::cleaned_text_to_sequence(phones_list, tones_list, word2ph_list);
 
             std::vector<std::vector<float>> phone_level_feature;

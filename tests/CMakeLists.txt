@@ -60,13 +60,23 @@ add_executable(test_bert
                ../src/utils.cpp)
 target_link_libraries(test_bert PRIVATE gtest_main openvino::runtime)
 
+add_executable(test_bert_en
+               test_bert_en.cpp
+               ../src/openvino_tokenizer.cpp 
+               ../src/openvino_model_base.cpp 
+               ../src/bert.cpp  
+               ../src/utils.cpp)
+target_link_libraries(test_bert_en PRIVATE gtest_main openvino::runtime)
+
 add_executable(test_tokenizer ${CMAKE_CURRENT_SOURCE_DIR}/test_tokenizer.cpp ../src/tokenizer.cpp ../src/utils.cpp)
 target_link_libraries(test_tokenizer  PRIVATE gtest_main openvino::runtime)
 
-add_executable(test_openvino_tokenizer test_openvino_tokenizer.cpp ../src/utils.cpp ../experimental/openvino_tokenizer.cpp)
+add_executable(test_openvino_tokenizer test_openvino_tokenizer.cpp ../src/utils.cpp ../src/openvino_tokenizer.cpp)
+target_include_directories(test_openvino_tokenizer  PRIVATE ${CMAKE_SOURCE_DIR}/openvino_tokenizer.h)
 target_link_libraries(test_openvino_tokenizer PRIVATE gtest_main openvino::runtime)
 
 include(GoogleTest)
 gtest_discover_tests(test_bert)
+gtest_discover_tests(test_bert_en)
 gtest_discover_tests(test_tokenizer)
 gtest_discover_tests(test_openvino_tokenizer)

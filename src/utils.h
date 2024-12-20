@@ -102,7 +102,7 @@ inline ov::AnyMap set_tts_config(const std::string& device_name, bool quantize =
     if (device_name.find("CPU") != std::string::npos)
     {
         device_config[ov::cache_dir.name()] = "cache";
-        device_config[ov::hint::scheduling_core_type.name()] = ov::hint::SchedulingCoreType::ECORE_ONLY;
+        device_config[ov::hint::scheduling_core_type.name()] = ov::hint::SchedulingCoreType::PCORE_ONLY;
         device_config[ov::hint::enable_hyper_threading.name()] = false;
         device_config[ov::hint::enable_cpu_pinning.name()] = true;
         device_config[ov::enable_profiling.name()] = false;

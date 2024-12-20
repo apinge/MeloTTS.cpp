@@ -13,14 +13,14 @@ public:
         std::cout << "zh_bert_path:" << std::filesystem::absolute(zh_bert_path) << std::endl;
         std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
         tokenizer_ptr = std::make_shared<melo::Tokenizer>((model_dir / "vocab_bert.txt"));
-        zh_bert = melo::Bert(core_ptr, zh_bert_path.string(), "CPU", "ZH", tokenizer_ptr);
-        zh_bert.set_static_shape();
+        en_bert = melo::Bert(core_ptr, zh_bert_path.string(), "CPU", "ZH", tokenizer_ptr);
+        en_bert.set_static_shape();
     }
 protected:
     std::filesystem::path model_dir;
     std::filesystem::path zh_bert_path;
     std::unique_ptr<ov::Core> core_ptr;
-    melo::Bert zh_bert;
+    melo::Bert en_bert;
     std::shared_ptr<melo::Tokenizer> tokenizer_ptr;
    
 };
@@ -33,7 +33,7 @@ TEST_F(BertTestSuit, StaticShapeModel){
     std::string text = "今天的meeting真的是超级productive";
     std::vector<int> word2ph{ 3, 4, 4, 4, 10, 4, 4, 4, 4, 4, 10, 8, 2 };
     std::vector<std::vector<float>> berts;
-    zh_bert.get_bert_feature(text, word2ph, berts);
+    en_bert.get_bert_feature(text, word2ph, berts);
     //std::cout << berts.size() <<' '<< berts.front().size() << std::endl;
     EXPECT_EQ(berts.size(), 65);
     EXPECT_EQ(berts.front().size(),768);
@@ -48,9 +48,9 @@ TEST_F(BertTestSuit, TestEachRow_Static) {
     std::vector<int64_t> token_ids = { 101,  1773,  2975,  5975, 17829,  6032,  5975,  4353,  8224,  6709, 20058, 12899, 102};
     std::vector<int> word2ph{ 3, 4, 4, 4, 10, 4, 4, 4, 4, 4, 10, 8, 2 };
     std::vector<std::vector<float>> res;
-    zh_bert.set_input_tensors(token_ids, true);
-    zh_bert.ov_infer();
-    zh_bert.get_output(res);
+    en_bert.set_input_tensors(token_ids, true);
+    en_bert.ov_infer();
+    en_bert.get_output(res);
     int n = res.size(), m = res.front().size();
     std::vector<float> mean,variance;
     for (int i =0;i<token_ids.size();++i) {
