@@ -177,7 +177,7 @@ namespace melo {
         try {
             std::string norm_text = _language_module->text_normalize(text);
             auto [phones_list, tones_list, word2ph_list] = _language_module->g2p(norm_text, ov_tokenizer);
-            auto [phones_ids, tones, lang_ids, word2ph] = _language_module->cleaned_text_to_sequence(phones_list, tones_list, word2ph_list);
+            auto [phones_ids, tones, lang_ids, word2ph] = cleaned_text_to_sequence(_language_module,phones_list, tones_list, word2ph_list);
 
             std::vector<std::vector<float>> phone_level_feature;
             if(!_disable_bert){
