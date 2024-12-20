@@ -38,7 +38,6 @@
 #include "utils.h"
 #include "tts.h"
 #include "language_modules/chinese_mix.h"
-#include "text_normalization/text_normalization.h"
 #include "parse_args.h"
 
 #if defined(_WIN32) && defined(DEBUG_MEMORY)
@@ -66,10 +65,8 @@ int main(int argc, char** argv)
     Args args = parse_args(argc, argv);
 
     std::filesystem::path input_path = args.input_file;
-    std::filesystem::path output_path = args.output_file;
+    std::string output_filename = args.output_filename;
   
-    //Text Normalizer
-    melo::TTS::normalizer = std::make_shared<text_normalization::TextNormalizer>(args.model_dir);
     // Init core
     std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     auto startTime = Time::now();
@@ -82,10 +79,13 @@ int main(int argc, char** argv)
     std::cout << "model init time is" << initTime <<" ms" << std::endl;
 
     std::vector<std::string> texts = read_file_lines(input_path);
-
-    startTime = Time::now();
-    model.tts_to_file(texts, output_path, 1, args.speed);
-    auto inferTime = get_duration_ms_till_now(startTime);
-    std::cout << "model infer time:" << inferTime << " ms"<< std::endl;
+    // TODO: make speaker id in args
+    for (auto& [speaker_id, style_name] : melo::TTS::speaker_ids.at(args.language)) {
+        startTime = Time::now();
+        model.tts_to_file(texts, std::format("{}_{}.wav", output_filename, style_name), speaker_id, args.speed);
+        auto inferTime = get_duration_ms_till_now(startTime);
+        std::cout << "model infer time:" << inferTime << " ms" << std::endl;
+    }
+    
 
 }

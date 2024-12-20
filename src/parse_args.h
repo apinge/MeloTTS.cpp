@@ -21,7 +21,7 @@ struct Args
     std::string bert_device = "CPU";
     std::string nf_device = "CPU";
     std::string input_file = "inputs.txt";
-    std::string output_file = "audio.wav";
+    std::string output_filename = "audio";
     float speed = 1.0;
     bool quantize = false;
     bool disable_bert = false;
@@ -56,7 +56,7 @@ inline void usage(const std::string& prog)
         << "  --nf_device             Specifies the OpenVINO device to be used for the DeepfilterNet model (Supported devices include CPU, GPU, and NPU; default: CPU).\n"
 #endif // USE_DEEPFILTERNET
         << "  --input_file            Specifies the input text file to be processed.\n"
-        << "  --output_file           Specifies the output audio file to be generated.\n"
+        << "  --output_file           Specifies the output audio filename to be generated in the format {output_file}_{language_style}.wav. For example, if the language is Chinese and the output_filen is \"audio\", the file will be saved as audio_ZH-MIX-EN.wav\n"
         << "  --speed                 Specifies the speed of output audio (default: 1.0).\n"
         << "  --quantize              Indicates whether to use an int8 quantized model (default: false, use fp16 model by default).\n"
         << "  --disable_bert          Indicates whether to disable the BERT model inference (default: false).\n"
@@ -107,7 +107,7 @@ inline Args parse_args(const std::vector<std::string>& argv)
         }
         else if (arg == "--output_file")
         {
-            args.output_file = argv[++i];
+            args.output_filename = argv[++i];
         }
         else if (arg == "--speed")
         {
@@ -165,20 +165,35 @@ inline Args parse_args(int argc, char** argv)
 }
 
 inline void Args::generate_init_file_paths() {
-    if (bert_device == "NPU") {
-        // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
-        zh_bert_path = model_dir / "bert_ZH_static_int8.xml";
+    if (language == "ZH") {
+        if (bert_device == "NPU") {
+            // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
+            zh_bert_path = model_dir / "bert_ZH_static_int8.xml";
+        }
+        else
+            zh_bert_path = model_dir / "bert_ZH_int8.xml";
+        if (quantize) {
+            zh_tts_path = model_dir / "tts_zn_mix_en_int8.xml";
+        }
+        else {
+            //fp16 model
+            zh_tts_path = model_dir / "tts_zn_mix_en.xml";
+        }
     }
-    else
-        zh_bert_path = model_dir / "bert_ZH_int8.xml";
-    if (quantize) {
-        zh_tts_path = model_dir / "tts_zn_mix_en_int8.xml";
-        //zh_bert_path = model_dir / "bert_ZH_int8.xml";
-    }
-    else {
-        //fp16 model
-        zh_tts_path = model_dir / "tts_zn_mix_en.xml";
-        //zh_bert_path = model_dir / "bert_ZH.xml";
+    else if (language == "EN") {
+        if (bert_device == "NPU") {
+            // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
+            zh_bert_path = model_dir / "bert_EN_static_int8.xml";
+        }
+        else
+            zh_bert_path = model_dir / "bert_EN.xml";// TODO :make it int8
+        if (quantize) {
+            zh_tts_path = model_dir / "tts_en_int8.xml";
+        }
+        else {
+            //fp16 model
+            zh_tts_path = model_dir / "tts_en.xml";
+        }
     }
 
     // init tokenizer

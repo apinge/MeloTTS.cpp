@@ -22,6 +22,7 @@
 #include "tts.h"
 #include "info_data.h"
 #include "language_modules/chinese_mix.h"
+#include "language_modules/english.h"
 namespace melo {
     TTS::TTS(std::unique_ptr<ov::Core>& core, const std::filesystem::path & tts_ir_path, const std::string & tts_device, const ov::AnyMap& tts_config,
         const std::filesystem::path& bert_ir_path, const std::string& bert_device, 
@@ -42,9 +43,10 @@ namespace melo {
             _language_module = std::make_shared<ChineseMix>(tts_ir_path.parent_path());
         }
         else if (language == "EN") {
+            _language_module = std::make_shared<English>(tts_ir_path.parent_path());
         }
         else
-            std::cerr <<"[ERROR] Unsupported Language!\n";
+            std::cerr <<"[ERROR] Unsupported Language\n";
 
         //init bert 
         if(!_disable_bert){
@@ -69,7 +71,7 @@ namespace melo {
         std::cout << "TTS::TTS : open puncuation dict.\n";
     }
 
-    void TTS::tts_to_file(const std::string& text, const std::filesystem::path& output_path, const int& speaker_id, const float& speed,
+    void TTS::tts_to_file(const std::string& text, const std::string& output_filename, const int& speaker_id, const float& speed,
         const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w ){
         std::vector<float> audio;
         try {
@@ -96,7 +98,7 @@ namespace melo {
                 std::cout << "TTS::TTS : [NF][DFNet] process time:" << nf_time_duration.count() << " seconds" << std::endl;
             }
 #endif // USE_DEEPFILTERNET
-            write_wave(output_path.string(), audio, sampling_rate_);
+            write_wave(output_filename, audio, sampling_rate_);
             //release memory buffer
             tts_model.release_infer_memory();
             if(!_disable_bert)
@@ -148,7 +150,7 @@ namespace melo {
         }
     }
 
-    void TTS::tts_to_file(const std::vector<std::string>& texts,const std::filesystem::path& output_path, const int& speaker_id, const float& speed,
+    void TTS::tts_to_file(const std::vector<std::string>& texts,const std::string& output_filename, const int& speaker_id, const float& speed,
         const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w) {
         std::vector<float> audio;
         for (const auto& text : texts) {
@@ -165,7 +167,7 @@ namespace melo {
             std::cout << "TTS::TTS : [NF][DFNet] process time:" << nf_time_duration.count() << " seconds" << std::endl;
         }
 #endif // USE_DEEPFILTERNET
-        write_wave(output_path.string(), audio, sampling_rate_);
+        write_wave(output_filename, audio, sampling_rate_);
     }
     std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
         TTS::get_text_for_tts_infer(const std::string& text) {
@@ -292,6 +294,10 @@ namespace melo {
         }
         return pieces;
     }
+    const std::map<std::string, std::map<int, std::string>> TTS::speaker_ids = {
+                {"ZH",{{1, "ZH-MIX-EN"}}},
+                {"EN", {{0, "EN-US"},{1, "EN-BR"},{2, "EN-INDIA"},{3, "EN-AU"},{4, "EN-Default"}}}
+    };
     /**
      * @brief Concatenates audio segments with silence intervals, similar to Python's `audio_numpy_concat`.
      *
@@ -303,7 +309,7 @@ namespace melo {
         int interval = static_cast<int>(std::lroundf(0.05f*sampling_rate/speed));// Insert 0.05 seconds of silent audio
         output.insert(output.end(),interval,0.0);
     }
-    void TTS::write_wave(const std::filesystem::path& output_path, const std::vector<float>& wave, const int32_t& sampling_rate) {
+    void TTS::write_wave(const std::string& output_filename, const std::vector<float>& wave, const int32_t& sampling_rate) {
         try {
             size_t n = wave.size();
             melo::WaveHeader header;
@@ -331,10 +337,10 @@ namespace melo {
                 samples_int16[i] = wave[i] * 32676;
             }
 
-            std::ofstream os(output_path.string(), std::ios::binary);
+            std::ofstream os(output_filename, std::ios::binary);
             if (!os)
             {
-                std::cout << "Failed to create " + output_path.string();
+                std::cout << "Failed to create " + output_filename<<"\n";
 
             }
 
@@ -344,10 +350,10 @@ namespace melo {
 
             if (!os)
             {
-                std::cout << "Write " + output_path.string() + " failed.";
+                std::cout << "Write " + output_filename + " failed.";
 
             }
-            std::cout << "write wav to " << output_path.string() << std::endl;
+            std::cout << "write wav to " << output_filename << std::endl;
             return;
         }
         catch (const std::runtime_error& e) {

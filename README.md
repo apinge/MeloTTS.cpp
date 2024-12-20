@@ -84,7 +84,7 @@ You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. B
 - `--bert_device`: Specifies the OpenVINO device to be used for the BERT model. Supported devices include CPU, GPU, and NPU (default: CPU).
 - `--nf_device`: Specifies the OpenVINO device to be used for the DeepfilterNet model. Supported devices include CPU, GPU, and NPU (default: CPU).
 - `--input_file`: Specifies the input text file to be processed. Make sure that the text is in **UTF-8** format.
-- `--output_file`: Specifies the output *.wav audio file to be generated.
+- `--output_file`: Specifies the output audio filename to be generated in the format {output_file}_{language_style}.wav. For example, if the language is Chinese and the output_file is "audio", the file will be saved as audio_ZH-MIX-EN.wav"
 - `--speed`: Specifies the speed of output audio. The default is 1.0.
 - `--quantize`: Indicates whether to use an int8 quantized model. The default is false, meaning an fp16 model is used by default.
 - `--disable_bert`: Indicates whether to disable the BERT model inference. The default is false.

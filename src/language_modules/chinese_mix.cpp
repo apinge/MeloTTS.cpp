@@ -88,7 +88,7 @@ namespace melo {
             pinyin_to_symbol_map = readPinyinFile(pinyin_to_symbol_map_path);
             pinyin = std::make_shared<cppinyin::PinyinEncoder>(cppinyin_resource);
             normalizer = std::make_shared<text_normalization::TextNormalizer>(data_folder);
-            std::cout << "[INFO] Init language Module Succeed!\n";
+            std::cout << "[INFO] Init Chinese language Module Succeed!\n";
         }
 
         // Only lowercase letters are accepted here! 

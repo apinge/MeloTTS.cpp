@@ -35,6 +35,7 @@ set(SOURCE_FILES
     src/tts.cpp
     src/language_modules/cmudict.cpp
     src/language_modules/chinese_mix.cpp
+    src/language_modules/english.cpp
     src/language_modules/tone_sandhi.cpp
     src/language_modules/language_module_base.cpp
     src/text_normalization/text_normalization.cpp   
@@ -73,6 +74,7 @@ set(HEADER_FILES
     src/tts.h
     src/language_modules/cmudict.h
     src/language_modules/chinese_mix.h
+    src/language_modules/english.h
     src/language_modules/tone_sandhi.h
     src/language_modules/language_module_base.h
     src/text_normalization/text_normalization.h
