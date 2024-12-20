@@ -33,8 +33,8 @@ namespace melo {
         ChineseMix(const std::filesystem::path& data_folder);
         virtual ~ChineseMix() = default;
         virtual std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer) override;
-        virtual inline int64_t get_symbol_to_id(const std::string& symbol) override { return symbol_to_id.at(symbol); }
-        std::shared_ptr<text_normalization::TextNormalizer> normalizer; // speical test normalizer for chinese
+        virtual inline int64_t symbol_to_id(const std::string& symbol) override { return symbol_to_id_mp.at(symbol); }
+        virtual std::string text_normalize(const std::string& text) override;
     private:
         [[maybe_unused]] std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(std::vector<std::pair<std::string, std::string>>& segment);
@@ -77,7 +77,6 @@ namespace melo {
             return (code_point >= 0x4E00 && code_point <= 0x9FA5);
         }
 
-        std::string text_normalize(const std::string& text);
         std::string filter_text(const std::string& text);
 
         const std::unordered_set<char> simple_initials = { 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'r', 'z', 'c', 's', 'y', 'w' };
@@ -95,8 +94,9 @@ namespace melo {
         std::shared_ptr<cppjieba::Jieba> jieba;
         std::shared_ptr<cppinyin::PinyinEncoder> pinyin;
         std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> pinyin_to_symbol_map;
+        std::shared_ptr<text_normalization::TextNormalizer> normalizer; // speical test normalizer for chinese
 
-        const std::unordered_map<std::string, int64_t> symbol_to_id =
+        const std::unordered_map<std::string, int64_t> symbol_to_id_mp =
         { { "_", 0 }, { "AA", 1 }, { "E", 2 }, { "EE", 3 }, { "En", 4 }, { "N", 5 }, { "OO", 6 }, { "V", 7 }, { "a", 8 }, { "a,", 9 }, { "aa", 10 },
         { "ae", 11 }, { "ah", 12 }, { "ai", 13 }, { "an", 14 }, { "ang", 15 }, { "ao", 16 }, { "aw", 17 }, { "ay", 18 }, { "b", 19 }, { "by", 20 },
         { "c", 21 }, { "ch", 22 }, { "d", 23 }, { "dh", 24 }, { "dy", 25 }, { "e", 26 }, { "e,", 27 }, { "eh", 28 }, { "ei", 29 }, { "en", 30 },

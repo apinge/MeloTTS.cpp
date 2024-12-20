@@ -12,7 +12,7 @@ namespace melo {
         // Grapheme to Phoneme conversion
         virtual std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer) = 0;
         virtual std::string text_normalize(const std::string& text) = 0;
-        virtual inline int64_t get_symbol_to_id(const std::string& symbol) = 0;
+        virtual inline int64_t symbol_to_id(const std::string& symbol) = 0;
     };
     /*
     Converts a string of text to a sequence of IDs corresponding to the symbols in the text.
@@ -33,7 +33,7 @@ namespace melo {
         std::vector<int> word2ph(word2ph_list.begin(), word2ph_list.end());
 
         for (int i = 0, j = 1; i < n && j < 2 * n + 1; ++i, j += 2) {
-            phones[j] = language_module_ptr->get_symbol_to_id(phones_list[i]);
+            phones[j] = language_module_ptr->symbol_to_id(phones_list[i]);
             lang_ids[j] = 3; //chinese language id
             tones[j] = tones_list[i];
         }
