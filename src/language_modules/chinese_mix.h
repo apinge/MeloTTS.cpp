@@ -21,6 +21,7 @@
 #include <memory>
 #include "openvino_tokenizer.h"
 #include "language_module_base.h"
+#include "text_normalization/text_normalization.h"
 #include "Jieba.hpp"
 #include "cmudict.h"
 #include "cppinyin.h"
@@ -33,6 +34,7 @@ namespace melo {
         virtual ~ChineseMix() = default;
         virtual std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer) override;
         virtual inline int64_t get_symbol_to_id(const std::string& symbol) override { return symbol_to_id.at(symbol); }
+        std::shared_ptr<text_normalization::TextNormalizer> normalizer; // speical test normalizer for chinese
     private:
         [[maybe_unused]] std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(std::vector<std::pair<std::string, std::string>>& segment);

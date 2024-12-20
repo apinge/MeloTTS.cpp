@@ -26,6 +26,7 @@ namespace text_normalization {
     TextNormalizer::TextNormalizer(const std::filesystem::path& char_map_folder) : SENTENCE_SPLITOR(L"([：、；。？！;?!][”’]?)") {
         initialize_constant_maps();
         initialize_char_maps(char_map_folder);
+        std::cout << "[INFO] TextNormalizer is constructed!\n";
     }
 
     // 分割函数

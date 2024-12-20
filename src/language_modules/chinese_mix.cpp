@@ -80,13 +80,14 @@ namespace melo {
                 std::cerr << "[ERROR] ChineseMix::file does not exists: " << std::filesystem::absolute(cmudict_path) << "\n";
             }
 #endif
-            if (!std::filesystem::exists(pinyin_to_symbol_map_path) || !std::filesystem::exists(cppjieba_dict)
+            if (!std::filesystem::exists(data_folder) || !std::filesystem::exists(pinyin_to_symbol_map_path) || !std::filesystem::exists(cppjieba_dict)
                 || !std::filesystem::exists(cppinyin_resource) || !std::filesystem::exists(cmudict_path))
                 std::cerr << "[ERROR] ChineseMix::file does not exists!\n";
             cmudict = std::make_shared<melo::CMUDict>(cmudict_path.string());
             jieba = std::make_shared<cppjieba::Jieba>(cppjieba_dict);
             pinyin_to_symbol_map = readPinyinFile(pinyin_to_symbol_map_path);
             pinyin = std::make_shared<cppinyin::PinyinEncoder>(cppinyin_resource);
+            normalizer = std::make_shared<text_normalization::TextNormalizer>(data_folder);
             std::cout << "[INFO] Init language Module Succeed!\n";
         }
 
@@ -421,14 +422,14 @@ namespace melo {
 
         // Convert uppercase to lowercase
         std::string ChineseMix::text_normalize(const std::string& text) {
-            std::string norm_text;
-            for (const auto& ch : text) {
+            std::string norm_text = text_normalization::wstring_to_string(normalizer->normalize_sentence(text_normalization::string_to_wstring(text)));
+            std::for_each(norm_text.begin(), norm_text.end(), [](auto& ch) {
                 if (ch <= 'Z' && ch >= 'A')
-                    norm_text.push_back(ch + 'a' - 'A');
-                else
-                    norm_text += ch;
-            }
-            return filter_text(norm_text);
+                    ch = ch + 'a' - 'A';
+                });
+            norm_text =  filter_text(norm_text);
+            std::cout << "[INFO] normed test is:" << norm_text << std::endl;
+            return norm_text;
         }
         // @brief This functionality cleans up text by retaining only Chinese characters, English letters,
         //  and valid punctuation symbols (including space), while removing all other characters.

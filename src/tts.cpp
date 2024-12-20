@@ -75,11 +75,9 @@ namespace melo {
         try {
             std::vector<std::string> sentences = split_sentences_into_pieces(text, false);
             for (const auto& sentence : sentences) {
-                std::string normalized_sentence = text_normalization::wstring_to_string(normalizer->normalize_sentence(text_normalization::string_to_wstring(sentence)));
-                std::cout << normalized_sentence  <<std::endl;
                 // structured binding
                 auto startTime = Time::now();
-                auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(normalized_sentence);
+                auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(sentence);
 
                 auto preProcess = get_duration_ms_till_now(startTime);
 
@@ -124,11 +122,8 @@ namespace melo {
             for (const auto& sentence : sentences) {
                 if(!sentence.size()) continue;
                 auto startTime = Time::now();
-                std::string normalized_sentence = text_normalization::wstring_to_string(normalizer->normalize_sentence(text_normalization::string_to_wstring(sentence)));
-                std::cout << normalized_sentence << std::endl;
-
                 // structured binding
-                auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(normalized_sentence);
+                auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(sentence);
                 auto preProcess = get_duration_ms_till_now(startTime);
 
                 std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature, speed, speaker_id, this->_disable_bert);
@@ -366,5 +361,4 @@ namespace melo {
             std::cerr << "Unknown exception caught" << std::endl;
         }
     }
-     std::shared_ptr<text_normalization::TextNormalizer> TTS::normalizer;
 }
