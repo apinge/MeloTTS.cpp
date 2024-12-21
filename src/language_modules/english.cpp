@@ -31,18 +31,26 @@ namespace melo{
         std::vector<int64_t> tones_list{ 0 };
         std::vector<int> word2ph{ 1 };
 
-        std::vector<std::string> tokenized_sentence = tokenizer->word_segment(const_cast<std::string&>(sentence));
-
+        std::vector<std::string> tokenized = tokenizer->word_segment(const_cast<std::string&>(sentence));
+        std::vector<std::vector<std::string>> ph_groups;
         //remove ## in suffix
-        for (auto& token : tokenized_sentence) {
-            if (token.front() == '#')
-                token = token.substr(2);
+        for (auto& token : tokenized) {
+            if (token.front() == '#') {
+                if (!ph_groups.size()) {
+                    std::cerr << "[ERROR] English::g2p: Suffix should has Prefix\n";
+                    continue;
+                }
+                ph_groups.back().emplace_back(token.substr(2));
+            }
+            else
+                ph_groups.push_back({token});
         }
         bool cmudict_unfound = false;
-        for (auto& token : tokenized_sentence) {
+        for (auto& group : ph_groups) {
             int phone_len = 0;
-            int word_len = 1;//TODO 
-            auto syllables = cmudict->find(token);
+            int word_len = group.size();
+            std::string w = std::accumulate(group.begin(), group.end(), std::string{});
+            auto syllables = cmudict->find(w);
 #ifdef MELO_DEBUG
             if (syllables.has_value()) {
                 for (std::cout << "token:" << token << ":"; auto & vec:syllables.value().get()) {
@@ -61,7 +69,7 @@ namespace melo{
             }
             else {
                 cmudict_unfound = true;
-                std::cout << "[WARNNING] cmudict cannot find:" << token << " in " << sentence << std::endl;
+                std::cout << "[WARNNING] cmudict cannot find:" << w << " in " << sentence << std::endl;
                 continue;
             }
             //std::cout << "phone_len" << phone_len << ' ' << "word_len" << word_len << std::endl;
