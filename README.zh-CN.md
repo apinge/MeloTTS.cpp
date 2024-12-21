@@ -84,7 +84,7 @@ cmake -S . -B build -DUSE_DEEPFILTERNET=OFF
 - `--bert_device`: 指定用于 BERT 模型的 OpenVINO 设备。支持的设备包括 CPU、GPU 和 NPU（默认：CPU）。
 - `--nf_device`: 指定用于 DeepfilterNet 模型的 OpenVINO 设备。支持的设备包括 CPU、GPU 和 NPU（默认：CPU）。
 - `--input_file`: 指定要处理的输入文本文件。确保文本是 **UTF-8** 格式。
-- `--output_file`: 指定生成的输出音频文件名，格式为 output_filename_{language_style_name}.wav。例如，如果语言为中文且 output_file 为 "audio"，文件将保存为 audio_ZH-MIX-EN.wav。
+- `--output_file`: 指定生成的输出音频文件名，格式为 output_filename_{language_style}.wav。例如，如果语言为中文且 output_file 为 "audio"，文件将保存为 audio_ZH-MIX-EN.wav。
 - `--speed`: 指定输出音频的速度。默认值为 1.0。
 - `--quantize`: 指示是否使用 int8 量化模型。默认值为 `false`，表示默认使用 fp16 模型。
 - `--disable_bert`: 指示是否禁用 BERT 模型推理。默认值为 false。

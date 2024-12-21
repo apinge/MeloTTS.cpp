@@ -11,7 +11,7 @@ namespace melo {
 		virtual std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer) override;
 		virtual std::string text_normalize(const std::string& text) override;
 		virtual inline int64_t symbol_to_id(const std::string& symbol) override { return symbol_to_id_mp.at(symbol); }
-
+		virtual inline std::string get_language_name() { return "EN"; };
 		private:
 			std::shared_ptr<CMUDict> cmudict;
 			const std::unordered_map<std::string, int> symbol_to_id_mp = {

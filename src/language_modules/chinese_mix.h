@@ -35,12 +35,13 @@ namespace melo {
         virtual std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer) override;
         virtual inline int64_t symbol_to_id(const std::string& symbol) override { return symbol_to_id_mp.at(symbol); }
         virtual std::string text_normalize(const std::string& text) override;
+        // Here, this actually refers to ZH_MIX_EN in the Python version.To avoid confusion, we try to use only ZH in the context.
+        virtual inline std::string get_language_name() { return "ZH";}; 
     private:
         [[maybe_unused]] std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(const std::string& word, const std::string& tag);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> _chinese_g2p(std::vector<std::pair<std::string, std::string>>& segment);
         std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p_en(const std::string& word, std::vector<std::string>& tokenized);      
-        std::tuple<std::vector<std::string>, std::vector<int64_t>> refine_syllables(const std::vector<std::vector<std::string>>& syllables);
-        std::vector<int> distribute_phone(const int& n_phone, const int& n_word);
+
 
         //load pinyin_to_symbol_map
         std::shared_ptr<std::unordered_map<std::string, std::vector<std::string>>> readPinyinFile(const std::filesystem::path& filepath);
