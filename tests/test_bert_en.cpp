@@ -14,7 +14,7 @@ public:
         std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
         std::filesystem::path en_bert_subword_tokenizer = model_dir / "bert-base-uncased" / "bert_subword_tokenizer.xml";
         std::filesystem::path en_bert_subword_detokenizer = model_dir / "bert-base-uncased" / "bert_subword_detokenizer.xml";
-        std::filesystem::path runtime_path = "C:\\Users\\gta\\source\\repos\\openvino_tokenizers_windows_2024.5.0.0_x86_64\\runtime\\bin\\intel64\\Release\\openvino_tokenizers.dll";
+        std::filesystem::path runtime_path = "C:\\Users\\gta\\source\\repos\\openvino_tokenizers_windows_2024.6.0.0_x86_64\\runtime\\bin\\intel64\\Release\\openvino_tokenizers.dll";
 
 
         ov_tokenizer_ptr = std::make_shared<melo::OpenVinoTokenizer>(core_ptr, runtime_path, en_bert_subword_tokenizer, en_bert_subword_detokenizer);

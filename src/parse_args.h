@@ -31,8 +31,8 @@ struct Args
     void generate_init_file_paths();
     const std::unordered_set<std::string> supported_languages = {"ZH","EN"};
  
-    std::filesystem::path zh_tts_path; //tts_model
-    std::filesystem::path zh_bert_path; //bert_model
+    std::filesystem::path tts_path; //tts_model
+    std::filesystem::path bert_path; //bert_model
     //std::filesystem::path vocab_bert_path;// init tokenizer
     std::filesystem::path tokenizer_model_folder; // path of openvino tokenizer folder
     std::filesystem::path tokenizer_runtime_path; // path of openivno tokenizer runtime 
@@ -168,37 +168,37 @@ inline void Args::generate_init_file_paths() {
     if (language == "ZH") {
         if (bert_device == "NPU") {
             // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
-            zh_bert_path = model_dir / "bert_ZH_static_int8.xml";
+            bert_path = model_dir / "bert_ZH_static_int8.xml";
         }
         else
-            zh_bert_path = model_dir / "bert_ZH_int8.xml";
+            bert_path = model_dir / "bert_ZH_int8.xml";
         if (quantize) {
-            zh_tts_path = model_dir / "tts_zn_mix_en_int8.xml";
+            tts_path = model_dir / "tts_zn_mix_en_int8.xml";
         }
         else {
             //fp16 model
-            zh_tts_path = model_dir / "tts_zn_mix_en.xml";
+            tts_path = model_dir / "tts_zn_mix_en.xml";
         }
     }
     else if (language == "EN") {
         if (bert_device == "NPU") {
             // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
-            zh_bert_path = model_dir / "bert_EN_static_int8.xml";
+            bert_path = model_dir / "bert_EN_static_int8.xml";
         }
         else
-            zh_bert_path = model_dir / "bert_EN.xml";// TODO :make it int8
+            bert_path = model_dir / "bert_EN_int8.xml";
         if (quantize) {
-            zh_tts_path = model_dir / "tts_en_int8.xml";
+            tts_path = model_dir / "tts_en_int8.xml";
         }
         else {
             //fp16 model
-            zh_tts_path = model_dir / "tts_en.xml";
+            tts_path = model_dir / "tts_en.xml";
         }
     }
 
     // init tokenizer
     //vocab_bert_path = model_dir / "vocab_bert.txt";
-    tokenizer_runtime_path = "C:\\Users\\gta\\source\\repos\\openvino_tokenizers_windows_2024.5.0.0_x86_64\\runtime\\bin\\intel64\\Release\\openvino_tokenizers.dll";// Temporarily hardcoded
+    tokenizer_runtime_path = "C:\\Users\\gta\\source\\repos\\openvino_tokenizers_windows_2024.6.0.0_x86_64\\runtime\\bin\\intel64\\Release\\openvino_tokenizers.dll";// Temporarily hardcoded
     if (language == "ZH")
         tokenizer_model_folder = model_dir / "bert-base-multilingual-uncased";
     else if (language == "EN")

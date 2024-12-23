@@ -70,7 +70,7 @@ int main(int argc, char** argv)
     // Init core
     std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     auto startTime = Time::now();
-    melo::TTS model(core_ptr, args.zh_tts_path,args.tts_device,set_tts_config(args.tts_device, args.quantize), args.zh_bert_path, args.bert_device, 
+    melo::TTS model(core_ptr, args.tts_path,args.tts_device,set_tts_config(args.tts_device, args.quantize), args.bert_path, args.bert_device, 
 #ifdef USE_DEEPFILTERNET
     args.nf_ir_path, args.nf_device,
 #endif // USE_DEEPFILTERNET
