@@ -34,15 +34,15 @@ The table below outlines the supported devices for each model:
 
 ## Setup and Execution Guide
 
-### 1. Download OpenVINO C++ Package
+### 1. Download OpenVINO™ GenAI C++ Package
 
-To download the OpenVINO C++ package for Windows, please refer to the following link: [Install OpenVINO for Windows]( https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-windows.html).
-For **OpenVINO 2024.5** on Windows, you can run the command line in the command prompt (cmd).
+To download the OpenVINO GenAI C++ package, please refer to the following link: [Install OpenVINO™ GenAI](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-genai.html).
+For **OpenVINO™ GenAI 2024.6** on Windows, you can run the command line in the command prompt (cmd).
 ```
-curl -O https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.5/windows/w_openvino_toolkit_windows_2024.5.0.17288.7975fa5da0c_x86_64.zip --ssl-no-revoke
-tar -xvf w_openvino_toolkit_windows_2024.5.0.17288.7975fa5da0c_x86_64.zip
+cd <user_home>/Downloads
+curl -L https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2024.6/windows/openvino_genai_windows_2024.6.0.0_x86_64.zip --output openvino_genai_2024.6.0.0.zip
 ```
-For Linux, you can download the C++ package from this link: [Install OpenVINO for Linux](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-linux.html). For **OpenVINO 2024.5** on Linux, simply download it from https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.5/linux and unzip the package.
+For Linux, you can download the C++ package from https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2024.6/linux/ and unzip the package.
 
 For additional versions and more information about OpenVINO, visit the official OpenVINO Toolkit page: [OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html).
 
@@ -55,14 +55,14 @@ git clone https://github.com/apinge/MeloTTS.cpp.git
 ### 3. Build and Run
 #### 3.1 Windows Build and Run
 ```
-<OpenVINO_DIR>\setupvars.bat
+<OpenVINO_GenAI_DIR>\setupvars.bat
 cd MeloTTS.cpp
 cmake -S . -B build && cmake --build build --config Release
 .\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_file audio.wav
 ```
 #### 3.2 Linux Build and Run
 ```
-source <OpenVINO_DIR>/setupvars.sh
+source <OpenVINO_GenAI_DIR>/setupvars.sh
 cd MeloTTS.cpp 
 cmake -S . -B build && cmake --build build --config Release
 ./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_file audio.wav

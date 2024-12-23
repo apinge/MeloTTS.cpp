@@ -198,7 +198,13 @@ inline void Args::generate_init_file_paths() {
 
     // init tokenizer
     //vocab_bert_path = model_dir / "vocab_bert.txt";
-    tokenizer_runtime_path = "C:\\Users\\gta\\source\\repos\\openvino_tokenizers_windows_2024.6.0.0_x86_64\\runtime\\bin\\intel64\\Release\\openvino_tokenizers.dll";// Temporarily hardcoded
+#ifdef _WIN32 
+    tokenizer_runtime_path = "openvino_tokenizers.dll";
+#elif  __linux__
+    tokenizer_runtime_path = "libopenvino_tokenizers.so";
+#else
+    std::cerr << "[ERROR] Unsupported Operating System.\n"
+#endif
     if (language == "ZH")
         tokenizer_model_folder = model_dir / "bert-base-multilingual-uncased";
     else if (language == "EN")

@@ -26,7 +26,13 @@ public:
         std::filesystem::path zh_bert_subword_detokenizer = model_path / "bert-base-multilingual-uncased" / "bert_subword" / "bert_subword_detokenizer.xml";
         std::filesystem::path en_bert_subword_tokenizer = model_path / "bert-base-uncased" /  "bert_subword_tokenizer.xml";
         std::filesystem::path en_bert_subword_detokenizer = model_path / "bert-base-uncased" /  "bert_subword_detokenizer.xml";
-        std::filesystem::path dll_path = "C:\\Users\\gta\\source\\repos\\openvino_tokenizers_windows_2024.5.0.0_x86_64\\runtime\\bin\\intel64\\Release\\openvino_tokenizers.dll";
+#ifdef _WIN32 
+        std::filesystem::path dll_path = "openvino_tokenizers.dll";
+#elif  __linux__
+        std::filesystem::path dll_path = "libopenvino_tokenizers.so";
+#else
+        std::cerr << "[ERROR] Unsupported Operating System.\n"
+#endif
         core = std::make_unique<ov::Core>();
         zh_tokenizer = melo::OpenVinoTokenizer(core,dll_path,zh_bert_subword_tokenizer,zh_bert_subword_detokenizer);
         en_tokenizer = melo::OpenVinoTokenizer(core,dll_path,en_bert_subword_tokenizer,en_bert_subword_detokenizer);

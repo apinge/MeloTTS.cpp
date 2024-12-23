@@ -37,14 +37,14 @@ MeloTTS.cpp的設計與[原始PyTorch 版本](https://github.com/myshell-ai/Melo
 
 ### 1. 下載 OpenVINO C++ Package
 
-若要下載適用於 Windows 的 OpenVINO C++ 套件，請參考以下連結：[Install OpenVINO for Windows](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-windows.html)。
-對於 OpenVINO 2024.5 在 Windows 上的安裝，可以在cmd中執行命令列。
+若要下載 OpenVINO GenAI C++ 套件，請參考以下連結：[Install OpenVINO™ GenAI](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-genai.html)。
+對於 **OpenVINO™ GenAI 2024.6** 在 Windows 上的安裝，可以在cmd中執行命令列。
 
 ```
-curl -O https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.5/windows/w_openvino_toolkit_windows_2024.5.0.17288.7975fa5da0c_x86_64.zip --ssl-no-revoke
-tar -xvf w_openvino_toolkit_windows_2024.5.0.17288.7975fa5da0c_x86_64.zip
+cd <user_home>/Downloads
+curl -L https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2024.6/windows/openvino_genai_windows_2024.6.0.0_x86_64.zip --output openvino_genai_2024.6.0.0.zip
 ```
-對於 Linux，可以從以下連結下載 C++ 套件：[Install OpenVINO for Linux](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-archive-linux.html)。對於 OpenVINO 2024.5 在 Linux 上的安裝，只需要從 https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.5/linux 下載並解壓縮該套件。
+對於 OpenVINO 2024.6 在 Linux 上的安裝，只需要從 https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2024.6/linux/ 下載並解壓縮該套件。
 
 有關其他版本和更多 OpenVINO 的資訊，請參考 OpenVINO 官方工具包頁面：[OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html)
 
@@ -57,14 +57,14 @@ git clone https://github.com/apinge/MeloTTS.cpp.git
 ### 3. 編譯與執行
 #### 3.1 Windows 編譯與執行
 ```
-<OpenVINO_DIR>\setupvars.bat
+<OpenVINO_GenAI_DIR>\setupvars.bat
 cd MeloTTS.cpp
 cmake -S . -B build && cmake --build build --config Release
 .\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_file audio.wav
 ```
 #### 3.2 Linux 編譯與執行
 ```
-source <OpenVINO_DIR>/setupvars.sh
+source <OpenVINO_GenAI_DIR>/setupvars.sh
 cd MeloTTS.cpp 
 cmake -S . -B build && cmake --build build --config Release
 ./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_file audio.wav
