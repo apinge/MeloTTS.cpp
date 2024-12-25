@@ -48,7 +48,7 @@ curl -L https://storage.openvinotoolkit.org/repositories/openvino_genai/packages
 ### 2. Clone仓库
 ```
 git lfs install
-git clone https://github.com/apinge/MeloTTS.cpp.git
+git clone https://github.com/apinge/MeloTTS.cpp.git -b multilang-develop
 ```
 
 ### 3. 编译与运行
