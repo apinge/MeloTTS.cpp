@@ -266,7 +266,9 @@ namespace melo {
             if (count_len > min_len || i == m - 1) {
 
                 if (new_sent.back() == ' ') new_sent.pop_back();
-                new_sentences.emplace_back(std::move(new_sent));
+                // new_sent it self is only one piece and it is space, then skip
+                if (!std::all_of(new_sent.begin(), new_sent.end(), [&](char& ch) { return ch == ' '; }))
+                    new_sentences.emplace_back(std::move(new_sent));
                 new_sent.clear();
                 count_len = 0;
             }
@@ -277,8 +279,6 @@ namespace melo {
             new_sentences[new_sentences.size() - 2] += new_sentences.back();
             new_sentences.pop_back();
         }
-        else if(new_sentences.size()==1&&new_sentences[0].size()&&new_sentences[0][0]==' ') // new sentences it self is only one piece and it is space, then skip
-            new_sentences.clear();
         return new_sentences;
 
     }

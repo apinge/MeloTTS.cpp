@@ -91,8 +91,12 @@ namespace text_normalization {
         modified_sentence = std::regex_replace(modified_sentence, std::wregex(L"ψ|Ψ"), L"普赛");
         modified_sentence = std::regex_replace(modified_sentence, std::wregex(L"ω|Ω"), L"欧米伽");
         modified_sentence = std::regex_replace(modified_sentence, std::wregex(L"@"), L" at ");
-        modified_sentence = std::regex_replace(modified_sentence, std::wregex(L"www."), L" www dot ");
-        modified_sentence = std::regex_replace(modified_sentence, std::wregex(L".com"), L" dot come ");
+        // Regular expression to match "www."
+        // Explanation of "www\\.": 
+        // - In regular expressions, "." matches any character. To match a literal ".", we use "\."
+        // - In C++ strings, "\" needs to be escaped as "\\". So "\." becomes "\\." in C++ code.
+        modified_sentence = std::regex_replace(modified_sentence, std::wregex(L"www\\."), L" www dot ");
+        modified_sentence = std::regex_replace(modified_sentence, std::wregex(L"\\.com"), L" dot come ");
         //modified_sentence = std::regex_replace(modified_sentence, std::wregex(L"([-——《》【】<=>{}()（）#&@“”^_|\\\\])"), L"");
         return modified_sentence;
     }
