@@ -65,7 +65,6 @@ tokenizer = {"<s>":0,"<pad>":1,"</s>":2,"<unk>":3,"<mask>":4,"e":5,"a":6,"s":7,"
 text = "hello"
 text = text.lower()  # Input text only lower case
 # turn text to input id
-
 input_ids = [tokenizer[char] for char in text]
 input_ids = [tokenizer['<s>']] + input_ids + [tokenizer['</s>']]
 input_ids = torch.tensor([input_ids]).to('cpu')
@@ -113,8 +112,8 @@ last_hidden_state = torch.from_numpy(
             encoder(inputs, share_inputs=True, share_outputs=True)["last_hidden_state"])
 
 #last_hidden_state = torch.from_numpy(encoder_outputs[encoder.outputs[0]]).to("cpu")
-decoder_input_ids = torch.tensor([[2]])
-attention_mask = torch.tensor([[1, 1, 1, 1, 1, 1, 1]])
+decoder_input_ids = torch.tensor([[2]])#Init state
+
 
 while(True):
     print("==========")
