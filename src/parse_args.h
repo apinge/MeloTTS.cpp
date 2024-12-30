@@ -26,7 +26,7 @@ struct Args
     bool quantize = false;
     bool disable_bert = false;
     bool disable_nf = false;
-    std::string language = "ZH";
+    std::string language = "EN";
 
     void generate_init_file_paths();
     const std::unordered_set<std::string> supported_languages = {"ZH","EN"};
@@ -56,14 +56,14 @@ inline void usage(const std::string& prog)
         << "  --nf_device             Specifies the OpenVINO device to be used for the DeepfilterNet model (Supported devices include CPU, GPU, and NPU; default: CPU).\n"
 #endif // USE_DEEPFILTERNET
         << "  --input_file            Specifies the input text file to be processed.\n"
-        << "  --output_file           Specifies the output audio filename to be generated in the format {output_file}_{language_style}.wav. For example, if the language is Chinese and the output_filen is \"audio\", the file will be saved as audio_ZH-MIX-EN.wav\n"
+        << "  --output_filename       Specifies the output audio filename to be generated in the format {output_filename}_{language_style}.wav. For example, if the language is Chinese and the output_filen is \"audio\", the file will be saved as audio_ZH-MIX-EN.wav\n"
         << "  --speed                 Specifies the speed of output audio (default: 1.0).\n"
         << "  --quantize              Indicates whether to use an int8 quantized model (default: false, use fp16 model by default).\n"
         << "  --disable_bert          Indicates whether to disable the BERT model inference (default: false).\n"
 #ifdef USE_DEEPFILTERNET
         << "  --disable_nf            Indicates whether to disable the DeepfilterNet model inference (default: false).\n"
 #endif // USE_DEEPFILTERNET
-        << "  --language              Specifies the language for TTS (default: ZH).\n";
+        << "  --language              Specifies the language for TTS (default: EN).\n";
 }
 
 static bool to_bool(const std::string& s) {
@@ -105,7 +105,7 @@ inline Args parse_args(const std::vector<std::string>& argv)
         {
             args.input_file = argv[++i];
         }
-        else if (arg == "--output_file")
+        else if (arg == "--output_filename")
         {
             args.output_filename = argv[++i];
         }

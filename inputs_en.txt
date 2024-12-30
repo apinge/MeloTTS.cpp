@@ -1,0 +1,2 @@
+When possible, the compiler will deduce the missing template arguments from the function arguments.
+I am absolutely thrilled to share this incredible news with everyone.

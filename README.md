@@ -58,14 +58,14 @@ git clone https://github.com/apinge/MeloTTS.cpp.git -b multilang-develop
 <OpenVINO_GenAI_DIR>\setupvars.bat
 cd MeloTTS.cpp
 cmake -S . -B build && cmake --build build --config Release
-.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_file audio.wav
+.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_filename audio
 ```
 #### 3.2 Linux Build and Run
 ```
 source <OpenVINO_GenAI_DIR>/setupvars.sh
 cd MeloTTS.cpp 
 cmake -S . -B build && cmake --build build --config Release
-./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_file audio.wav
+./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_filename audio
 ```
 #### 3.3 Enabling and Disabling DeepFilterNet
 DeepFilterNet functionality is currently supported only on Windows and is used to filter noise from int8 quantized models. By default, it is enabled, but you can enable or disable it during the CMake stage using the `-DUSE_DEEPFILTERNET` option.
@@ -84,12 +84,12 @@ You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. B
 - `--bert_device`: Specifies the OpenVINO device to be used for the BERT model. Supported devices include CPU, GPU, and NPU (default: CPU).
 - `--nf_device`: Specifies the OpenVINO device to be used for the DeepfilterNet model. Supported devices include CPU, GPU, and NPU (default: CPU).
 - `--input_file`: Specifies the input text file to be processed. Make sure that the text is in **UTF-8** format.
-- `--output_file`: Specifies the output audio filename to be generated in the format {output_file}_{language_style}.wav. For example, if the language is Chinese and the output_file is "audio", the file will be saved as audio_ZH-MIX-EN.wav"
+- `--output_filename`: Specifies the output audio filename to be generated in the format {output_filename}_{language_style}.wav. For example, if the language is Chinese and the output_filename is "audio", the file will be saved as audio_ZH-MIX-EN.wav"
 - `--speed`: Specifies the speed of output audio. The default is 1.0.
 - `--quantize`: Indicates whether to use an int8 quantized model. The default is false, meaning an fp16 model is used by default.
 - `--disable_bert`: Indicates whether to disable the BERT model inference. The default is false.
 - `--disable_nf`: Indicates whether to disable the DeepfilterNet model inference (default: false).
-- `--language`: Specifies the language for TTS. The default language is Chinese (`ZH`).
+- `--language`: Specifies the language for TTS. The default language is English (`EN`).
 
 ## NPU Device Support
 The BERT and DeepFilterNet models in the pipeline support NPU as the inference device, utilizing the integrated NPUs in Meteor Lake and Lunar Lake.
