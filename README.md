@@ -4,7 +4,7 @@
 </p>
 
 
-This repository offers a C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO, supporting seamless deployment on CPU, GPU, and NPU devices. Currently, this repository only supports Chinese mixed with English. Support for [English model](https://huggingface.co/myshell-ai/MeloTTS-English) is coming next.
+This repository offers a C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO, supporting seamless deployment on CPU, GPU, and NPU devices. Currently, this repository supports both Chinese with mixed English and English. Support for [Japanese model](https://huggingface.co/myshell-ai/MeloTTS-Japanese) is coming next.
 
 ## Pipeline Design
 
@@ -128,8 +128,8 @@ Note that all the drivers differs between Windows and Linux, so make sure to fol
 ## Future Development Plan
 Here are some features and improvements planned for future releases:
 
-1. **Add English language TTS support**: 
-   - Enable English text-to-speech (TTS) functionality, but tokenization for English language input is not yet implemented.
+1. **Add Japanese language TTS support**: 
+   - Enable Japanese text-to-speech (TTS) functionality, but tokenization for Japanese language input is not yet implemented.
    
 2. **Enhancing Quality in Quantized TTS Models**:
    - The current INT8 quantized model exhibits slight background noise. As a workaround, we integrated DeepFilterNet for post-processing. Moving forward, we aim to address the noise issue more effectively by the quantization techniques.

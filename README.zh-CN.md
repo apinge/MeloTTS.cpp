@@ -3,7 +3,7 @@
    <b>< <a href='./README.md'>English</a> </b> | <b>简体中文</b> | <a href='./README.zh-TW.md'>繁體中文</a>  >
 </p>
 
-**MeloTTS.cpp** 是[meloTTS](https://github.com/myshell-ai/MeloTTS) 的 C++ 实现，**MeloTTS**是由 MyShell.ai 发布的一个高质量、多语言的文本转语音 (Text To Speech) 库，支持英语、中文以及其他多种语言。本仓库基于**OpenVINO**，支持在 CPU、GPU 和 NPU 边缘设备上的部署。目前，本仓库仅支持中文(混合英文)。对[MeloTTS 英文模型](https://huggingface.co/myshell-ai/MeloTTS-English)的支持还处于开发阶段。
+**MeloTTS.cpp** 是[meloTTS](https://github.com/myshell-ai/MeloTTS) 的 C++ 实现，**MeloTTS**是由 MyShell.ai 发布的一个高质量、多语言的文本转语音 (Text To Speech) 库，支持英语、中文以及其他多种语言。本仓库基于**OpenVINO**，支持在 CPU、GPU 和 NPU 边缘设备上的部署。目前，本仓库支持中文(混合英文)和纯英语。计划支持[MeloTTS 日文模型](https://huggingface.co/myshell-ai/MeloTTS-Japanese)。
 
 ## Pipeline Design
 
@@ -127,7 +127,7 @@ BERT 和 DeepFilterNet 模型支持将 NPU 作为推理设备，利用 Meteor La
 
 ## 开发计划
 
-1. **实现MeloTTS英文版本**
+1. **实现MeloTTS日文版本**
    
 2. **提高量化质量**:
    - 当前的INT8量化模型表现出轻微的背景噪声。我们集成了 DeepFilterNet 进行后处理。未来的目标是通过量化技术解决噪声问题。
