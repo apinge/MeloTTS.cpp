@@ -25,6 +25,7 @@ namespace melo {
     }
     std::vector<std::string> MiniBartG2P::forward(const std::string& input) {
         _input_ids.clear(); _attention_mask.clear(); _decoder_input_ids.clear();
+        std::vector<std::string> res;
         try {
             std::string text = _to_lower(input);
             unsigned long long n = text.length();
@@ -62,8 +63,8 @@ namespace melo {
             2 encoder_hidden_states*/
             _decoder_input_ids = { 2 };
             for (;;) {
-                for (std::cout << "_decoder_input_ids:"; auto & x:_decoder_input_ids) std::cout << x << ' ';
-                std::cout << std::endl;
+                //for (std::cout << "_decoder_input_ids:"; auto & x:_decoder_input_ids) std::cout << x << ' ';
+                //std::cout << std::endl;
                 ov::Tensor encoder_attention_mask(ov::element::i64, { BATCH_SIZE, n + 2 }, _attention_mask.data());//TODO deduplicate
                 ov::Tensor decoder_input_ids(ov::element::i64, { BATCH_SIZE, _decoder_input_ids.size()}, _decoder_input_ids.data());
                 ov::Tensor encoder_hidden_states(ov::element::f32, last_hidden_state.get_shape(),last_hidden_state_data.data());
@@ -73,7 +74,7 @@ namespace melo {
                 decoder_req->start_async();
                 decoder_req->wait();
                 const float* logits_data = decoder_req->get_output_tensor(0).data<const float>();
-                std::cout << "Decoder logits.get_size()/vocab_size:" << decoder_req->get_output_tensor(0).get_size()/vocab_size << std::endl;
+                //std::cout << "Decoder logits.get_size()/vocab_size:" << decoder_req->get_output_tensor(0).get_size()/vocab_size << std::endl;
                 int logits_row = decoder_req->get_output_tensor(0).get_size() / vocab_size;
                 float maxLogits = 0.f;
                 int maxArg = -1;
@@ -85,11 +86,16 @@ namespace melo {
                     }
                 }
                 _decoder_input_ids.emplace_back(maxArg);
-                for (std::cout << "_decoder_input_ids"; auto & x:_decoder_input_ids) std::cout << detokenizer.at(x) << ' ';
-                std::cout << "\n";
+                //for (std::cout << "_decoder_input_ids"; auto & x:_decoder_input_ids) std::cout << detokenizer.at(x) << ' ';
+                //std::cout << "\n";
                 if (maxArg == 2) break;
             }
-
+            // detokenize
+            for (auto& id : _decoder_input_ids) {
+                if (id == 0 || id == 2)//<s> or </s>
+                    continue;
+                res.emplace_back(_to_lower(detokenizer.at(id)));
+            }
             release_memory();
 
         }
@@ -99,10 +105,13 @@ namespace melo {
         catch (const std::exception& e) {
             std::cerr << "General exception: " << e.what() << std::endl;
         }
-        return {};
+        return res;
         
     }
-    const std::map<char, int64_t> MiniBartG2P::tokenizer = { {'e', 5}, {'a', 6}, {'s', 7}, {'i', 8}, {'r', 9}, {'n', 10}, {'o', 12}, {'t', 14}, {'l', 15}, {'c', 21}, 
+    /*
+    * space is '<unk>':3, ref: https://huggingface.co/cisco-ai/mini-bart-g2p/blob/main/vocab.json
+    */
+    const std::map<char, int64_t> MiniBartG2P::tokenizer = { {' ', 3 }, { 'e', 5 }, {'a', 6}, {'s', 7}, {'i', 8}, {'r', 9}, {'n', 10}, {'o', 12}, {'t', 14}, {'l', 15}, {'c', 21},
         {'d', 22}, {'u', 24}, {'m', 26}, {'h', 29}, {'g', 30}, {'p', 31}, {'b', 34}, {'y', 40}, {'k', 41}, {'f', 44}, {'w', 46}, {'v', 48}, {'z', 63}, {'j', 76}, {'x', 79}, {'q', 85} };
     const std::unordered_map<int, std::string> MiniBartG2P::detokenizer = { {0,"<s>"},{2,"</s>"}, { 11, "AH0" },{13, "N"},{16, "S"},{17, "L"},{18, "T"},{19, "R"},{20, "K"},{23, "D"},{25, "IH0"},{27, "M"},{28, "Z"},{32, "ER0"},{33, "IY0"},{35, "B"},{36, "P"},{37, "EH1"},
         {38, "AE1"},{39, "AA1"},{42, "IH1"},{43, "F"},{45, "G"},{47, "V"},{49, "NG"},{51, "IY1"},{52, "EY1"},{53, "HH"},{54, "W"},{55, "SH"},{56, "OW1"},{57, "AO1"},{58, "OW0"},{59, "AH1"},{60, "UW1"},{61, "AY1"},{62, "JH"},{64, "CH"},{65, "Y"},
