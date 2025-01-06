@@ -168,7 +168,7 @@ std::vector<std::string> wordBreak_da(const std::string& s, melo::CMUDict& dict)
 
 int main() {
     {
-        std::string ov_models = "C:\\Users\\gta\\source\\repos\\MeloTTS.cp.zh\\ov_models";
+        std::string ov_models = "C:\\Users\\gta\\source\\repos\\MeloTTS.cpp\\ov_models";
         std::filesystem::path file_dir = std::filesystem::path(ov_models) / "cmudict_cache_order.txt";
         //std::cout << std::boolalpha << std::filesystem::absolute(file_dir) << std::endl;
         melo::CMUDict dict(file_dir);
@@ -178,7 +178,8 @@ int main() {
 
 
         //plan search
-        for (std::cout << "find word compiler:"; auto & row : dict.direct_lookup("compiler")) for (auto& x : row) std::cout << x << ' ';
+        const std::vector<std::string>& res1 = dict.direct_lookup("compiler");
+        for (std::cout << "find word compiler:"; auto & row : res1) for (auto& x : row) std::cout << x << ' ';
 
         std::string text = "deletepartitionoverride";//"masterbootrecordsecurity";
         auto startTime = Time::now();

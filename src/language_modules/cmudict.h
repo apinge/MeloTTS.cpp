@@ -58,16 +58,18 @@ namespace melo {
 #endif
                 std::vector<std::string> symbols;
                 for (const std::string& w : words.front()) {
-                    std::vector<std::string> x = direct_lookup(w);
+                    const std::vector<std::string>& x = direct_lookup(w);
                     std::copy(x.begin(), x.end(), std::back_inserter(symbols));
                 }
                 return symbols;
             }
             return std::nullopt;
         }
-        inline const std::vector<std::string> direct_lookup(const std::string& word) {
+        // This function returns a reference to reduce copying
+        inline const std::vector<std::string>& direct_lookup(const std::string& word) {
+            static std::vector<std::string> empty_result;
             auto res = keys_da.exactMatchSearch<Darts::DoubleArray::result_type>(word.c_str());
-            if (res == -1) return {};
+            if (res == -1) return empty_result;
             return values_data[res];
         }
         std::vector<std::vector<std::string>> wordBreak(const std::string& s);
