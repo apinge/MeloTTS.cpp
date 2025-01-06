@@ -123,7 +123,7 @@ namespace text_normalization {
             return match.prefix().str() + num2str(pure_decimal) + match.suffix().str();
         }
         else {
-            sign = sign.empty() ? L"" : L"负";
+            //sign = sign.empty() ? L"" : L"负"; ugly workaround for "144fps-240fps",There are not many scenarios for reading negative numbers, so we will comment it out for now.
             number = num2str(number);
             return match.prefix().str() + sign + number + match.suffix().str();
             ;
