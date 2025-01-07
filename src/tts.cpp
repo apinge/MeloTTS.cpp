@@ -22,6 +22,9 @@
 #include "tts.h"
 #include "info_data.h"
 #include "language_modules/chinese_mix.h"
+#ifdef KALMAN_FILTER
+#include <Eigen/Dense> // eigen-3.4.0
+#endif
 namespace melo {
     TTS::TTS(std::unique_ptr<ov::Core>& core, const std::filesystem::path & tts_ir_path, const std::string & tts_device, const ov::AnyMap& tts_config,
         const std::filesystem::path& bert_ir_path, const std::string& bert_device, 
@@ -123,8 +126,16 @@ namespace melo {
                 auto preProcess = get_duration_ms_till_now(startTime);
 
                 std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature, speed, speaker_id, this->_disable_bert);
-
+#ifdef KALMAN_FILTER
+                constexpr static float noise_std = 0.035f; //Assume the standard deviation of the measurement noise, adjust as needed
+                startTime = Time::now();
+                auto filtered_signal = kalman_filter(wav_data, noise_std);
+                auto filterTime = get_duration_ms_till_now(startTime);
+                std::cout << "[INFO] TTS::tts_to_file: kalman filter time is:" << filterTime << "ms" << std::endl;
+                audio_concat(output_audio, filtered_signal, speed, sampling_rate_);
+#else
                 audio_concat(output_audio, wav_data, speed, sampling_rate_);
+#endif
                 std::cout << "[INFO] preProcess Time: " << preProcess << "ms, including the time for BERT inference.\n";
             }
             //release memory buffer
@@ -165,7 +176,61 @@ namespace melo {
             sample *= gain;
         }
     }
+#ifdef KALMAN_FILTER
+    /**
+      * @brief Applies Kalman filter for denoising a given signal. This function introduces eigen (eigen-3.4.0)
+      *
+      * Ref: https://www.geeksforgeeks.org/kalman-filter-in-python/
+      *      https://en.wikipedia.org/wiki/Kalman_filter
+      *      https://github.com/hmartiro/kalman-cpp/blob/master/kalman.cpp
+      *
+      * @param signal Input signal as a vector of floats (1D).
+      * @param noise_std Standard deviation of the measurement noise.
+      * @return std::vector<float> The filtered signal as a vector of floats.
+  */
+    std::vector<float> TTS::kalman_filter(const std::vector<float>& signal, double noise_std) const {
+        // Get the length of the signal
+        size_t n = signal.size();
 
+        // Initialize matrices
+        Eigen::MatrixXf A(1, 1);  // State transition matrix
+        Eigen::MatrixXf H(1, 1);  // Observation matrix
+        Eigen::MatrixXf Q(1, 1);  // Process noise covariance
+        Eigen::MatrixXf R(1, 1);  // Measurement noise covariance
+        Eigen::VectorXf x(1);     // Initial state
+        Eigen::MatrixXf P(1, 1);  // Initial error covariance
+
+        A(0, 0) = 1.0;
+        H(0, 0) = 1.0;
+        Q(0, 0) = 1e-5;
+        R(0, 0) = noise_std * noise_std;
+        x(0) = 0.0;
+        P(0, 0) = 1.0;
+
+        // To store the filtered signal
+        std::vector<float> filtered_signal;
+        filtered_signal.reserve(n);
+
+        // Kalman filter loop
+        for (size_t i = 0; i < n; ++i) {
+            double z = signal[i];  // Current observation
+
+            // Prediction
+            Eigen::VectorXf x_pred = A * x;
+            Eigen::MatrixXf P_pred = A * P * A.transpose() + Q;
+
+            // Update
+            Eigen::MatrixXf K = P_pred * H.transpose() * (H * P_pred * H.transpose() + R).inverse();
+            x = x_pred + K * (z - (H * x_pred)(0));
+            P = (Eigen::MatrixXf::Identity(1, 1) - K * H) * P_pred;
+
+            // Save the filtered result
+            filtered_signal.push_back(x(0));
+        }
+
+        return filtered_signal;
+    }
+#endif
     void TTS::tts_to_file(const std::vector<std::string>& texts,const std::filesystem::path& output_path, const int& speaker_id, const float& speed, const float& target_dbfs,
         const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w) {
         std::vector<float> audio;
@@ -183,7 +248,12 @@ namespace melo {
             std::chrono::duration<double> nf_time_duration = nf_time_2 - nf_time_1;
             std::cout << "TTS::TTS : [NF][DFNet] process time:" << nf_time_duration.count() << " seconds" << std::endl;
         }
-#endif // USE_DEEPFILTERNET
+#endif // USE_DEEPFILTERNET 
+        //for(auto &x:audio) std::cout << x <<',';
+        //auto startTime = Time::now();
+        //auto filtered_signal = kalman_filter(audio,0.02);
+        //auto filterTime = get_duration_ms_till_now(startTime);
+        //std::cout << "[INFO] TTS::tts_to_file: kalman filter time is:"<< filterTime <<"ms" << std::endl;
         write_wave(output_path.string(), audio, sampling_rate_);
     }
     std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
