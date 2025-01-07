@@ -249,11 +249,6 @@ namespace melo {
             std::cout << "TTS::TTS : [NF][DFNet] process time:" << nf_time_duration.count() << " seconds" << std::endl;
         }
 #endif // USE_DEEPFILTERNET 
-        //for(auto &x:audio) std::cout << x <<',';
-        //auto startTime = Time::now();
-        //auto filtered_signal = kalman_filter(audio,0.02);
-        //auto filterTime = get_duration_ms_till_now(startTime);
-        //std::cout << "[INFO] TTS::tts_to_file: kalman filter time is:"<< filterTime <<"ms" << std::endl;
         write_wave(output_path.string(), audio, sampling_rate_);
     }
     std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
