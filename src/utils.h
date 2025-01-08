@@ -26,6 +26,7 @@ inline long long get_duration_us_till_now(Time::time_point& startTime) {
     return std::chrono::duration_cast<us>(Time::now() - startTime).count();;
 };
 void ConfigureOneDNNCache();
+void SetOneDNN_CPU_MAX_ISA();
 
 // Lambda for calculating mean
 // const please refer to https://stackoverflow.com/questions/18113164/lambda-in-header-file-error
@@ -106,6 +107,7 @@ inline ov::AnyMap set_tts_config(const std::string& device_name, bool quantize =
         device_config[ov::hint::enable_hyper_threading.name()] = false;
         device_config[ov::hint::enable_cpu_pinning.name()] = true;
         device_config[ov::enable_profiling.name()] = false;
+        //device_config["CPU_RUNTIME_CACHE_CAPACITY"] = 100;
         // device_config[ov::inference_num_threads.name()] = 1;
     }
     if (device_name.find("GPU") != std::string::npos)
