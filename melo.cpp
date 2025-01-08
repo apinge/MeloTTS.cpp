@@ -62,6 +62,7 @@ int main(int argc, char** argv)
 #endif
 
     ConfigureOneDNNCache();
+    SetOneDNN_CPU_MAX_ISA();
     Args args = parse_args(argc, argv);
 
     std::filesystem::path input_path = args.input_file;

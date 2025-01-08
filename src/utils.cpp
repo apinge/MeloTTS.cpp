@@ -22,7 +22,25 @@ void ConfigureOneDNNCache() {
         char* onednn_kernel_capacity = std::getenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY");
         int num = std::stoi(std::string(onednn_kernel_capacity));
         assert((num == 100) && "[ERROR] Set ONEDNN_PRIMITIVE_CACHE_CAPACITY fails!");
-        std::cout << "set ONEDNN_PRIMITIVE_CACHE_CAPACITY: " << onednn_kernel_capacity << "\n";
+        std::cout << "[INFO] Set ONEDNN_PRIMITIVE_CACHE_CAPACITY: " << onednn_kernel_capacity << "\n";
+    }
+}
+// set ONEDNN_MAX_CPU_ISA=AVX2_VNNI 
+// A workaround for int8 model's inference on Lunar Lake
+// Should not affect on Meteor lake or processors and will be removed in the future.
+// Ref https://oneapi-src.github.io/oneDNN/dev_guide_cpu_dispatcher_control.html
+void SetOneDNN_CPU_MAX_ISA() {
+#ifdef _WIN32
+    auto status = _putenv("ONEDNN_MAX_CPU_ISA=AVX2_VNNI");
+#elif __linix__
+    auto status = setenv("ONEDNN_MAX_CPU_ISA", "AVX2_VNNI", true);
+#else
+    std::cout << "Running on an unknown OS" << std::endl;
+#endif
+    if (status == 0) {
+        char* onednn_max_cpu_isa = std::getenv("ONEDNN_MAX_CPU_ISA");
+        assert((num == "AVX2_VNNI") && "[ERROR] Set ONEDNN_MAX_CPU_ISA fails!");
+        std::cout << "[INFO] Set ONEDNN_MAX_CPU_ISA: " << onednn_max_cpu_isa << "\n";
     }
 }
 
