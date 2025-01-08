@@ -59,6 +59,7 @@ namespace melo {
 #ifdef KALMAN_FILTER
             std::vector<float> kalman_filter(const std::vector<float>& signal, double noise_std) const;
 #endif
+            std::vector<float> lms_filter(const std::vector<float>& noisy_signal, double mu = 1e-6, size_t filter_order = 88) const;
         protected:
             std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
                 get_text_for_tts_infer(const std::string& text);

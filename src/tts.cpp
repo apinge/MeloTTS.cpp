@@ -129,6 +129,7 @@ namespace melo {
 #ifdef KALMAN_FILTER
                 constexpr static float noise_std = 0.035f; //Assume the standard deviation of the measurement noise, adjust as needed
                 startTime = Time::now();
+                //auto filtered_signal = lms_filter(wav_data);
                 auto filtered_signal = kalman_filter(wav_data, noise_std);
                 auto filterTime = get_duration_ms_till_now(startTime);
                 std::cout << "[INFO] TTS::tts_to_file: kalman filter time is:" << filterTime << "ms" << std::endl;
@@ -231,6 +232,76 @@ namespace melo {
         return filtered_signal;
     }
 #endif
+    /**
+     * @brief Implements an LMS filter based on Ref  https://www.geeksforgeeks.org/least-mean-squares-filter-in-signal-processing/.
+     *
+     * This function processes the input signal using the Least Mean Squares (LMS) algorithm.
+     * Note: The implementation may result in scaling of the input signal's volume.
+     * It is recommended to apply proper post-processing to the output if volume consistency is required.
+     *
+     * @param noisy_signal The input signal to be filtered.
+     * @param mu The step size for the LMS algorithm
+     * @param filter_order The order of the adaptive filter.
+     * @return Filtered signal and updated filter weights.
+     */
+    std::vector<float> TTS::lms_filter(const std::vector<float>& noisy_signal, double mu, size_t filter_order) const {
+        size_t n = noisy_signal.size();
+        if (filter_order >= n) // Duration too short, directly return
+            return noisy_signal;
+        std::vector<float> res(n);
+        try {
+            std::cout << "[INFO] lms_filter :: noisy_signal, max:" << std::ranges::max(noisy_signal) << std::endl;
+            std::cout << "[INFO] lms_filter :: noisy_signal, min:" << std::ranges::min(noisy_signal) << std::endl;
+            std::vector<double> y_normalized(n, 0.0), desired_signal, filtered_signal(n, 0.0);
+            double max_weight = 1e3;
+            // Normalize the signal, cast to double to enhance precision
+            double origin_signal_max = static_cast<double>(*std::max_element(noisy_signal.begin(), noisy_signal.end(),
+                [](double a, double b) {
+                    return std::abs(a) < std::abs(b);
+                }));
+            for (int i = 0; i < n; ++i) y_normalized[i] = static_cast<double>(noisy_signal[i]) / origin_signal_max;
+            desired_signal = y_normalized;
+
+            std::vector<double> weights(filter_order, 0.0);
+
+            for (int i = filter_order; i < n; ++i) {
+                std::vector<double> x(filter_order);
+                for (int j = 0, k = i - filter_order; j < filter_order && k < i; ++j, ++k) {
+                    x[j] = y_normalized[k];
+                }
+                std::reverse(x.begin(), x.end());
+
+                double y = std::inner_product(weights.begin(), weights.end(), x.begin(), 0.0f);
+
+                double error = desired_signal[i] - y;
+
+                for (int j = 0; j < filter_order; ++j) {
+                    weights[j] += 2 * mu * error * x[j];
+                }
+                std::for_each(weights.begin(), weights.end(), [&](auto& x) { x = std::clamp(x, -max_weight, max_weight); });
+
+                filtered_signal[i] = y;
+            }
+            auto filtered_signal_max = static_cast<double>(*std::max_element(filtered_signal.begin(), filtered_signal.end(),
+                [](double a, double b) {
+                    return std::abs(a) < std::abs(b);
+                }));
+            if (filtered_signal_max > 1.0) {
+                std::cout << "Warning: The normalized signal exceeds the range [-1, 1], clipping." << std::endl;
+
+                // Clip each element
+                std::for_each(filtered_signal.begin(), filtered_signal.end(), [](auto& x) { x = std::clamp(x, -1.0, 1.0); });
+            }
+            // Normalize and *32767
+            for (size_t i = 0; i < n; ++i) res[i] = static_cast<float>(filtered_signal[i] / filtered_signal_max * origin_signal_max);//32767
+            std::cout << "[INFO] lms_filter :: res max:" << std::ranges::max(res) << std::endl;
+            std::cout << "[INFO] lms_filter :: res min:" << std::ranges::min(res) << std::endl;
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Exception in lms_filter: " << e.what() << std::endl;
+        }
+        return res;
+    }
     void TTS::tts_to_file(const std::vector<std::string>& texts,const std::filesystem::path& output_path, const int& speaker_id, const float& speed, const float& target_dbfs,
         const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w) {
         std::vector<float> audio;
