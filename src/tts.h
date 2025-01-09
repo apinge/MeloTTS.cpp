@@ -56,9 +56,10 @@ namespace melo {
             static constexpr float norm_dbfs = -1.0f;
             static std::shared_ptr<text_normalization::TextNormalizer> normalizer;
             void normalize_audio(std::vector<float>& buffer, float targetDbFS = -1.0f); // adjust the volume
-#ifdef KALMAN_FILTER
+#ifdef KALMAN_FILTER_EIGEN
             std::vector<float> kalman_filter(const std::vector<float>& signal, double noise_std) const;
 #endif
+            std::vector<float> kalman_filter_1d(const std::vector<float>& signal, double noise_std) const;
             std::vector<float> lms_filter(const std::vector<float>& noisy_signal, double mu = 1e-6, size_t filter_order = 88) const;
         protected:
             std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>

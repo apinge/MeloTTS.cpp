@@ -22,7 +22,7 @@
 #include "tts.h"
 #include "info_data.h"
 #include "language_modules/chinese_mix.h"
-#ifdef KALMAN_FILTER
+#ifdef KALMAN_FILTER_EIGEN
 #include <Eigen/Dense> // eigen-3.4.0
 #endif
 namespace melo {
@@ -126,8 +126,8 @@ namespace melo {
                 auto preProcess = get_duration_ms_till_now(startTime);
 
                 std::vector<float> wav_data = tts_model.tts_infer(phones_ids, tones, lang_ids, phone_level_feature, speed, speaker_id, this->_disable_bert);
-#ifdef KALMAN_FILTER
-                constexpr static float noise_std = 0.035f; //Assume the standard deviation of the measurement noise, adjust as needed
+#ifdef KALMAN_FILTER_EIGEN
+                constexpr static double noise_std = 0.035; //Assume the standard deviation of the measurement noise, adjust as needed
                 startTime = Time::now();
                 //auto filtered_signal = lms_filter(wav_data);
                 auto filtered_signal = kalman_filter(wav_data, noise_std);
@@ -177,7 +177,7 @@ namespace melo {
             sample *= gain;
         }
     }
-#ifdef KALMAN_FILTER
+#ifdef KALMAN_FILTER_EIGEN
     /**
       * @brief Applies Kalman filter for denoising a given signal. This function introduces eigen (eigen-3.4.0)
       *
@@ -232,6 +232,59 @@ namespace melo {
         return filtered_signal;
     }
 #endif
+    /**
+      * @brief Applies Kalman filter for denoising a 1-dimensional signal. This function was modified from version with eigen.
+      *
+      * Ref: https://www.geeksforgeeks.org/kalman-filter-in-python/
+      *      https://en.wikipedia.org/wiki/Kalman_filter
+      *      https://github.com/hmartiro/kalman-cpp/blob/master/kalman.cpp
+      *
+      * @param signal Input signal as a vector of floats (1D).
+      * @param noise_std Standard deviation of the measurement noise.
+      * @return std::vector<float> The filtered signal as a vector of floats.
+  */
+    std::vector<float> TTS::kalman_filter_1d(const std::vector<float>& signal, double noise_std) const {
+        // Get the length of the signal
+        size_t n = signal.size();
+
+        // Initialize matrices
+        double A;  // State transition matrix
+        double H;  // Observation matrix
+        double Q;  // Process noise covariance
+        double R;  // Measurement noise covariance
+        double x;  // Initial state
+        double P;  // Initial error covariance
+
+        A = 1.0;
+        H = 1.0;
+        Q = 1e-5;
+        R = noise_std * noise_std;
+        x = 0.0;
+        P = 1.0;
+
+        // To store the filtered signal
+        std::vector<float> filtered_signal;
+        filtered_signal.reserve(n);
+
+        // Kalman filter loop
+        for (size_t i = 0; i < n; ++i) {
+            double z = static_cast<double>(signal[i]);  // To improve precision, the original float type is cast to double
+
+            // Prediction
+            double x_pred = A * x;
+            double P_pred = A * P * A + Q;
+
+            // Update
+            double K = P_pred * H * 1.0 / (H * P_pred * H + R);
+            x = x_pred + K * (z - (H * x_pred));
+            P = (1.0 - K * H) * P_pred;
+
+            // Save the filtered result, cast back to float
+            filtered_signal.push_back(static_cast<float>(x));
+        }
+
+        return filtered_signal;
+    }
     /**
      * @brief Implements an LMS filter based on Ref  https://www.geeksforgeeks.org/least-mean-squares-filter-in-signal-processing/.
      *
