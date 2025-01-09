@@ -39,7 +39,7 @@ void SetOneDNN_CPU_MAX_ISA() {
 #endif
     if (status == 0) {
         char* onednn_max_cpu_isa = std::getenv("ONEDNN_MAX_CPU_ISA");
-        assert((num == "AVX2_VNNI") && "[ERROR] Set ONEDNN_MAX_CPU_ISA fails!");
+        assert((onednn_max_cpu_isa == "AVX2_VNNI") && "[ERROR] Set ONEDNN_MAX_CPU_ISA fails!");
         std::cout << "[INFO] Set ONEDNN_MAX_CPU_ISA: " << onednn_max_cpu_isa << "\n";
     }
 }
