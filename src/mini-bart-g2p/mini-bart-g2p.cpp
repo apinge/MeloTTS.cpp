@@ -60,9 +60,9 @@ namespace melo {
 #endif
             std::vector<float> last_hidden_state_data(frame_num, 0);
             for (int i = 0; i < frame_num; ++i) last_hidden_state_data[i] = output_data[i];
-            // decoder
-            print_input_names(decoder_model.get());
-            /*0 encoder_attention_mask
+            /*
+            * decoder
+            0 encoder_attention_mask
             1 input_ids
             2 encoder_hidden_states*/
             _decoder_input_ids = { 2 };

@@ -88,7 +88,7 @@ namespace melo{
                 phone_len += phones.size();
                 phones_list.insert(phones_list.end(), phones.begin(), phones.end());
                 tones_list.insert(tones_list.end(), tones.begin(), tones.end());
-                std::cout << "[INFO] Use mini-bart-g2p:" << w << " in " << sentence << std::endl;
+                //std::cout << "[INFO] Use mini-bart-g2p:" << w << std::endl;
             }
             //std::cout << "phone_len" << phone_len << ' ' << "word_len" << word_len << std::endl;
             auto aaa = distribute_phone(phone_len, word_len);
