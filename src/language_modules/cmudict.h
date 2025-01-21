@@ -36,7 +36,7 @@ namespace melo {
         CMUDict& operator=(CMUDict&&) = delete;
 
      
-        inline  std::optional<std::reference_wrapper<const std::vector<std::vector<std::string>>>> find(const std::string& key) const {
+        inline  std::optional<std::reference_wrapper<const std::vector<std::string>>> find(const std::string& key) const {
             if ( dict_.contains(key)) {
                 return std::cref(dict_.at(key));
             }
@@ -47,7 +47,7 @@ namespace melo {
     // Friend function for overloading the operator<<
     friend std::ostream& operator<<(std::ostream& os, const CMUDict& dict);
     private:
-        std::unordered_map<std::string, std::vector<std::vector<std::string>>> dict_;
+        std::unordered_map<std::string, std::vector<std::string>> dict_;
     };
 }
 

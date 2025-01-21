@@ -64,6 +64,7 @@ set(SOURCE_FILES
     src/deepfilternet/deepfilter.cpp
     src/deepfilternet/dfnet_model.cpp
     src/deepfilternet/multiframe.cpp
+    src/mini-bart-g2p/mini-bart-g2p.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.cc
 )
@@ -96,6 +97,7 @@ set(HEADER_FILES
     src/deepfilternet/deepfilter.h
     src/deepfilternet/multiframe.h
     src/deepfilternet/dfnet_model.h
+    src/mini-bart-g2p/mini-bart-g2p.h
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.h
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.h
 )

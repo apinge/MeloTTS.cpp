@@ -13,17 +13,29 @@ void printVec(const auto& vec, const std::string& vecName) {
 
 namespace melo{
     // Constructor
-    English::English(const std::filesystem::path& data_folder) {
+    English::English(std::unique_ptr<ov::Core>& core_ptr, const std::filesystem::path& data_folder) {
         //english pronounciation dict
         auto cmudict_path = data_folder / "cmudict_cache.txt";
 
 
         if (!std::filesystem::exists(cmudict_path)) {
-            std::cerr << "[ERROR] ChineseMix::file does not exists: " << std::filesystem::absolute(cmudict_path) << "\n";
+            std::cerr << "[ERROR] English::file does not exists: " << std::filesystem::absolute(cmudict_path) << "\n";
+        }
+        else {
+            cmudict = std::make_shared<CMUDict>(cmudict_path.string());
+            std::cout << "[INFO] English::Init English language Module Succeed!\n";
         }
 
-        cmudict = std::make_shared<CMUDict>(cmudict_path.string());
-        std::cout << "[INFO] Init English language Module Succeed!\n";
+        //Init mini-bart g2p TODO: use the stateful model with kv cache
+        auto bart_g2p_path = data_folder / "mini-bart-g2p-no_cache"; 
+        if (!std::filesystem::exists(bart_g2p_path)) {
+            std::cerr << "[ERROR] English::file does not exists: " << std::filesystem::absolute(bart_g2p_path) << "\n";
+        }
+        else {
+            bart_g2p = std::make_shared<MiniBartG2P>(core_ptr, bart_g2p_path, "CPU", false);
+            std::cout << "[INFO] Engilish:: Init MiniBartG2P Succeed!\n";
+        }
+        
     }
 
 	std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> English::g2p(const std::string& sentence, std::shared_ptr<OpenVinoTokenizer>& tokenizer) {
@@ -68,9 +80,15 @@ namespace melo{
                 tones_list.insert(tones_list.end(), tones.begin(), tones.end());
             }
             else {
-                cmudict_unfound = true;
-                std::cout << "[WARNNING] cmudict cannot find:" << w << " in " << sentence << std::endl;
-                continue;
+                auto syllables_ = bart_g2p->forward(w);
+                if (syllables_.empty()) continue;
+                auto [phones, tones] = refine_syllables(syllables_);
+                //for (const auto& x : phones) std::cout << x << ' ';
+                //for(const auto&y:tones) std::cout << y << ' ';
+                phone_len += phones.size();
+                phones_list.insert(phones_list.end(), phones.begin(), phones.end());
+                tones_list.insert(tones_list.end(), tones.begin(), tones.end());
+                std::cout << "[INFO] Use mini-bart-g2p:" << w << " in " << sentence << std::endl;
             }
             //std::cout << "phone_len" << phone_len << ' ' << "word_len" << word_len << std::endl;
             auto aaa = distribute_phone(phone_len, word_len);

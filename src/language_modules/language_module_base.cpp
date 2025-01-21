@@ -1,23 +1,22 @@
 #include "language_module_base.h"
 namespace melo {
 
-    std::tuple<std::vector<std::string>, std::vector<int64_t>> AbstractLanguageModule::refine_syllables(const std::vector<std::vector<std::string>>& syllables) {
+    std::tuple<std::vector<std::string>, std::vector<int64_t>> AbstractLanguageModule::refine_syllables(const std::vector<std::string>& syllables) {
         std::vector<std::string> phonemes;
         std::vector<int64_t> tones;
-        for (const auto& phn_list : syllables) {
-            for (const auto& phn : phn_list) {
-                if (phn.size() > 0 && isdigit(phn.back())) {
-                    std::string tmp = phn.substr(0, phn.length() - 1);
-                    phonemes.emplace_back(std::move(tmp));
-                    tones.emplace_back(static_cast<int64_t>(phn.back() - '0' + 1));
-                }
-                else {
-                    phonemes.emplace_back(phn);
-                    tones.emplace_back(0);
-                }
 
+        for (const auto& phn : syllables) {
+            if (phn.size() > 0 && isdigit(phn.back())) {
+                std::string tmp = phn.substr(0, phn.length() - 1);
+                phonemes.emplace_back(std::move(tmp));
+                tones.emplace_back(static_cast<int64_t>(phn.back() - '0' + 1));
+            }
+            else {
+                phonemes.emplace_back(phn);
+                tones.emplace_back(0);
             }
         }
+
         return { phonemes, tones };
     }
 

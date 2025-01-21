@@ -18,7 +18,7 @@ namespace melo {
     protected:
         /* refine_syllables and distribute_phone are used to process both EN and ZH_MIX_EN, as both involve handling English content. 
          Therefore, they are placed in the base class.*/
-        virtual std::tuple<std::vector<std::string>, std::vector<int64_t>> refine_syllables(const std::vector<std::vector<std::string>>& syllables);
+        virtual std::tuple<std::vector<std::string>, std::vector<int64_t>> refine_syllables(const std::vector<std::string>& syllables);
         virtual std::vector<int> distribute_phone(const int& n_phone, const int& n_word);
     };
     static constexpr int num_zh_tones = 6;

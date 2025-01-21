@@ -1,2 +1,3 @@
 When possible, the compiler will deduce the missing template arguments from the function arguments.
 I am absolutely thrilled to share this incredible news with everyone.
+Flang's Fortran compiler frontend analyzes Fortran code through lexical, syntax, and semantic analysis to produce an intermediate representation.

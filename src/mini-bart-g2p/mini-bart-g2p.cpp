@@ -27,17 +27,19 @@ namespace melo {
         _input_ids.clear(); _attention_mask.clear(); _decoder_input_ids.clear();
         std::vector<std::string> res;
         try {
-            std::string text = _to_lower(input);
+            std::string text = filter(input);
             unsigned long long n = text.length();
             _attention_mask.resize(n + 2, 1);
             _input_ids.emplace_back(0);//<s>
             for (auto& ch : text) _input_ids.emplace_back(tokenizer.at(ch));
             _input_ids.emplace_back(2);//</s>
+#ifdef MELO_DEBUG
             for (std::cout << "input_ids"; auto & x:_input_ids) std::cout << x << ' ';
             std::cout << std::endl;
-            // encoder
             print_input_names(encoder_model.get());
+#endif
             /*
+            * encoder
             * 0 input_ids
              1 attention_mask
             */
@@ -52,8 +54,10 @@ namespace melo {
             const float* output_data = encoder_req->get_output_tensor(0).data<const float>();
             //size_t output_size = _input_ids.size();//_infer_request->GetOutputTensorSize(0);
             size_t frame_num = last_hidden_state.get_size();
+#ifdef MELO_DEBUG
             std::cout << "Encoder last_hidden_state shape:" << last_hidden_state.get_shape() << std::endl;
             std::cout << "Encoder last_hidden_state.get_size():" << frame_num << std::endl;
+#endif
             std::vector<float> last_hidden_state_data(frame_num, 0);
             for (int i = 0; i < frame_num; ++i) last_hidden_state_data[i] = output_data[i];
             // decoder

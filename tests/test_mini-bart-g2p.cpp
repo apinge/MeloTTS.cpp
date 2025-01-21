@@ -33,12 +33,13 @@ inline long long get_duration_us_till_now(Time::time_point& startTime) {
 
 int main(){
     ConfigureOneDNNCache();
-	std::filesystem::path  model_folder = "C:\\Users\\gta\\source\\repos\\MeloTTS.cpp\\experimental\\mini-bart-g2p\\mini-bart-g2p-no_cache";
+    std::filesystem::path  ov_models = "C:\\Users\\gta\\source\\repos\\MeloTTS.cpp\\ov_models";
+	std::filesystem::path  model_folder = ov_models / "mini-bart-g2p-no_cache";
 	bool use_past = false;
 	std::unique_ptr<ov::Core> core = std::make_unique<ov::Core>();
 	MiniBartG2P g2p(core,model_folder,"CPU", use_past);
     auto startTime = Time::now();
-	auto phones = g2p.forward("hello world");//s</s> <s> HH EH1 L OW0 </s>
+	auto phones = g2p.forward("fortran");//s</s> <s> HH EH1 L OW0 </s> 'no punc no hyphen here!!!!
     auto inferTime = get_duration_ms_till_now(startTime);
     std::cout << "[INFO] mini-bart-g2p infer time is " << inferTime << "ms\n";
     for (std::cout << "result phones:"; auto & x:phones) std::cout << x << ' ';

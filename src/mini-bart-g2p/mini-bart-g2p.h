@@ -27,7 +27,21 @@ public:
      */
     std::vector<std::string> forward(const std::string& text);
 protected:
-    inline std::string _to_lower(const std::string& input){ 
+
+    // Filter all characters, convert uppercase to lowercase, and keep only lowercase letters and spaces
+    inline std::string filter(const std::string& text) {
+        std::string res;
+        for (const auto& ch : text) {
+            if (ch >= 'A' && ch <= 'Z')
+                res += ch - 'A' + 'a';
+            else if (ch >= 'a' && ch <= 'z' || ch == ' ')
+                res += ch;
+            else //filter
+                continue;
+        }
+        return res;
+    }
+    inline std::string _to_lower(const std::string& input) {
         std::string res;
         for (auto& ch : input) {
             if (ch >= 'A' && ch <= 'Z') res += ch - 'A' + 'a';

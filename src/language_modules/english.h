@@ -2,10 +2,11 @@
 #define ENGLISH_H
 #include "language_module_base.h"
 #include "cmudict.h"
+#include "mini-bart-g2p/mini-bart-g2p.h"
 namespace melo {
 	class English : public AbstractLanguageModule {
 	public:
-		English(const std::filesystem::path& data_folder);
+		English(std::unique_ptr<ov::Core>& core_ptr, const std::filesystem::path& data_folder);
 		virtual ~English() = default;
 		// Grapheme to Phoneme conversion
 		virtual std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> g2p(const std::string& segment, std::shared_ptr<OpenVinoTokenizer>& tokenizer) override;
@@ -14,6 +15,7 @@ namespace melo {
 		virtual inline std::string get_language_name() { return "EN"; };
 		private:
 			std::shared_ptr<CMUDict> cmudict;
+			std::shared_ptr<MiniBartG2P> bart_g2p;
 			const std::unordered_map<std::string, int> symbol_to_id_mp = {
 			{"_", 0}, {"\"", 1}, {"(", 2}, {")", 3}, {"*", 4}, {"/", 5}, {":", 6},
 			{"AA", 7}, {"E", 8}, {"EE", 9}, {"En", 10}, {"N", 11}, {"OO", 12}, {"Q", 13}, {"V", 14},

@@ -39,7 +39,7 @@ namespace melo {
                 continue; // Skip lines that cannot be parsed.
             }
 
-            std::vector<std::vector<std::string>> value;
+            std::vector<std::string> value;
             std::string segment;
 
             while (std::getline(iss, segment, ',')) {
@@ -50,7 +50,7 @@ namespace melo {
                     subValues.push_back(subValue);
                 }
                 if (!subValues.empty()) {
-                    value.push_back(subValues);
+                    value.insert(value.end(),subValues.begin(),subValues.end());
                 }
             }
 
@@ -70,18 +70,12 @@ namespace melo {
     [[maybe_unused]]  std::ostream& operator<<(std::ostream& os, const CMUDict& dict) {
         for (const auto& pair : dict.dict_) {
             const std::string& key = pair.first;
-            const std::vector<std::vector<std::string>>& value = pair.second;
+            const std::vector<std::string>& value = pair.second;
 
             os << key << ":";
-            for (const auto& vec : value) {
-                os << " ";
-                for (size_t i = 0; i < vec.size(); ++i) {
-                    os << vec[i];
-                    if (i < vec.size() - 1) {
-                        os << " ";
-                    }
-                }
-            }
+        
+            for (auto&x:value) os << x;
+            os << " ";
             os << std::endl;
         }
         return os;

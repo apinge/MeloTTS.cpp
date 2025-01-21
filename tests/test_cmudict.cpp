@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cassert>
 #include <filesystem>
-#include "CMUDict.h"
+#include "../src/language_modules/cmudict.h"
 
 #define OV_MODEL_PATH "ov_models"
 
@@ -29,7 +29,8 @@ auto print_result = [](const auto& result) {
     };
 
 int main() {
-    std::filesystem::path file_dir = std::filesystem::path(OV_MODEL_PATH) / "cmudict_cache.txt";
+    std::filesystem::path ov_model = "C:\\Users\\gta\\source\\repos\\MeloTTS.cpp\\ov_models\\";
+    std::filesystem::path file_dir = ov_model / "cmudict_cache.txt";
     melo::CMUDict dict(file_dir.string());
 
 
@@ -42,9 +43,5 @@ int main() {
     result = dict.find("engineer");
     print_result(result);
 
-#ifdef CRT_
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-#endif
+
 }

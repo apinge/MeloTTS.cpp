@@ -41,8 +41,8 @@ target_include_directories(test_darts  PRIVATE ${CMAKE_SOURCE_DIR}/thirdParty/cp
 add_executable(test_split_sentence ${CMAKE_CURRENT_SOURCE_DIR}/test_split_sentence.cpp ${CMAKE_SOURCE_DIR}/thirdParty/cppinyin/csrc/darts.h)
 target_include_directories(test_split_sentence  PRIVATE ${CMAKE_SOURCE_DIR}/thirdParty/cppinyin/csrc/)
 
-add_executable(test_mini-bart-g2p ${CMAKE_CURRENT_SOURCE_DIR}/test_mini-bart-g2p.cpp ${CMAKE_CURRENT_SOURCE_DIR}/../experimental/mini-bart-g2p/mini-bart-g2p.cpp)
-target_include_directories(test_mini-bart-g2p PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../experimental/mini-bart-g2p)
+add_executable(test_mini-bart-g2p ${CMAKE_CURRENT_SOURCE_DIR}/test_mini-bart-g2p.cpp ${CMAKE_CURRENT_SOURCE_DIR}/../src/mini-bart-g2p/mini-bart-g2p.cpp)
+target_include_directories(test_mini-bart-g2p PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/mini-bart-g2p)
 target_link_libraries(test_mini-bart-g2p PRIVATE openvino::runtime) 
 
 include(FetchContent)

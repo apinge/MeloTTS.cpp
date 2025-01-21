@@ -43,7 +43,7 @@ namespace melo {
             _language_module = std::make_shared<ChineseMix>(tts_ir_path.parent_path());
         }
         else if (language == "EN") {
-            _language_module = std::make_shared<English>(tts_ir_path.parent_path());
+            _language_module = std::make_shared<English>(core, tts_ir_path.parent_path());
         }
         else
             std::cerr <<"[ERROR] Unsupported Language\n";
