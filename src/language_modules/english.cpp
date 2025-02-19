@@ -1,5 +1,5 @@
 #include "english.h"
-
+#include "text_normalization/text_normalization_eng.h"
 void printVec(const auto& vec, const std::string& vecName) {
     std::cout << vecName << ":\n";
     for (const auto& row : vec) {
@@ -125,13 +125,16 @@ namespace melo{
 
         return { phones_list, tones_list, word2ph };
 	}
-    // TODO: implement the function
+
     std::string English::text_normalize(const std::string& text) {
         std::string norm_text = text;
         std::for_each(norm_text.begin(), norm_text.end(), [](auto& ch) {
             if (ch <= 'Z' && ch >= 'A')
                 ch = ch + 'a' - 'A';
             });
+        norm_text = text_normalization::expand_time_english(norm_text);
+        norm_text = text_normalization::expand_abbreviations(norm_text);
+        norm_text = text_normalization::normalize_numbers(norm_text);
         return norm_text;
     }
 

@@ -65,6 +65,7 @@ set(SOURCE_FILES
     src/deepfilternet/dfnet_model.cpp
     src/deepfilternet/multiframe.cpp
     src/mini-bart-g2p/mini-bart-g2p.cpp
+    src/text_normalization/text_normalization_eng.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.cc
 )
@@ -91,6 +92,7 @@ set(HEADER_FILES
     src/text_normalization/number.h
     src/text_normalization/phonecode.h
     src/text_normalization/quantifier.h
+    src/text_normalization/text_normalization_eng.h
     ${CMAKE_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.h
     ${CMAKE_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.h
     src/deepfilternet/noisefilter.h

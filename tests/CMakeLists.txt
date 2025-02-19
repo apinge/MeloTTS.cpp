@@ -45,6 +45,9 @@ add_executable(test_mini-bart-g2p ${CMAKE_CURRENT_SOURCE_DIR}/test_mini-bart-g2p
 target_include_directories(test_mini-bart-g2p PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/mini-bart-g2p)
 target_link_libraries(test_mini-bart-g2p PRIVATE openvino::runtime) 
 
+add_executable(test_text_normalization_en ${CMAKE_CURRENT_SOURCE_DIR}/test_text_normalization_en.cpp ${CMAKE_CURRENT_SOURCE_DIR}/../src/text_normalization/text_normalization_eng.cpp)
+target_include_directories(test_text_normalization_en PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/text_normalization)
+
 include(FetchContent)
 FetchContent_Declare(
   googletest

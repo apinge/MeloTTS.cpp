@@ -75,8 +75,18 @@ namespace melo {
         const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w ){
         std::vector<float> audio;
         try {
-            std::vector<std::string> sentences = split_sentences_into_pieces(text, false);
-            for (const auto& sentence : sentences) {
+			std::string norm_text = text;
+            // We place English text normalization before sentence splitting.
+            // For English, we need to address cases involving abbreviations like "Mr." and scientific notation.
+            // If normalization is applied after sentence splitting, it may prematurely process periods and commas, which could lead to issues.
+            if (this->_language == "EN") {
+                norm_text = _language_module->text_normalize(text);
+            }
+            std::vector<std::string> sentences = split_sentences_into_pieces(norm_text, false);
+            for (auto& sentence : sentences) {
+                if (this->_language == "ZH") {
+					sentence = _language_module->text_normalize(sentence);
+                }
                 // structured binding
                 auto startTime = Time::now();
                 auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(sentence);
@@ -118,11 +128,20 @@ namespace melo {
 
     void TTS::tts_to_file(const std::string& text, std::vector<float>& output_audio, const int& speaker_id, const float& speed,
         const float& sdp_ratio, const float& noise_scale, const float& noise_scale_w) {
-        try {                   
-           // std::vector<std::wstring> normalized_sentences = normalizer->normalize(text_normalization::string_to_wstring(text));
-            std::vector<std::string> sentences = split_sentences_into_pieces(text,false);
-            for (const auto& sentence : sentences) {
+        try {
+			std::string norm_text = text;
+            // We place English text normalization before sentence splitting.
+            // For English, we need to address cases involving abbreviations like "Mr." and scientific notation.
+            // If normalization is applied after sentence splitting, it may prematurely process periods and commas, which could lead to issues.
+            if (this->_language == "EN") {
+                norm_text = _language_module->text_normalize(text);
+            }
+            std::vector<std::string> sentences = split_sentences_into_pieces(norm_text,false);
+            for ( auto& sentence : sentences) {
                 if(!sentence.size()) continue;
+                if (this->_language == "ZH") {
+                    sentence = _language_module->text_normalize(sentence);
+                }
                 auto startTime = Time::now();
                 // structured binding
                 auto [phone_level_feature, phones_ids, tones, lang_ids] = get_text_for_tts_infer(sentence);
@@ -172,13 +191,13 @@ namespace melo {
     std::tuple<std::vector<std::vector<float>>, std::vector<int64_t>, std::vector<int64_t>, std::vector<int64_t>>
         TTS::get_text_for_tts_infer(const std::string& text) {
         try {
-            std::string norm_text = _language_module->text_normalize(text);
-            auto [phones_list, tones_list, word2ph_list] = _language_module->g2p(norm_text, ov_tokenizer);
+            //std::string norm_text = _language_module->text_normalize(text);
+            auto [phones_list, tones_list, word2ph_list] = _language_module->g2p(text, ov_tokenizer);
             auto [phones_ids, tones, lang_ids, word2ph] = cleaned_text_to_sequence(_language_module,phones_list, tones_list, word2ph_list);
 
             std::vector<std::vector<float>> phone_level_feature;
             if(!_disable_bert){
-                bert_model.get_bert_feature(norm_text, word2ph, phone_level_feature);
+                bert_model.get_bert_feature(text, word2ph, phone_level_feature);
             }
             else
                 std::cout << " TTS::get_text_for_tts_infer:disable bert infer\n";
