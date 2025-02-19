@@ -201,7 +201,13 @@ inline void Args::generate_init_file_paths() {
 #ifdef _WIN32 
     tokenizer_runtime_path = "openvino_tokenizers.dll";
 #elif  __linux__
-    tokenizer_runtime_path = "libopenvino_tokenizers.so";
+    const char * openvino_dir = std::getenv("INTEL_OPENVINO_DIR");
+    if (openvino_dir) {
+        std::cout << "INTEL_OPENVINO_DIR: " << openvino_dir << std::endl;
+    } else {
+        std::cerr << "[ERROR] INTEL_OPENVINO_DIR is not set." << std::endl;
+    }
+    tokenizer_runtime_path = std::filesystem::path(openvino_dir) / "runtime" / "lib" /  "intel64" / "libopenvino_tokenizers.so";
 #else
     std::cerr << "[ERROR] Unsupported Operating System.\n"
 #endif

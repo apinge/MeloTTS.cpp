@@ -1,6 +1,7 @@
 ﻿#include <regex>
 #include <iostream>
 #include <unordered_map>
+#include <cmath>
 #include "text_normalization_eng.h"
 
 namespace text_normalization {
