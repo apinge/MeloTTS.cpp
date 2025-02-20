@@ -3,22 +3,22 @@
 
 
 int main() {
-	std::string num = "I have 1234567.893 in text and 201th in echo 253,235,365";
-	std::string words = text_normalization::normalize_numbers(num);
-	std::cout << words << std::endl;
+	std::string input = "I have 1234567.893 in text and 201th in echo 253,235,365";
+	std::string output = text_normalization::normalize_numbers(input);
+	std::cout << output << std::endl;
 
-	num = "23 sheep";
-	words = text_normalization::normalize_numbers(num);
-	std::cout << words << std::endl;
+	input = "64000.30 sheep";
+	output = text_normalization::normalize_numbers(input);
+	std::cout << output << std::endl;
 
 
-	std::string input = "Dr. Smith went to St. John's Church with Mr. Brown";
-	std::string output = text_normalization::expand_abbreviations(input);
+	input = "Dr. Smith went to St. John's Church with Mr. Brown";
+	output = text_normalization::expand_abbreviations(input);
 	std::cout << output << std::endl;
 
 
 	input = "Meet me at 03:15 p.m. to 12:28 for coffee.";
-	 output = text_normalization::expand_time_english(input);
+	output = text_normalization::expand_time_english(input);
 	std::cout << output << std::endl;
 
 	input = "At 10:03 ";

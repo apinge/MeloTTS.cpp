@@ -47,6 +47,11 @@ namespace text_normalization {
         }
         return result;
     }
+    // we assume that if the string size exceeds 10, the number is likely too large and may cause errors with stod or stoi
+    inline bool is_number_too_large(const std::string& num_str) {
+        return (num_str.size() > 10);
+    }
+
     // We assume there are no negative numbers - the situation is too complex otherwise.
     static std::string number_to_words(double num) {
         double x = std::floor(num);
@@ -56,7 +61,20 @@ namespace text_normalization {
         std::string decimalWords = decimal_to_words(decimalPart);
         return words + (decimalWords.empty() ? "" : " " + decimalWords);
     }
-	// TODO: Fix secenario where 211st, 202nd, etc. are not converted correctly
+
+    static std::string number_to_words(const std::string& s) {
+        if (is_number_too_large(s)) {
+               std::string res = "";
+            for (const auto& ch : s) {
+                    if (ch == '.') res += "point ";
+                    else if(ch <='9' && ch>='0')
+                        res += (ch=='0')? "zero " : belowTwenty[ch - '0'] + " ";
+            }
+            return res;
+          }
+          return number_to_words(std::stod(s));
+     }
+     // TODO: Fix secenario where 211st, 202nd, etc. are not converted correctly
     static std::string convert_ordinal(int num) {
         static const std::unordered_map<int, std::string> ordinal_map = {
             {1, "first"}, {2, "second"}, {3, "third"}, {4, "fourth"}, {5, "fifth"},
@@ -92,7 +110,7 @@ namespace text_normalization {
     std::string normalize_numbers(const std::string& text) {
         std::string result = text;
         std::smatch match;
-		// First, convert the commas to facilitate further conversion of decimals and other subsequent numbers.
+          // First, convert the commas to facilitate further conversion of decimals and other subsequent numbers.
         while (std::regex_search(result, match, comma_number_re)) {
             std::string no_commas = match.str(0);
             no_commas.erase(std::remove(no_commas.begin(), no_commas.end(), ','), no_commas.end());
@@ -103,10 +121,10 @@ namespace text_normalization {
             result.replace(match.position(0), match.length(0), convert_ordinal(num));
         }
         while (std::regex_search(result, match, decimal_number_re)) {
-            result.replace(match.position(0), match.length(0), number_to_words(std::stod(match.str(0))));
+            result.replace(match.position(0), match.length(0), number_to_words(match.str(0)));
         }
         while (std::regex_search(result, match, number_re)) {
-            result.replace(match.position(0), match.length(0), number_to_words(std::stoi(match.str(0))));
+            result.replace(match.position(0), match.length(0), number_to_words(match.str(0)));
         }
 
         return result;
@@ -142,7 +160,7 @@ namespace text_normalization {
         return result;
     }
 
-	// expand_time_english
+     // expand_time_english
     const std::regex time_re(
         R"(((0?[0-9])|(1[0-1])|(1[2-9])|(2[0-3])):([0-5][0-9])\s*(a\.m\.|am|pm|p\.m\.|a\.m|p\.m)?)",
         std::regex_constants::icase
