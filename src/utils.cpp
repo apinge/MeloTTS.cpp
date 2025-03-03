@@ -32,14 +32,14 @@ void ConfigureOneDNNCache() {
 void SetOneDNN_CPU_MAX_ISA() {
 #ifdef _WIN32
     auto status = _putenv("ONEDNN_MAX_CPU_ISA=AVX2_VNNI");
-#elif __linix__
+#elif __linux__
     auto status = setenv("ONEDNN_MAX_CPU_ISA", "AVX2_VNNI", true);
 #else
     std::cout << "Running on an unknown OS" << std::endl;
 #endif
     if (status == 0) {
         char* onednn_max_cpu_isa = std::getenv("ONEDNN_MAX_CPU_ISA");
-        assert((onednn_max_cpu_isa == "AVX2_VNNI") && "[ERROR] Set ONEDNN_MAX_CPU_ISA fails!");
+        assert((std::string(onednn_max_cpu_isa) == "AVX2_VNNI") && "[ERROR] Set ONEDNN_MAX_CPU_ISA fails!");
         std::cout << "[INFO] Set ONEDNN_MAX_CPU_ISA: " << onednn_max_cpu_isa << "\n";
     }
 }
