@@ -25,7 +25,12 @@ if(MSVC AND MSVC_VERSION GREATER_EQUAL 1930 AND MSVC_VERSION LESS 1941)
     add_compile_definitions(_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
 endif()
 
-find_package(OpenVINO REQUIRED COMPONENTS Runtime)
+find_package(OpenVINOGenAI REQUIRED
+    PATHS
+        ${INTEL_OPENVINO_DIR} # get the environment variable
+    NO_CMAKE_FIND_ROOT_PATH
+)
+ 
 
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/src)
@@ -183,7 +188,7 @@ target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdP
 
 
 target_link_libraries(meloTTS_ov
-    PRIVATE openvino::runtime  # Link OpenVINO Runtime privately
+    PRIVATE openvino::genai  # Link OpenVINO.GenAI Runtime privately
 )
 
 if (UNIX)
