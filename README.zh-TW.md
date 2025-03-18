@@ -17,7 +17,7 @@
 要切換到這個分支，請執行：
 ```bash
 git fetch --all
-git checkout multilang-develop
+git checkout multilang-develop -b ZH_MIX_EN
 ```
 更多詳細資訊，可以到 [MeloTTS.cpp 多語言分支](https://github.com/apinge/MeloTTS.cpp/tree/multilang-develop)
 

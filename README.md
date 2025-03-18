@@ -66,7 +66,7 @@ For additional versions and more information about OpenVINO, visit the official 
 ### 2. Clone the Repository
 ```
 git lfs install
-git clone https://github.com/apinge/MeloTTS.cpp.git
+git clone https://github.com/apinge/MeloTTS.cpp.git -b ZH_MIX_EN
 ```
 
 ### 3. Build and Run

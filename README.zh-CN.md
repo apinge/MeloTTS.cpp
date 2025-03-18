@@ -64,7 +64,7 @@ tar -xvf w_openvino_toolkit_windows_2024.5.0.17288.7975fa5da0c_x86_64.zip
 ### 2. Clone仓库
 ```
 git lfs install
-git clone https://github.com/apinge/MeloTTS.cpp.git
+git clone https://github.com/apinge/MeloTTS.cpp.git -b ZH_MIX_EN
 ```
 
 ### 3. 编译与运行
