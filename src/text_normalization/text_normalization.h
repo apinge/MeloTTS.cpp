@@ -18,30 +18,30 @@
 #pragma once
 #ifndef TEXT_NORMLIZATION_H
 #define TEXT_NORMLIZATION_H
-#include <vector>
-#include <string>
 #include <algorithm>
 #include <filesystem>
+#include <string>
+#include <vector>
 
-#include"char_convert.h"
-#include"constant.h"
-#include"chronology.h"
-#include"number.h"
-#include"phonecode.h"
-#include"quantifier.h"
+#include "char_convert.h"
+#include "chronology.h"
+#include "constant.h"
+#include "number.h"
+#include "phonecode.h"
+#include "quantifier.h"
 
 namespace text_normalization {
-    class TextNormalizer {
-    public:
-        explicit TextNormalizer(const std::filesystem::path& char_map_folder);
-        std::vector<std::wstring> split(const std::wstring& text, const std::wstring& lang = L"zh");
-        std::wstring post_replace(const std::wstring& sentence);
-        std::wstring normalize_sentence(const std::wstring& sentence);
-        std::vector<std::wstring> normalize(const std::wstring& text);
+class TextNormalizer {
+public:
+    explicit TextNormalizer(const std::filesystem::path& char_map_folder);
+    std::vector<std::wstring> split(const std::wstring& text, const std::wstring& lang = L"zh");
+    std::wstring post_replace(const std::wstring& sentence);
+    std::wstring normalize_sentence(const std::wstring& sentence);
+    std::vector<std::wstring> normalize(const std::wstring& text);
 
-    private:
-        std::wregex SENTENCE_SPLITOR;
-    };
-}
+private:
+    std::wregex SENTENCE_SPLITOR;
+};
+}  // namespace text_normalization
 
 #endif

@@ -18,8 +18,8 @@
 #ifndef NUM_H
 #define NUM_H
 namespace num {
-	public:
-		std::function<string(const smatch&)> replace_number_func = replace_number; 
-}
+public:
+std::function<string(const smatch&)> replace_number_func = replace_number;
+}  // namespace num
 
 #endif
