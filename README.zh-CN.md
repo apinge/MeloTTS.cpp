@@ -15,7 +15,7 @@ MeloTTS.cpp的设计与 [原始 PyTorch 版本](https://github.com/myshell-ai/Me
 
 #### 图例
 1. tokenizer and BERT: tokenizer和 BERT 模型为中文使用 `bert-base-multilingual-uncased`，英文使用 `bert-base-uncased`
-2. g2p: Grapheme-to-Phoneme 
+2. g2p: 字母到音素的转换。对于英语的g2p，使用mini-bart-g2p来生成音素。详情请参见启用 mini-bart-g2p 用于 OpenVINO。
 3. phones and tones: 中文表示为拼音和四声，英文表示为音标和重音
 4. tone_sandi: 纠正分词和音素的类（仅用于中文）
 5. DeepFilterNet: 用于降噪（由 int8 量化引入的背景噪声）

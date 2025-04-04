@@ -18,7 +18,7 @@ The pipeline design is largely consistent with the [orignal pytorch Version](htt
 
 #### Legend / Terminology
 1. tokenizer and BERT: The tokenizer and BERT model are `bert-base-multilingual-uncased` for Chinese and `bert-base-uncased` for English 
-2. g2p: Grapheme-to-Phoneme conversion
+2. g2p: Grapheme-to-Phoneme conversion. For English g2p, [mini-bart-g2p](https://huggingface.co/cisco-ai/mini-bart-g2p) is used to generate phonemes. See [Enable mini-bart-g2p for OpenVINO](https://github.com/apinge/MeloTTS.cpp/blob/multilang-develop/experimental/mini-bart-g2p/README.md) for details
 3. phones and tones: represented as pinyin with four tones for Chinese and phonemes with stress marks for English
 4. tone_sandi: class used for handling Chinese scenarios, correcting tokenization and phones
 5. DeepFilterNet: used for denoising (background noise introduced by int8 quantization)
