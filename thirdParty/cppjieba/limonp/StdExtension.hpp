@@ -71,11 +71,12 @@ ostream& operator << (ostream& os, const deque<T>& dq) {
 }
 
 
-template<class T1, class T2>
-ostream& operator << (ostream& os, const pair<T1, T2>& pr) {
-  os << pr.first << ":" << pr.second ;
-  return os;
-}
+// Comment out this code to prevent confiflict with functions in libtorch
+// template<class T1, class T2>
+// ostream& operator << (ostream& os, const pair<T1, T2>& pr) {
+//   os << pr.first << ":" << pr.second ;
+//   return os;
+// }
 
 
 template<class T>

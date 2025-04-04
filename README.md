@@ -18,7 +18,7 @@ The pipeline design is largely consistent with the [orignal pytorch Version](htt
 
 #### Legend / Terminology
 1. tokenizer and BERT: The tokenizer and BERT model are `bert-base-multilingual-uncased` for Chinese and `bert-base-uncased` for English 
-2. g2p: Grapheme-to-Phoneme conversion. For English g2p, [mini-bart-g2p](https://huggingface.co/cisco-ai/mini-bart-g2p) is used to generate phonemes. See [Enable mini-bart-g2p for OpenVINO](https://github.com/apinge/MeloTTS.cpp/blob/multilang-develop/experimental/mini-bart-g2p/README.md) for details
+2. g2p: Grapheme-to-Phoneme conversion. For English g2p, [mini-bart-g2p](https://huggingface.co/cisco-ai/mini-bart-g2p) is used to generate phonemes. See [Enable mini-bart-g2p for OpenVINO](https://github.com/apinge/MeloTTS.cpp/blob/multilang-develop/experimental/mini-bart-g2p/README.md) for details.
 3. phones and tones: represented as pinyin with four tones for Chinese and phonemes with stress marks for English
 4. tone_sandi: class used for handling Chinese scenarios, correcting tokenization and phones
 5. DeepFilterNet: used for denoising (background noise introduced by int8 quantization)
@@ -68,7 +68,7 @@ cmake -S . -B build && cmake --build build --config Release
 ./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_filename audio
 ```
 #### 3.3 Enabling and Disabling DeepFilterNet
-DeepFilterNet functionality is currently supported only on Windows and is used to filter noise from int8 quantized models. By default, it is enabled, but you can enable or disable it during the CMake stage using the `-DUSE_DEEPFILTERNET` option.
+DeepFilterNet functionality is currently supported on both Windows and Linux and is used to filter noise from int8 quantized models. By default, it is enabled, but you can disable it during the CMake stage using the `-DUSE_DEEPFILTERNET` option.
 
 For example, to disable the feature, you can use the following line during the CMake generation process:
 ```

@@ -1,3 +1,7 @@
+# Copyright (C) 2024-2025 Tong Qiu (tong.qiu@intel.com)
+# SPDX-License-Identifier: Apache-2.0
+#
+
 cmake_minimum_required(VERSION 3.25)
 project(MeloTTS)
 
@@ -114,15 +118,17 @@ include_directories(${CMAKE_SOURCE_DIR}/thirdParty/eigen)
 add_executable(meloTTS_ov ${SOURCE_FILES} ${HEADER_FILES})
 
 # Whether use deep filter net; We do not support this feature on Linux now.
-if(NOT DEFINED USE_DEEPFILTERNET AND WIN32)
-    set(USE_DEEPFILTERNET ON)
+option(USE_DEEPFILTERNET "Enable DeepFilterNet support" ON)
+
+if(USE_DEEPFILTERNET)
+    add_compile_definitions(USE_DEEPFILTERNET)
     message(STATUS "DeepFilterNet is enabled")
-elseif(UNIX OR NOT USE_DEEPFILTERNET)
-    set(USE_DEEPFILTERNET OFF)
+else()
     message(STATUS "DeepFilterNet is disabled")
 endif()
 
-if(USE_DEEPFILTERNET)
+
+if(USE_DEEPFILTERNET AND WIN32)
     add_compile_definitions(USE_DEEPFILTERNET)
     # unzip libtorch
     set(LIBTORCH_DIR  ${CMAKE_SOURCE_DIR}/thirdParty/libtorch)
@@ -144,7 +150,7 @@ if(USE_DEEPFILTERNET)
     set(DLLS torch.dll torch_cpu.dll asmjit.dll fbgemm.dll c10.dll uv.dll libiomp5md.dll)
 
     foreach(dll ${DLLS})
-        message("Copying ${dll} from ${LIBTORCH_DIR}/lib to ${RELEASE_DIR} and ${DEBUG_DIR}")
+        message("Copying ${dll} from ${LIBTORCH_DIR}/lib to ${RELEASE_DIR}")
         execute_process(
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBTORCH_DIR}/lib/${dll} ${RELEASE_DIR}
             #COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBTORCH_DIR}/lib/${dll} ${DEBUG_DIR}
@@ -174,7 +180,60 @@ if(USE_DEEPFILTERNET)
         target_link_libraries(meloTTS_ov PRIVATE ${ADDITIONAL_LIBRARY_DEPENDENCIES})
     endif()
 
-endif() # end USE_DEEPFILTERNET
+endif() # end USE_DEEPFILTERNET AND WIN32
+
+if(USE_DEEPFILTERNET AND UNIX)
+    message(STATUS "Checking if libtorch is already downloaded and extracted")
+
+    set(LIBTORCH_ZIP ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/libtorch-cxx11-abi-shared-with-deps-2.6.0*cpu.zip)
+    set(LIBTORCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/libtorch)
+
+    if(NOT EXISTS ${LIBTORCH_ZIP} AND NOT EXISTS ${LIBTORCH_DIR})
+        message(STATUS "Downloading and extracting libtorch for Linux")
+
+        file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty)
+
+        execute_process(
+            COMMAND wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.6.0%2Bcpu.zip
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty
+            RESULT_VARIABLE download_result
+        )
+        if(NOT download_result EQUAL 0)
+            message(FATAL_ERROR "Failed to download libtorch.")
+        endif()
+
+        execute_process(
+            COMMAND unzip libtorch-cxx11-abi-shared-with-deps-2.6.0*cpu.zip
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty
+            RESULT_VARIABLE unzip_result
+        )
+        if(NOT unzip_result EQUAL 0)
+            message(FATAL_ERROR "Failed to unzip libtorch.")
+        endif()
+
+        message(STATUS "libtorch downloaded and extracted successfully")
+    else()
+        message(STATUS "libtorch already downloaded and extracted, skipping download")
+    endif()
+    
+    set(CMAKE_PREFIX_PATH ${LIBTORCH_DIR})
+    find_package(Torch REQUIRED)
+    target_link_libraries(meloTTS_ov PRIVATE "${TORCH_LIBRARIES}")
+
+    # Copy torch runtime to executable folder
+    file(GLOB_RECURSE LIBSO_FILES ${LIBTORCH_DIR}/lib/*.so)
+    set(RELEASE_DIR ${CMAKE_BINARY_DIR})
+    foreach(SO_FILE ${LIBSO_FILES})
+        message("Copying ${SO_FILE} from  ${LIBTORCH_DIR}/lib to ${RELEASE_DIR}")
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBTORCH_DIR}/lib/${dll} ${RELEASE_DIR}
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        )
+    endforeach()
+
+endif() # end USE_DEEPFILTERNET AND UNIX
+   
+
 
 
 # Define DEBUG macro for Debug configuration

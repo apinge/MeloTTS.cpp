@@ -70,7 +70,7 @@ cmake -S . -B build && cmake --build build --config Release
 ./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_filename audio
 ```
 #### 3.3 在 cmake build 裡啟用或停用 DeepFilterNet
-DeepFilterNet 功能目前只有技援 Windows 平台，用於消除由於 int8 TTS 量化模型中所產生的雜訊。在預設情況下，該功能是啟用的，但可以在 CMake build 階段使用 `-DUSE_DEEPFILTERNET` 選項來啟用或停用它。
+DeepFilterNet 功能目前有技援 Windows 和 Linux平台，用於消除由於 int8 TTS 量化模型中所產生的雜訊。在預設情況下，該功能是啟用的，但可以在 CMake build 階段使用 `-DUSE_DEEPFILTERNET` 選項來啟用或停用它。
 
 例如，若要停用此功能，可以在 CMake build 產生過程中使用下列命令：
 ```

@@ -15,7 +15,7 @@ MeloTTS.cpp的设计与 [原始 PyTorch 版本](https://github.com/myshell-ai/Me
 
 #### 图例
 1. tokenizer and BERT: tokenizer和 BERT 模型为中文使用 `bert-base-multilingual-uncased`，英文使用 `bert-base-uncased`
-2. g2p: 字母到音素的转换。对于英语的g2p，使用mini-bart-g2p来生成音素。详情请参见启用 mini-bart-g2p 用于 OpenVINO。
+2. g2p: 字母到音素的转换。对于英语的g2p，使用[mini-bart-g2p](https://huggingface.co/cisco-ai/mini-bart-g2p)来生成音素。详情请参见[Enable mini-bart-g2p for OpenVINO](https://github.com/apinge/MeloTTS.cpp/blob/multilang-develop/experimental/mini-bart-g2p/README.md) 。
 3. phones and tones: 中文表示为拼音和四声，英文表示为音标和重音
 4. tone_sandi: 纠正分词和音素的类（仅用于中文）
 5. DeepFilterNet: 用于降噪（由 int8 量化引入的背景噪声）
@@ -67,7 +67,7 @@ cmake -S . -B build && cmake --build build --config Release
 ./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_filename audio
 ```
 #### 3.3 在cmake里启用和禁用 DeepFilterNet
-DeepFilterNet 功能目前仅在 Windows 上支持，用于过滤 int8 量化模型中的噪声。默认情况下，该功能是启用的，但您可以在 CMake 阶段使用 `-DUSE_DEEPFILTERNET` 选项来启用或禁用它。
+DeepFilterNet 功能目前在 Windows和Linux 上均支持，用于过滤 int8 量化模型中的噪声。默认情况下，该功能是启用的，但您可以在 CMake 阶段使用 `-DUSE_DEEPFILTERNET` 选项来启用或禁用它。
 
 例如，要禁用此功能，您可以在 CMake 生成过程中使用以下命令：
 ```
