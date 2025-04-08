@@ -112,8 +112,6 @@ set(HEADER_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.h
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.h
 )
-include_directories(${CMAKE_SOURCE_DIR}/thirdParty/eigen)
-
 # Define the executable
 add_executable(meloTTS_ov ${SOURCE_FILES} ${HEADER_FILES})
 
