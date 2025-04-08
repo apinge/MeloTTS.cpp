@@ -6,6 +6,21 @@
 
 This repository offers a C++ implementation of [meloTTS](https://github.com/myshell-ai/MeloTTS), which is a high-quality, multilingual Text-to-Speech (TTS) library released by MyShell.ai that supports English, Chinese (mixed with English), and various other languages. This implementation is fully integrated with OpenVINO, supporting seamless deployment on CPU, GPU, and NPU devices. Currently, this repository supports both Chinese with mixed English and English. Support for [Japanese model](https://huggingface.co/myshell-ai/MeloTTS-Japanese) is coming next.
 
+## 🔀 Branch Usage Guide
+
+This repository supports multilingual text-to-speech inference. Please switch to the appropriate branch based on your use case:
+
+- **`EN` branch**:  
+  For **English-only** speech inference.
+
+- **`ZH_MIX_EN` branch**:  
+  For **Chinese-only** speech inference, designed to handle Mandarin with embedded English words.
+
+- **`multilang-develop` branch**:  
+  For **multilingual** speech inference 
+  Supports both Mandarin-English mixed speech and English-only processing.
+
+
 ## Pipeline Design
 
 
@@ -37,12 +52,12 @@ The table below outlines the supported devices for each model:
 ### 1. Download OpenVINO™ GenAI C++ Package
 
 To download the OpenVINO GenAI C++ package, please refer to the following link: [Install OpenVINO™ GenAI](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-genai.html).
-For **OpenVINO™ GenAI 2024.6** on Windows, you can run the command line in the command prompt (cmd).
+For **OpenVINO™ GenAI 2025.0** on Windows, you can run the command line in the command prompt (cmd).
 ```
-cd <user_home>/Downloads
-curl -L https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2024.6/windows/openvino_genai_windows_2024.6.0.0_x86_64.zip --output openvino_genai_2024.6.0.0.zip
+curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.0/windows/openvino_genai_windows_2025.0.0.0_x86_64.zip
+tar -xzvf openvino_genai_windows_2025.0.0.0_x86_64.zip
 ```
-For Linux, you can download the C++ package from https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2024.6/linux/ and unzip the package.
+For Linux, you can download the C++ package from https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.0/linux/ and unzip the package.
 
 For additional versions and more information about OpenVINO, visit the official OpenVINO Toolkit page: [OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html).
 
@@ -58,14 +73,14 @@ git clone https://github.com/apinge/MeloTTS.cpp.git
 <OpenVINO_GenAI_DIR>\setupvars.bat
 cd MeloTTS.cpp
 cmake -S . -B build && cmake --build build --config Release
-.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_filename audio
+.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs_en.txt  --output_filename audio
 ```
 #### 3.2 Linux Build and Run
 ```
 source <OpenVINO_GenAI_DIR>/setupvars.sh
 cd MeloTTS.cpp 
 cmake -S . -B build && cmake --build build --config Release
-./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_filename audio
+./build/meloTTS_ov --model_dir ov_models --input_file inputs_en.txt --output_filename audio
 ```
 #### 3.3 Enabling and Disabling DeepFilterNet
 DeepFilterNet functionality is currently supported on both Windows and Linux and is used to filter noise from int8 quantized models. By default, it is enabled, but you can disable it during the CMake stage using the `-DUSE_DEEPFILTERNET` option.
@@ -86,9 +101,9 @@ You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. B
 - `--input_file`: Specifies the input text file to be processed. Make sure that the text is in **UTF-8** format.
 - `--output_filename`: Specifies the output audio filename to be generated in the format {output_filename}_{language_style}.wav. For example, if the language is Chinese and the output_filename is "audio", the file will be saved as audio_ZH-MIX-EN.wav"
 - `--speed`: Specifies the speed of output audio. The default is 1.0.
-- `--quantize`: Indicates whether to use an int8 quantized model. The default is false, meaning an fp16 model is used by default.
-- `--disable_bert`: Indicates whether to disable the BERT model inference. The default is false.
-- `--disable_nf`: Indicates whether to disable the DeepfilterNet model inference (default: false).
+- `--quantize`: Indicates whether to use a quantized tts model. The default is `true`, meaning int8 quantized model is used by default.
+- `--disable_bert`: Indicates whether to disable the BERT model inference. The default is `false`.
+- `--disable_nf`: Indicates whether to disable the DeepfilterNet model inference (default: `false`).
 - `--language`: Specifies the language for TTS. The default language is English (`EN`).
 
 ## NPU Device Support
