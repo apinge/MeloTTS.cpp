@@ -154,11 +154,6 @@ The Python version of this repository (MeloTTS integrated with OpenVINO) is prov
 
 ## Third-Party Code
 This repository includes third-party code and libraries for Chinese word segmentation and pinyin processing.
-
-- [cppjieba](https://github.com/yanyiwu/cppjieba)
-    - A Chinese text segmentation library.
-- [cppinyin](https://github.com/pkufool/cppinyin)
-    - A C++ library supporting conversion between Chinese characters and pinyin
 - [libtorch](https://github.com/pytorch/pytorch/blob/main/docs/libtorch.rst)
    - Used to integrate DeepFilterNet
 

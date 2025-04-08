@@ -153,11 +153,6 @@ Python 版本（整合 OpenVINO 的 MeloTTS）可在 [MeloTTS-OV](https://github
 ## 第三方函式庫
 
 參考了以下函式庫:
-
-- [cppjieba](https://github.com/yanyiwu/cppjieba)
-    - C++中文分詞庫
-- [cppinyin](https://github.com/pkufool/cppinyin)
-    - C++漢語拼音庫，我們移除了 python 部分並且整合在程式碼中
 - [libtorch](https://github.com/pytorch/pytorch/blob/main/docs/libtorch.rst)
    - 用於 DeepFilterNet
 
