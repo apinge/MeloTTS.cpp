@@ -5,6 +5,16 @@
 
 **MeloTTS.cpp** 是[meloTTS](https://github.com/myshell-ai/MeloTTS) 的 C++ 实现，**MeloTTS**是由 MyShell.ai 发布的一个高质量、多语言的文本转语音 (Text To Speech) 库，支持英语、中文以及其他多种语言。本仓库基于**OpenVINO**，支持在 CPU、GPU 和 NPU 边缘设备上的部署。目前，本仓库支持中文(混合英文)和纯英语。计划支持[MeloTTS 日文模型](https://huggingface.co/myshell-ai/MeloTTS-Japanese)。
 
+
+## 🔀 分支使用指南
+此存储库支持多语言文本到语音的推理。请根据您的使用情况切换到适当的分支：
+- `EN` 分支：
+用于仅限英语的语音推理。
+- `ZH_MIX_EN` 分支：
+专为普通话-英语混合语音而设计。
+- `multilang-develop` 分支：
+用于多语言语音推理，支持普通话-英语混合语音和仅限英语的处理。
+
 ## Pipeline Design
 
 MeloTTS.cpp的设计与 [原始 PyTorch 版本](https://github.com/myshell-ai/MeloTTS) 基本一致，由三个模型组成（BERT、TTS 和 DeepFilterNet），其中 DeepFilterNet 是额外新增的模型。
@@ -35,13 +45,13 @@ MeloTTS.cpp的设计与 [原始 PyTorch 版本](https://github.com/myshell-ai/Me
 
 
 下载 OpenVINO GenAI C++ 包，请参考以下链接：[Install OpenVINO™ GenAI](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-genai.html)。
-对于 **OpenVINO™ GenAI 2024.6** 在 Windows 上的安装，您可以在命令提示符（cmd）中运行命令行。
+对于 **OpenVINO™ GenAI 2025.0** 在 Windows 上的安装，您可以在命令提示符（cmd）中运行命令行。
 ```
-cd <user_home>/Downloads
-curl -L https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2024.6/windows/openvino_genai_windows_2024.6.0.0_x86_64.zip --output openvino_genai_2024.6.0.0.zip
+curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.0/windows/openvino_genai_windows_2025.0.0.0_x86_64.zip
+tar -xzvf openvino_genai_windows_2025.0.0.0_x86_64.zip
 ```
 
-对于 Linux，您可以从 https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2024.6/linux/ 下载并解压该包。
+对于 Linux，您可以从 https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.0/linux/ 下载并解压该包。
 
 有关其他版本和更多 OpenVINO 信息，请访问 OpenVINO 官方工具包页面：[OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html)
 
@@ -57,14 +67,14 @@ git clone https://github.com/apinge/MeloTTS.cpp.git
 <OpenVINO_GenAI_DIR>\setupvars.bat
 cd MeloTTS.cpp
 cmake -S . -B build && cmake --build build --config Release
-.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs.txt  --output_filename audio
+.\build\Release\meloTTS_ov.exe --model_dir ov_models --input_file inputs_en.txt  --output_filename audio
 ```
 #### 3.2 Linux 编译与运行
 ```
 source <OpenVINO_GenAI_DIR>/setupvars.sh
 cd MeloTTS.cpp 
 cmake -S . -B build && cmake --build build --config Release
-./build/meloTTS_ov --model_dir ov_models --input_file inputs.txt --output_filename audio
+./build/meloTTS_ov --model_dir ov_models --input_file inputs_en.txt --output_filename audio
 ```
 #### 3.3 在cmake里启用和禁用 DeepFilterNet
 DeepFilterNet 功能目前在 Windows和Linux 上均支持，用于过滤 int8 量化模型中的噪声。默认情况下，该功能是启用的，但您可以在 CMake 阶段使用 `-DUSE_DEEPFILTERNET` 选项来启用或禁用它。
@@ -86,8 +96,8 @@ cmake -S . -B build -DUSE_DEEPFILTERNET=OFF
 - `--input_file`: 指定要处理的输入文本文件。确保文本是 **UTF-8** 格式。
 - `--output_filename`: 指定生成的输出音频文件名，格式为 {output_filename}_{language_style}.wav。例如，如果语言为中文且 output_filename 为 "audio"，文件将保存为 audio_ZH-MIX-EN.wav。
 - `--speed`: 指定输出音频的速度。默认值为 1.0。
-- `--quantize`: 指示是否使用 int8 量化模型。默认值为 `false`，表示默认使用 fp16 模型。
-- `--disable_bert`: 指示是否禁用 BERT 模型推理。默认值为 false。
+- `--quantize`: 指示是否使用 tts的量化模型。默认值为 `true`，表示默认使用 int8 模型。
+- `--disable_bert`: 指示是否禁用 BERT 模型推理。默认值为 `false`。
 - `--disable_nf`:  指示是否禁用 DeepfilterNet 模型推理（默认：`false`）。
 - `--language`: 指定 TTS 的语言。默认语言为英语（`EN`）。
 
