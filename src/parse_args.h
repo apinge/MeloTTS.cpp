@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <iostream>
 #include <unordered_set>
+#include <vector>
 #ifdef _WIN32
 #include <fcntl.h>
 #include <io.h>
