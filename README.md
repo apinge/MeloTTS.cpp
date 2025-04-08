@@ -104,7 +104,7 @@ You can use `run_tts.bat` or `run_tts.sh` as sample scripts to run the models. B
 - `--quantize`: Indicates whether to use a quantized tts model. The default is `true`, meaning int8 quantized model is used by default.
 - `--disable_bert`: Indicates whether to disable the BERT model inference. The default is `false`.
 - `--disable_nf`: Indicates whether to disable the DeepfilterNet model inference (default: `false`).
-- `--language`: Specifies the language for TTS. The default language is English (`EN`).
+- `--speaker_id`: Specifies the speaker_id (`0:EN-US,1:EN-BR,2:EN-INDIA,3:EN-AU,4:EN-Default`), if no input is provided, output will be generated for each speaker id.
 
 ## NPU Device Support
 The BERT and DeepFilterNet models in the pipeline support NPU as the inference device, utilizing the integrated NPUs in Meteor Lake and Lunar Lake.

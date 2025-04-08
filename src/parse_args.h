@@ -24,47 +24,53 @@ struct Args {
     std::string input_file = "inputs.txt";
     std::string output_filename = "audio";
     float speed = 1.0;
-    bool quantize = true; // quantize for tts
+    bool quantize = true;  // quantize for tts
     bool disable_bert = false;
     bool disable_nf = false;
-    std::string language = "EN";
-
+    const std::string language = "EN";
+    int speaker_id = -1;  // speaker_idI 0-4 correspond to the following:
+                          // 0: EN-US (English - United States)
+                          // 1: EN-BR (English - Brazil)
+                          // 2: EN-INDIA (English - India)
+                          // 3: EN-AU (English - Australia)
+                          // 4: EN-Default (Default English)
     void generate_init_file_paths();
-    const std::unordered_set<std::string> supported_languages = {"ZH", "EN"};
+    const std::unordered_set<std::string> supported_languages = {"EN"};
 
-    std::filesystem::path tts_path;   // tts_model
-    std::filesystem::path bert_path;  // bert_model
-    std::filesystem::path punc_dict_path;          // // punctuation dict
+    std::filesystem::path tts_path;        // tts_model
+    std::filesystem::path bert_path;       // bert_model
+    std::filesystem::path punc_dict_path;  // // punctuation dict
     std::filesystem::path nf_ir_path;
 };
 
 inline void usage(const std::string& prog) {
-    std::cout << "Usage: " << prog << " [options]\n"
-              << "\n"
-              << "options:\n"
-              << "  --model_dir             Specifies the folder containing the model files, dictionary files, and "
-                 "third-party resource files. \n"
-              << "  --tts_device            Specifies the OpenVINO device to be used for the TTS model (Supported "
-                 "devices include CPU, and GPU; default: CPU).\n"
-              << "  --bert_device           Specifies the OpenVINO device to be used for the BERT model (Supported "
-                 "devices include CPU, GPU, and NPU; default: CPU).\n"
+    std::cout
+        << "Usage: " << prog << " [options]\n"
+        << "\n"
+        << "options:\n"
+        << "  --model_dir             Specifies the folder containing the model files, dictionary files, and "
+           "third-party resource files. \n"
+        << "  --tts_device            Specifies the OpenVINO device to be used for the TTS model (Supported "
+           "devices include CPU, and GPU; default: CPU).\n"
+        << "  --bert_device           Specifies the OpenVINO device to be used for the BERT model (Supported "
+           "devices include CPU, GPU, and NPU; default: CPU).\n"
 #    ifdef USE_DEEPFILTERNET
-              << "  --nf_device             Specifies the OpenVINO device to be used for the DeepfilterNet model "
-                 "(Supported devices include CPU, GPU, and NPU; default: CPU).\n"
+        << "  --nf_device             Specifies the OpenVINO device to be used for the DeepfilterNet model "
+           "(Supported devices include CPU, GPU, and NPU; default: CPU).\n"
 #    endif  // USE_DEEPFILTERNET
-              << "  --input_file            Specifies the input text file to be processed.\n"
-              << "  --output_filename       Specifies the output audio filename to be generated in the format "
-                 "{output_filename}_{language_style}.wav. For example, if the language is Chinese and the output_filen "
-                 "is \"audio\", the file will be saved as audio_ZH-MIX-EN.wav\n"
-              << "  --speed                 Specifies the speed of output audio (default: 1.0).\n"
-              << "  --quantize              Indicates whether to use an int8 quantized tts model (default: true, use int8 "
-                 "model by default).\n"
-              << "  --disable_bert          Indicates whether to disable the BERT model inference (default: false).\n"
+        << "  --input_file            Specifies the input text file to be processed.\n"
+        << "  --output_filename       Specifies the output audio filename to be generated in the format "
+           "{output_filename}_{language_style}.wav. For example, if the language is Chinese and the output_filen "
+           "is \"audio\", the file will be saved as audio_ZH-MIX-EN.wav\n"
+        << "  --speed                 Specifies the speed of output audio (default: 1.0).\n"
+        << "  --quantize              Indicates whether to use an int8 quantized tts model (default: true, use int8 "
+           "model by default).\n"
+        << "  --disable_bert          Indicates whether to disable the BERT model inference (default: false).\n"
 #    ifdef USE_DEEPFILTERNET
-              << "  --disable_nf            Indicates whether to disable the DeepfilterNet model inference (default: "
-                 "false).\n"
+        << "  --disable_nf            Indicates whether to disable the DeepfilterNet model inference (default: "
+           "false).\n"
 #    endif  // USE_DEEPFILTERNET
-              << "  --language              Specifies the language for TTS (default: EN).\n";
+        << "  --speaker_id           Specifies the speaker_id (0:EN-US,1:EN-BR,2:EN-INDIA,3:EN-AU,4:EN-Default), if no input is provided, output will be generated for each speaker id.\n";
 }
 
 static bool to_bool(const std::string& s) {
@@ -102,8 +108,8 @@ inline Args parse_args(const std::vector<std::string>& argv) {
             args.disable_nf = to_bool(argv[++i]);
         } else if (arg == "--quantize") {
             args.quantize = to_bool(argv[++i]);
-        } else if (arg == "--language") {
-            args.language = argv[++i];
+        } else if (arg == "--speaker_id") {
+            args.speaker_id = std::stoi(argv[++i]);
         } else {
             usage(argv[0]);
             throw std::runtime_error("Unknown argument: " + arg);

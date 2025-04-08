@@ -86,8 +86,13 @@ int main(int argc, char** argv) {
     std::cout << "model init time is" << initTime << " ms" << std::endl;
 
     std::vector<std::string> texts = read_file_lines(input_path);
-    // TODO: make speaker id in args
-    for (auto& [speaker_id, style_name] : melo::TTS::speaker_ids.at(args.language)) {
+    std::map<int, std::string> speaker_ids;
+    if (args.speaker_id>=0)
+        speaker_ids.emplace(args.speaker_id, melo::TTS::speaker_ids.at(args.language).at(args.speaker_id));
+    else
+        speaker_ids = melo::TTS::speaker_ids.at(args.language);
+
+    for (auto& [speaker_id, style_name] : speaker_ids) {
         startTime = Time::now();
         model.tts_to_file(texts, std::format("{}_{}.wav", output_filename, style_name), speaker_id, args.speed);
         auto inferTime = get_duration_ms_till_now(startTime);

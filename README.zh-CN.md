@@ -99,7 +99,7 @@ cmake -S . -B build -DUSE_DEEPFILTERNET=OFF
 - `--quantize`: 指示是否使用 tts的量化模型。默认值为 `true`，表示默认使用 int8 模型。
 - `--disable_bert`: 指示是否禁用 BERT 模型推理。默认值为 `false`。
 - `--disable_nf`:  指示是否禁用 DeepfilterNet 模型推理（默认：`false`）。
-- `--language`: 指定 TTS 的语言。默认语言为英语（`EN`）。
+- `--speaker_id`: 指定 speaker_id（`0:EN-US, 1:EN-BR, 2:EN-INDIA, 3:EN-AU, 4:EN-Default`），如果未提供输入，将为每个 speaker_id 生成输出。
 
 ## NPU设备支持
 BERT 和 DeepFilterNet 模型支持将 NPU 作为推理设备，利用 Meteor Lake 和 Lunar Lake 中集成的 NPU。
