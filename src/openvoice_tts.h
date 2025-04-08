@@ -25,9 +25,13 @@ public:
     OpenVoiceTTS(std::unique_ptr<ov::Core>& core_ptr,
                  const std::filesystem::path& model_path,
                  const std::string& device,
-                 const ov::AnyMap& config,
-                 const std::string& language)
-        : AbstractOpenvinoModel(core_ptr, model_path, device, config),
+                 const std::string& language,
+                 const bool quantize = true,
+                 const std::optional<ov::AnyMap> config = std::nullopt)
+        : AbstractOpenvinoModel(core_ptr,
+                                model_path,
+                                device,
+                                config.value_or(OpenVoiceTTS::set_tts_config(device, quantize))),
           _language(language) {}
 
     OpenVoiceTTS() = default;
@@ -41,13 +45,45 @@ public:
                                  const float& sdp_ratio = 0.2f,
                                  const float& noise_scale = 0.6f,
                                  const float& noise_scale_w = 0.8f);
-    virtual void ov_infer() override;
+    virtual void ov_infer();
     virtual std::vector<float> get_ouput();
 
     inline std::string get_language() {
         return _language;
     }
     static constexpr size_t BATCH_SIZE = 1;
+    // This function must be static because it is used in the constructor
+    inline static ov::AnyMap set_tts_config(const std::string& device_name, bool quantize = false) {
+#ifdef MELO_DEBUG
+        std::cout << "TTS: set_tts_config for " << device_name << "\n";
+#endif
+        ov::AnyMap device_config = {};
+        if (device_name.find("CPU") != std::string::npos) {
+            device_config[ov::cache_dir.name()] = "cache";
+            device_config[ov::hint::scheduling_core_type.name()] = ov::hint::SchedulingCoreType::PCORE_ONLY;
+            device_config[ov::hint::enable_hyper_threading.name()] = false;
+            device_config[ov::hint::enable_cpu_pinning.name()] = true;
+            device_config[ov::enable_profiling.name()] = false;
+            // device_config["CPU_RUNTIME_CACHE_CAPACITY"] = 100;
+            //  device_config[ov::inference_num_threads.name()] = 1;
+        }
+        if (device_name.find("GPU") != std::string::npos) {
+            device_config[ov::cache_dir.name()] = "cache";
+            device_config[ov::intel_gpu::hint::queue_throttle.name()] = ov::intel_gpu::hint::ThrottleLevel::MEDIUM;
+            device_config[ov::intel_gpu::hint::queue_priority.name()] = ov::hint::Priority::MEDIUM;
+            device_config[ov::intel_gpu::hint::host_task_priority.name()] = ov::hint::Priority::HIGH;
+            device_config[ov::hint::enable_cpu_pinning.name()] = true;
+            device_config[ov::enable_profiling.name()] = false;
+            device_config[ov::intel_gpu::hint::enable_kernels_reuse.name()] = true;
+            // For accurate inference with this model, currently it's necessary to set both FP16 and FP32 models to run
+            // in FP32 mode on the GPU
+            if (!quantize) {
+                device_config[ov::hint::inference_precision.name()] = ov::element::f32;
+                std::cout << "TTS: set ov::hint::inference_precision as f32\n";
+            }
+        }
+        return device_config;
+    }
 
 private:
     std::string _language = "ZH";

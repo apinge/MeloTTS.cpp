@@ -70,21 +70,19 @@ int main(int argc, char** argv) {
     std::unique_ptr<ov::Core> core_ptr = std::make_unique<ov::Core>();
     auto startTime = Time::now();
     melo::TTS model(core_ptr,
-                    args.tts_path,
+                    args.model_dir,
+                    args.language,
                     args.tts_device,
-                    set_tts_config(args.tts_device, args.quantize),
-                    args.bert_path,
+                    args.quantize,
                     args.bert_device,
+                    args.disable_bert,
 #ifdef USE_DEEPFILTERNET
                     args.nf_ir_path,
                     args.nf_device,
-#endif  // USE_DEEPFILTERNET
-                    args.tokenizer_runtime_path,
-                    args.tokenizer_model_folder,
-                    args.punc_dict_path,
-                    args.language,
-                    args.disable_bert,
-                    args.disable_nf);
+                    args.disable_nf
+#endif
+    );
+    
     auto initTime = get_duration_ms_till_now(startTime);
     std::cout << "model init time is" << initTime << " ms" << std::endl;
 

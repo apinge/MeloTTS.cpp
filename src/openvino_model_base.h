@@ -35,11 +35,8 @@ class AbstractOpenvinoModel {
 public:
     AbstractOpenvinoModel(std::unique_ptr<ov::Core>& core_ptr,
                           const std::filesystem::path& model_path,
-                          const std::string& device);
-    AbstractOpenvinoModel(std::unique_ptr<ov::Core>& core_ptr,
-                          const std::filesystem::path& model_path,
                           const std::string& device,
-                          const ov::AnyMap& config);
+                          const std::optional<ov::AnyMap> config = std::nullopt);
 
     AbstractOpenvinoModel() = default;
     virtual ~AbstractOpenvinoModel() = default;
@@ -49,7 +46,7 @@ public:
     AbstractOpenvinoModel(AbstractOpenvinoModel&&) = default;
     AbstractOpenvinoModel& operator=(AbstractOpenvinoModel&& other) = default;
 
-    virtual void ov_infer() = 0;
+    //virtual void ov_infer() = 0;
 
     inline void release_infer_memory() {
         // this api works since OV2024.4 RC2
@@ -59,12 +56,11 @@ public:
         std::cout << "OpenVINO:" << ov::get_openvino_version() << std::endl;
         std::cout << "Model Device info:" << core_ptr->get_versions(device_name) << std::endl;
     }
-    inline void get_ov_info(std::shared_ptr<ov::Core>& core_ptr, const std::string& device_name) {
-        std::cout << "OpenVINO:" << ov::get_openvino_version() << std::endl;
-        std::cout << "Model Device info:" << core_ptr->get_versions(device_name) << std::endl;
-    }
     // TODO How to set AUTO device?
-    virtual ov::AnyMap set_ov_config(const std::string& device_name) {
+    static inline ov::AnyMap set_ov_config(const std::string& device_name) {
+#ifdef MELO_DEBUG
+        std::cout << "set_ov_config in base class" << device_name << "\n";
+#endif
         ov::AnyMap device_config = {};
         if (device_name.find("CPU") != std::string::npos) {
             device_config[ov::cache_dir.name()] = "cache";

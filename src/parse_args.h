@@ -23,7 +23,7 @@ struct Args {
     std::string input_file = "inputs.txt";
     std::string output_filename = "audio";
     float speed = 1.0;
-    bool quantize = false;
+    bool quantize = true; // quantize for tts
     bool disable_bert = false;
     bool disable_nf = false;
     std::string language = "EN";
@@ -33,15 +33,7 @@ struct Args {
 
     std::filesystem::path tts_path;   // tts_model
     std::filesystem::path bert_path;  // bert_model
-    // std::filesystem::path vocab_bert_path;// init tokenizer
-    std::filesystem::path tokenizer_model_folder;  // path of openvino tokenizer folder
-    std::filesystem::path tokenizer_runtime_path;  // path of openivno tokenizer runtime
     std::filesystem::path punc_dict_path;          // // punctuation dict
-    std::filesystem::path cppjieba_dict;           // dict folder for cppjieba
-    std::filesystem::path cppinyin_resource;       // cppinyin
-    std::filesystem::path
-        cmudict_path;  // Carnegie Mellon University Pronouncing Dictionary, used for english pronunciation
-    std::filesystem::path pinyin_to_symbol_map_path;  // pinyin_to_symbol_map
     std::filesystem::path nf_ir_path;
 };
 
@@ -64,7 +56,7 @@ inline void usage(const std::string& prog) {
                  "{output_filename}_{language_style}.wav. For example, if the language is Chinese and the output_filen "
                  "is \"audio\", the file will be saved as audio_ZH-MIX-EN.wav\n"
               << "  --speed                 Specifies the speed of output audio (default: 1.0).\n"
-              << "  --quantize              Indicates whether to use an int8 quantized model (default: false, use fp16 "
+              << "  --quantize              Indicates whether to use an int8 quantized tts model (default: true, use int8 "
                  "model by default).\n"
               << "  --disable_bert          Indicates whether to disable the BERT model inference (default: false).\n"
 #    ifdef USE_DEEPFILTERNET
@@ -143,56 +135,6 @@ inline Args parse_args(int argc, char** argv) {
 }
 
 inline void Args::generate_init_file_paths() {
-    if (language == "ZH") {
-        if (bert_device == "NPU") {
-            // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
-            bert_path = model_dir / "bert_ZH_static_int8.xml";
-        } else
-            bert_path = model_dir / "bert_ZH_int8.xml";
-        if (quantize) {
-            tts_path = model_dir / "tts_zn_mix_en_int8.xml";
-        } else {
-            // fp16 model
-            tts_path = model_dir / "tts_zn_mix_en.xml";
-        }
-    } else if (language == "EN") {
-        if (bert_device == "NPU") {
-            // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
-            bert_path = model_dir / "bert_EN_static_int8.xml";
-        } else
-            bert_path = model_dir / "bert_EN_int8.xml";
-        if (quantize) {
-            tts_path = model_dir / "tts_en_int8.xml";
-        } else {
-            // fp16 model
-            tts_path = model_dir / "tts_en.xml";
-        }
-    }
-
-    // init tokenizer
-    // vocab_bert_path = model_dir / "vocab_bert.txt";
-#    ifdef _WIN32
-    tokenizer_runtime_path = "openvino_tokenizers.dll";
-#    elif __linux__
-    const char* openvino_dir = std::getenv("INTEL_OPENVINO_DIR");
-    if (openvino_dir) {
-        std::cout << "INTEL_OPENVINO_DIR: " << openvino_dir << std::endl;
-    } else {
-        std::cerr << "[ERROR] INTEL_OPENVINO_DIR is not set." << std::endl;
-    }
-    tokenizer_runtime_path =
-        std::filesystem::path(openvino_dir) / "runtime" / "lib" / "intel64" / "libopenvino_tokenizers.so";
-#    else
-    std::cerr << "[ERROR] Unsupported Operating System.\n"
-#    endif
-    if (language == "ZH")
-        tokenizer_model_folder = model_dir / "bert-base-multilingual-uncased";
-    else if (language == "EN")
-        tokenizer_model_folder = model_dir / "bert-base-uncased";
-
-    // punctuation dict
-    punc_dict_path = model_dir / "punc.dic";
-
 #    ifdef USE_DEEPFILTERNET
     // nf_df2 model path
     nf_ir_path = model_dir;

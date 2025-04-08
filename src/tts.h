@@ -34,6 +34,21 @@ namespace melo {
 class TTS {
 public:
     explicit TTS(std::unique_ptr<ov::Core>& core,
+        const std::filesystem::path& model_dir,
+        const std::string& language,
+        const std::string& tts_device = "CPU",
+        const bool tts_quantize = true,
+        const std::string& bert_device = "CPU",
+        bool disable_bert = false,
+#ifdef USE_DEEPFILTERNET
+        const std::filesystem::path& nf_ir_path = {},
+        const std::string& nf_device = "CPU",
+        bool disable_nf = false
+#endif  // USE_DEEPFILTERNET
+    );
+
+    [[deprecated("Use another constructor instead")]]
+    explicit TTS(std::unique_ptr<ov::Core>& core,
                  const std::filesystem::path& tts_ir_path,
                  const std::string& tts_device,
                  const ov::AnyMap& tts_config,
@@ -92,17 +107,16 @@ protected:
     get_text_for_tts_infer(const std::string& text);
 
 private:
-    // std::shared_ptr<Tokenizer> tokenizer;
     std::shared_ptr<OpenVinoTokenizer> ov_tokenizer;
     Bert bert_model;
     OpenVoiceTTS tts_model;
 #ifdef USE_DEEPFILTERNET
     NoiseFilter nf;
 #endif  // USE_DEEPFILTERNET
-    std::string _language = "ZH";
+    std::string _language;
     Darts::DoubleArray _da;  // punctuation dict use to split sentence
-    bool _disable_bert = false;
-    bool _disable_nf = false;
+    bool _disable_bert;
+    bool _disable_nf;
     std::shared_ptr<AbstractLanguageModule> _language_module;
 };
 }  // namespace melo

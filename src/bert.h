@@ -40,7 +40,7 @@ public:
     void get_bert_feature(const std::string& text,
                           const std::vector<int>& word2ph,
                           std::vector<std::vector<float>>& berts);
-    virtual void ov_infer() override;
+    virtual void ov_infer();
     virtual void get_output(const std::vector<int>& word2ph, std::vector<std::vector<float>>& phone_level_feature);
 
     // virtual void get_output(std::vector<std::any>& output) {};

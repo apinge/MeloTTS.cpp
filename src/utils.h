@@ -96,35 +96,6 @@ inline size_t str_len(const std::string& s) {
     return cnt;
 }
 
-inline ov::AnyMap set_tts_config(const std::string& device_name, bool quantize = false) {
-    ov::AnyMap device_config = {};
-    if (device_name.find("CPU") != std::string::npos) {
-        device_config[ov::cache_dir.name()] = "cache";
-        device_config[ov::hint::scheduling_core_type.name()] = ov::hint::SchedulingCoreType::PCORE_ONLY;
-        device_config[ov::hint::enable_hyper_threading.name()] = false;
-        device_config[ov::hint::enable_cpu_pinning.name()] = true;
-        device_config[ov::enable_profiling.name()] = false;
-        // device_config["CPU_RUNTIME_CACHE_CAPACITY"] = 100;
-        //  device_config[ov::inference_num_threads.name()] = 1;
-    }
-    if (device_name.find("GPU") != std::string::npos) {
-        device_config[ov::cache_dir.name()] = "cache";
-        device_config[ov::intel_gpu::hint::queue_throttle.name()] = ov::intel_gpu::hint::ThrottleLevel::MEDIUM;
-        device_config[ov::intel_gpu::hint::queue_priority.name()] = ov::hint::Priority::MEDIUM;
-        device_config[ov::intel_gpu::hint::host_task_priority.name()] = ov::hint::Priority::HIGH;
-        device_config[ov::hint::enable_cpu_pinning.name()] = true;
-        device_config[ov::enable_profiling.name()] = false;
-        device_config[ov::intel_gpu::hint::enable_kernels_reuse.name()] = true;
-        // For accurate inference with this model, currently it's necessary to set both FP16 and FP32 models to run in
-        // FP32 mode on the GPU
-        if (!quantize) {
-            device_config[ov::hint::inference_precision.name()] = ov::element::f32;
-            std::cout << "TTS: set ov::hint::inference_precision as f32\n";
-        }
-    }
-    return device_config;
-}
-
 // function to get profiling info, used after inference with config "device_config[ov::enable_profiling.name()] =
 // false;" Refer to
 // https://github.com/sammysun0711/ov_llm_bench/blob/6a03a1aacab550ec7e3b84948abf1c7fe186e652/inference_engine.py#L215-L220

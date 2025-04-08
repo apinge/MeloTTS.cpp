@@ -27,6 +27,96 @@
 #include "language_modules/english.h"
 namespace melo {
 TTS::TTS(std::unique_ptr<ov::Core>& core,
+         const std::filesystem::path& model_dir,
+         const std::string& language,
+         const std::string& tts_device,
+         const bool tts_quantize,
+         const std::string& bert_device,
+         bool disable_bert,
+#ifdef USE_DEEPFILTERNET
+         const std::filesystem::path& nf_ir_path,
+         const std::string& nf_device,
+         bool disable_nf
+#endif  // USE_DEEPFILTERNET
+         )
+    : _language(language),
+      _disable_bert(disable_bert),
+      _disable_nf(disable_nf)
+      {
+    assert((core.get() != nullptr) && "core should not be null!");
+    assert((std::filesystem::exists(model_path)) && "ir files or vocab_bert does not exit!");
+    std::filesystem::path tts_ir_path, bert_ir_path, tokenizer_dir_path;
+    if (language == "ZH") {
+        if (bert_device == "NPU") {
+            // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
+            bert_ir_path = model_dir / "bert_ZH_static_int8.xml";
+        } else
+            bert_ir_path = model_dir / "bert_ZH_int8.xml";
+        if (tts_quantize) {
+            tts_ir_path = model_dir / "tts_zn_mix_en_int8.xml";
+        } else {
+            // fp16 model
+            tts_ir_path = model_dir / "tts_zn_mix_en.xml";
+        }
+        tokenizer_dir_path = model_dir / "bert-base-multilingual-uncased";
+    } else if (language == "EN") {
+        if (bert_device == "NPU") {
+            // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
+            bert_ir_path = model_dir / "bert_EN_static_int8.xml";
+        } else
+            bert_ir_path = model_dir / "bert_EN_int8.xml";
+        if (tts_quantize) {
+            tts_ir_path = model_dir / "tts_en_int8.xml";
+        } else {
+            // fp16 model
+            tts_ir_path = model_dir / "tts_en.xml";
+        }
+        tokenizer_dir_path = model_dir / "bert-base-uncased";
+    }
+    assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(bert_ir_path)) &&
+           "ir files or vocab_bert does not exit!");
+    assert((std::filesystem::exists(tokenizer_dir_path)) && "tokenizer model folder does not exit!");
+
+    // init tts model
+    tts_model = OpenVoiceTTS(core, tts_ir_path, tts_device, language, tts_quantize);
+
+    // init tokenizer
+    ov_tokenizer = std::make_shared<OpenVinoTokenizer>(tokenizer_dir_path);
+
+    // init language module
+    if (language == "ZH") {
+        // We temporarily assume that the initialization data files used by the language module are all located in the
+        // tts_ir_path folder.
+        _language_module = std::make_shared<ChineseMix>(model_dir);
+    } else if (language == "EN") {
+        _language_module = std::make_shared<English>(core, model_dir);
+    } else
+        std::cerr << "[ERROR] Unsupported Language\n";
+
+    // init bert
+    if (!_disable_bert) {
+        assert(std::filesystem::exists(bert_ir_path) && "bert_ir_path does not exist!\n");
+        bert_model = Bert(core, bert_ir_path, bert_device, language, ov_tokenizer);
+        std::cout << "TTS::TTS : init bert_model\n";
+    } else
+        std::cout << "TTS::TTS : disable bert_model\n";
+#ifdef USE_DEEPFILTERNET
+    // Init noise filter model
+    if (!_disable_nf) {
+        assert(std::filesystem::exists(nf_ir_path) && "nf_ir_path does not exist!\n");
+        nf.init(core, nf_ir_path.string(), nf_device);
+        std::cout << "TTS::TTS : init nf_model\n";
+    } else
+        std::cout << "TTS::TTS : disable nf_model\n";
+#endif  // USE_DEEPFILTERNET
+
+    // init punctuation dict
+    std::filesystem::path punctuation_dict_path = model_dir / "punc.dic";
+    assert(std::filesystem::exists(punctuation_dict_path) && "punctuation dictionary does not exit!");
+    _da.open(punctuation_dict_path.string().c_str());
+    std::cout << "TTS::TTS : open puncuation dict.\n";
+}
+TTS::TTS(std::unique_ptr<ov::Core>& core,
          const std::filesystem::path& tts_ir_path,
          const std::string& tts_device,
          const ov::AnyMap& tts_config,
@@ -45,7 +135,7 @@ TTS::TTS(std::unique_ptr<ov::Core>& core,
     : _language(language),
       _disable_bert(disable_bert),
       _disable_nf(disable_nf),
-      tts_model(core, tts_ir_path, tts_device, tts_config, language),
+      tts_model(core, tts_ir_path, tts_device, language),
       ov_tokenizer(std::make_shared<OpenVinoTokenizer>(tokenizer_model_folder)) {
 
     assert((core.get() != nullptr) && "core should not be null!");
