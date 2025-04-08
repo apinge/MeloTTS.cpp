@@ -48,35 +48,16 @@ set(SOURCE_FILES
     src/bert.cpp
     src/openvoice_tts.cpp
     src/tts.cpp
+    src/darts.h
     src/language_modules/cmudict.cpp
-    src/language_modules/chinese_mix.cpp
     src/language_modules/english.cpp
-    src/language_modules/tone_sandhi.cpp
-    src/language_modules/language_module_base.cpp
-    src/text_normalization/text_normalization.cpp   
-    src/text_normalization/char_convert.cpp     
-    src/text_normalization/chronology.cpp     
-    src/text_normalization/constants.cpp     
-    src/text_normalization/num.cpp     
-    src/text_normalization/phonecode.cpp     
-    src/text_normalization/quantifier.cpp     
-    ${CMAKE_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.cc
-    ${CMAKE_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.cc
-    src/text_normalization/text_normalization.cpp
-    src/text_normalization/char_convert.cpp
-    src/text_normalization/chronology.cpp
-    src/text_normalization/constants.cpp
-    src/text_normalization/num.cpp
-    src/text_normalization/phonecode.cpp
-    src/text_normalization/quantifier.cpp
+    src/language_modules/language_module_base.cpp  
     src/deepfilternet/noisefilter.cpp
     src/deepfilternet/deepfilter.cpp
     src/deepfilternet/dfnet_model.cpp
     src/deepfilternet/multiframe.cpp
     src/mini-bart-g2p/mini-bart-g2p.cpp
     src/text_normalization/text_normalization_eng.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.cc
 )
 
 # Header files
@@ -90,29 +71,15 @@ set(HEADER_FILES
     src/openvoice_tts.h
     src/tts.h
     src/language_modules/cmudict.h
-    src/language_modules/chinese_mix.h
     src/language_modules/english.h
-    src/language_modules/tone_sandhi.h
     src/language_modules/language_module_base.h
-    src/text_normalization/text_normalization.h
-    src/text_normalization/char_convert.h
-    src/text_normalization/chronology.h
-    src/text_normalization/constant.h
-    src/text_normalization/number.h
-    src/text_normalization/phonecode.h
-    src/text_normalization/quantifier.h
     src/text_normalization/text_normalization_eng.h
-    ${CMAKE_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.h
-    ${CMAKE_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.h
     src/deepfilternet/noisefilter.h
     src/deepfilternet/deepfilter.h
     src/deepfilternet/multiframe.h
     src/deepfilternet/dfnet_model.h
     src/mini-bart-g2p/mini-bart-g2p.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc/cppinyin_csrc_utils.h
 )
-include_directories(${CMAKE_SOURCE_DIR}/thirdParty/eigen)
 
 # Define the executable
 add_executable(meloTTS_ov ${SOURCE_FILES} ${HEADER_FILES})
@@ -238,12 +205,6 @@ endif() # end USE_DEEPFILTERNET AND UNIX
 
 # Define DEBUG macro for Debug configuration
 target_compile_definitions(meloTTS_ov PRIVATE "$<$<CONFIG:DEBUG>:DEBUG>")
-target_include_directories(meloTTS_ov PRIVATE ${CMAKE_SOURCE_DIR}/thirdParty/cppjieba)
-target_include_directories(meloTTS_ov PRIVATE ${CMAKE_SOURCE_DIR}/thirdParty/cppjieba/include)
-target_include_directories(meloTTS_ov PRIVATE ${CMAKE_SOURCE_DIR}/thirdParty/cppinyin/csrc)
-target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba)
-target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppjieba/include)
-target_include_directories(meloTTS_ov PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/cppinyin/csrc)
 
 
 target_link_libraries(meloTTS_ov

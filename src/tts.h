@@ -20,7 +20,6 @@
 #define TTS_H
 #include <filesystem>
 
-#include "Jieba.hpp"
 #include "bert.h"
 #include "darts.h"
 #include "language_modules/cmudict.h"

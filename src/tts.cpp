@@ -23,7 +23,6 @@
 #include <fstream>
 
 #include "info_data.h"
-#include "language_modules/chinese_mix.h"
 #include "language_modules/english.h"
 namespace melo {
 TTS::TTS(std::unique_ptr<ov::Core>& core,
@@ -45,37 +44,26 @@ TTS::TTS(std::unique_ptr<ov::Core>& core,
       {
     assert((core.get() != nullptr) && "core should not be null!");
     assert((std::filesystem::exists(model_dir)) && "ir files or vocab_bert does not exit!");
+    
     std::filesystem::path tts_ir_path, bert_ir_path, tokenizer_dir_path;
-    if (language == "ZH") {
-        if (bert_device == "NPU") {
-            // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
-            bert_ir_path = model_dir / "bert_ZH_static_int8.xml";
-        } else
-            bert_ir_path = model_dir / "bert_ZH_int8.xml";
-        if (tts_quantize) {
-            tts_ir_path = model_dir / "tts_zn_mix_en_int8.xml";
-        } else {
-            // fp16 model
-            tts_ir_path = model_dir / "tts_zn_mix_en.xml";
-        }
-        tokenizer_dir_path = model_dir / "bert-base-multilingual-uncased";
-    } else if (language == "EN") {
-        if (bert_device == "NPU") {
-            // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
-            bert_ir_path = model_dir / "bert_EN_static_int8.xml";
-        } else
-            bert_ir_path = model_dir / "bert_EN_int8.xml";
-        if (tts_quantize) {
-            tts_ir_path = model_dir / "tts_en_int8.xml";
-        } else {
-            // fp16 model
-            tts_ir_path = model_dir / "tts_en.xml";
-        }
-        tokenizer_dir_path = model_dir / "bert-base-uncased";
+
+    if (bert_device == "NPU") {
+        // NPU device runs the static shape model in Meteor Lake and Lunar Lake.
+        bert_ir_path = model_dir / "bert_EN_static_int8.xml";
+    } else
+        bert_ir_path = model_dir / "bert_EN_int8.xml";
+    if (tts_quantize) {
+        tts_ir_path = model_dir / "tts_en_int8.xml";
+    } else {
+        // fp16 model
+        tts_ir_path = model_dir / "tts_en.xml";
     }
+    tokenizer_dir_path = model_dir / "bert-base-uncased";
+
     assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(bert_ir_path)) &&
            "ir files or vocab_bert does not exit!");
     assert((std::filesystem::exists(tokenizer_dir_path)) && "tokenizer model folder does not exit!");
+    assert(language == "EN" && "This is the branch for English!");
 
     // init tts model
     tts_model = OpenVoiceTTS(core, tts_ir_path, tts_device, language, tts_quantize);
@@ -84,14 +72,9 @@ TTS::TTS(std::unique_ptr<ov::Core>& core,
     ov_tokenizer = std::make_shared<OpenVinoTokenizer>(tokenizer_dir_path);
 
     // init language module
-    if (language == "ZH") {
-        // We temporarily assume that the initialization data files used by the language module are all located in the
-        // tts_ir_path folder.
-        _language_module = std::make_shared<ChineseMix>(model_dir);
-    } else if (language == "EN") {
-        _language_module = std::make_shared<English>(core, model_dir);
-    } else
-        std::cerr << "[ERROR] Unsupported Language\n";
+
+     _language_module = std::make_shared<English>(core, model_dir);
+
 
     // init bert
     if (!_disable_bert) {
@@ -142,17 +125,8 @@ TTS::TTS(std::unique_ptr<ov::Core>& core,
     assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(tokenizer_runtime_path) &&
             std::filesystem::exists(tokenizer_model_folder)) &&
            "ir files or vocab_bert does not exit!");
-
-    // init language module
-    if (language == "ZH") {
-        // We temporarily assume that the initialization data files used by the language module are all located in the
-        // tts_ir_path folder.
-        _language_module = std::make_shared<ChineseMix>(tts_ir_path.parent_path());
-    } else if (language == "EN") {
-        _language_module = std::make_shared<English>(core, tts_ir_path.parent_path());
-    } else
-        std::cerr << "[ERROR] Unsupported Language\n";
-
+    assert(language == "EN" && "This is the branch for English!");
+    _language_module = std::make_shared<English>(core, tts_ir_path.parent_path());
     // init bert
     if (!_disable_bert) {
         assert(std::filesystem::exists(bert_ir_path) && "bert_ir_path does not exist!\n");
