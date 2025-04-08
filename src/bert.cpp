@@ -30,11 +30,7 @@ void Bert::get_bert_feature(const std::string& text,
     _token_type_ids.clear();
 
     // get token ids
-    std::vector<int64_t> ids;
-    std::vector<std::string> strs;
-    //_tokenizer->Tokenize(text, strs, _input_ids);
-    auto _text = text;
-    _input_ids = _ov_tokenizer->tokenize(std::move(_text));
+    _input_ids = _ov_tokenizer->tokenize(text);
     size_t n = _input_ids.size();
     _attention_mask = std::vector<int64_t>(n, 1);
     _token_type_ids = std::vector<int64_t>(n, 0);
@@ -46,10 +42,7 @@ void Bert::get_bert_feature(const std::string& text,
         _token_type_ids = to_static_1d_shape(_token_type_ids);
     }
 #ifdef MELO_DEBUG
-    for (const auto& word : strs)
-        std::cout << word << " ";
-    std::cout << std::endl;
-    for (const auto& id : _input_ids)
+    for (std::cout << "_input_ids"; const auto& id : _input_ids)
         std::cout << id << " ";
     std::cout << std::endl;
     print_input_names();

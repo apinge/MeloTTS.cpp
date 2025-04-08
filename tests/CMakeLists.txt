@@ -78,8 +78,9 @@ add_executable(test_tokenizer ${CMAKE_CURRENT_SOURCE_DIR}/test_tokenizer.cpp ../
 target_link_libraries(test_tokenizer  PRIVATE gtest_main openvino::runtime)
 
 add_executable(test_openvino_tokenizer test_openvino_tokenizer.cpp ../src/utils.cpp ../src/openvino_tokenizer.cpp)
-target_include_directories(test_openvino_tokenizer  PRIVATE ${CMAKE_SOURCE_DIR}/openvino_tokenizer.h)
-target_link_libraries(test_openvino_tokenizer PRIVATE gtest_main openvino::runtime)
+target_include_directories(test_openvino_tokenizer  PRIVATE ../src/openvino_tokenizer.h)
+target_link_libraries(test_openvino_tokenizer PRIVATE gtest_main openvino::genai)
+
 
 include(GoogleTest)
 gtest_discover_tests(test_bert)

@@ -46,7 +46,7 @@ TTS::TTS(std::unique_ptr<ov::Core>& core,
       _disable_bert(disable_bert),
       _disable_nf(disable_nf),
       tts_model(core, tts_ir_path, tts_device, tts_config, language),
-      ov_tokenizer(std::make_shared<OpenVinoTokenizer>(core, tokenizer_runtime_path, tokenizer_model_folder)) {
+      ov_tokenizer(std::make_shared<OpenVinoTokenizer>(tokenizer_model_folder)) {
 
     assert((core.get() != nullptr) && "core should not be null!");
     assert((std::filesystem::exists(tts_ir_path) && std::filesystem::exists(tokenizer_runtime_path) &&

@@ -21,6 +21,7 @@
 #include <filesystem>
 #include <memory>
 #include <openvino/openvino.hpp>
+#include <openvino/genai/tokenizer.hpp>
 #include <string>
 #include <vector>
 namespace melo {
@@ -32,22 +33,12 @@ namespace melo {
  */
 class OpenVinoTokenizer {
 public:
-    OpenVinoTokenizer(std::unique_ptr<ov::Core>& core,
-                      const std::filesystem::path& runtime_path,
-                      const std::filesystem::path& tokenize_path,
-                      const std::filesystem::path& detokenize_path);
-    OpenVinoTokenizer(std::unique_ptr<ov::Core>& core,
-                      const std::filesystem::path& runtime_path,
-                      const std::filesystem::path& tokenizer_model_folder);
+    OpenVinoTokenizer(const std::filesystem::path& tokenizer_model_folder) : _tokenizer(tokenizer_model_folder) {}
     OpenVinoTokenizer() = default;
     ~OpenVinoTokenizer() = default;
 
-    ov::Tensor tokenize_tensor(std::string&& prompt);
-    std::vector<int64_t> tokenize(std::string&& prompt);
-    std::vector<std::string> detokenize(std::vector<int64_t>&& token_id, size_t size);
-    std::string* detokenize(int64_t&& token_id);
-    std::vector<std::string> detokenize(ov::Tensor& token_ids);
-    std::vector<std::string> word_segment(std::string& text);
+    std::vector<int64_t> tokenize(const std::string& prompt);
+    std::vector<std::string> word_segment(const std::string& text);
 
     template <typename T>
     static std::vector<T> get_output_vec(const ov::Tensor& output_tensor) {
@@ -62,7 +53,7 @@ public:
     }
 
 private:
-    ov::InferRequest tokenizer_infer, detokenizer_infer;
+    ov::genai::Tokenizer _tokenizer;
 };
 }  // namespace melo
 #endif  // OPENVINO_TOKENIZER_H

@@ -56,7 +56,12 @@ std::tuple<std::vector<std::string>, std::vector<int64_t>, std::vector<int>> Eng
     std::vector<int64_t> tones_list{0};
     std::vector<int> word2ph{1};
 
-    std::vector<std::string> tokenized = tokenizer->word_segment(const_cast<std::string&>(sentence));
+    std::vector<std::string> tokenized = tokenizer->word_segment(sentence);
+#ifdef MELO_DEBUG
+    for (std::cout << "Enligsh::English tokenizer_en"; const auto& x : tokenized)
+        std::cout << x << ",";
+    std::cout << std::endl;
+#endif
     std::vector<std::vector<std::string>> ph_groups;
     // remove ## in suffix
     for (auto& token : tokenized) {
