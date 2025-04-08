@@ -44,7 +44,7 @@ TTS::TTS(std::unique_ptr<ov::Core>& core,
       _disable_nf(disable_nf)
       {
     assert((core.get() != nullptr) && "core should not be null!");
-    assert((std::filesystem::exists(model_path)) && "ir files or vocab_bert does not exit!");
+    assert((std::filesystem::exists(model_dir)) && "ir files or vocab_bert does not exit!");
     std::filesystem::path tts_ir_path, bert_ir_path, tokenizer_dir_path;
     if (language == "ZH") {
         if (bert_device == "NPU") {
