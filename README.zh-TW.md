@@ -61,7 +61,7 @@ tar -xzvf openvino_genai_windows_2025.0.0.0_x86_64.zip
 ### 2. Clone Git Repository
 ```
 git lfs install
-git clone https://github.com/apinge/MeloTTS.cpp.git
+git clone https://github.com/apinge/MeloTTS.cpp.git -b EN
 ```
 
 ### 3. 編譯與執行
