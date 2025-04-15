@@ -77,8 +77,8 @@ protected:
         const std::vector<ov::Output<const ov::Node>>& inputs = _compiled_model->inputs();
         for (size_t i = 0; i < inputs.size(); i++) {
             const auto& item = inputs[i];
-            auto iop_precision = ov::element::undefined;
-            auto type_to_set = ov::element::undefined;
+            // auto iop_precision = ov::element::undefined;
+            // auto type_to_set = ov::element::undefined;
             std::string name;
             // Some tensors might have no names, get_any_name will throw exception in that case.
             // -iop option will not work for those tensors.

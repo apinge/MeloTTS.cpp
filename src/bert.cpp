@@ -22,7 +22,7 @@
 #include "utils.h"
 namespace melo {
 void Bert::get_bert_feature(const std::string& text,
-                            const std::vector<int>& word2ph,
+                            std::vector<int>& word2ph,
                             std::vector<std::vector<float>>& berts) {
     // clear previous result
     _input_ids.clear();
@@ -36,10 +36,11 @@ void Bert::get_bert_feature(const std::string& text,
     _token_type_ids = std::vector<int64_t>(n, 0);
 
     if (_static_shape) {
-        std::cout << "[INFO]:Bert::get_bert_feature: static shape bert\n";
-        _input_ids = to_static_1d_shape(_input_ids);
-        _attention_mask = to_static_1d_shape(_attention_mask);
-        _token_type_ids = to_static_1d_shape(_token_type_ids);
+        std::cout << "[INFO]:Bert::get_bert_feature: reshape the bert inputs\n";
+        to_static_1d_shape(_input_ids, NPU_BERT_STATIC_SHAPE_SIZE);
+        to_static_1d_shape(_attention_mask, NPU_BERT_STATIC_SHAPE_SIZE);
+        to_static_1d_shape(_token_type_ids, NPU_BERT_STATIC_SHAPE_SIZE);
+        to_static_1d_shape(word2ph, NPU_BERT_STATIC_SHAPE_SIZE);
     }
 #ifdef MELO_DEBUG
     for (std::cout << "_input_ids"; const auto& id : _input_ids)
@@ -81,9 +82,9 @@ void Bert::ov_infer() {
     std::cout << "---- [Bert]: Bert model profiling ----" << std::endl;
     get_profiling_info(_infer_request);
 #endif  // MODEL_PROFILING_DEBUG
-#ifdef MELO_DEBUG
-    std::cout << "bert infer ok\n";
-#endif
+
+    std::cout << "[INOF] in inferbert infer ok\n";
+
 }
 
 void Bert::get_output(const std::vector<int>& word2ph, std::vector<std::vector<float>>& phone_level_feature) {
@@ -91,7 +92,6 @@ void Bert::get_output(const std::vector<int>& word2ph, std::vector<std::vector<f
     const float* output_data = _infer_request->get_output_tensor(0).data<const float>();
     // size_t output_size = _input_ids.size();//_infer_request->GetOutputTensorSize(0);
     size_t frame_num = output_tensor.get_shape()[0];
-
     assert(frame_num == _input_ids.size() && "[ERROR] Should be frame_num == _input_ids.size()");
 #if defined(MELO_DEBUG) || defined(MELO_TEST)
     ov::Shape output_tensor_shape = output_tensor.get_shape();
@@ -145,20 +145,21 @@ void Bert::get_output(const std::vector<int>& word2ph, std::vector<std::vector<f
     }
 }
 
-std::vector<int64_t> Bert::to_static_1d_shape(const std::vector<int64_t>& dynamic_input, size_t shape_size) {
-    std::vector<int64_t> static_output(shape_size, 0);
-    size_t n = dynamic_input.size();
-    // Pad with 0 if the length of dynamic_input is less than or equal to the model input size.
-    if (n <= shape_size) {
-        std::copy(dynamic_input.begin(), dynamic_input.end(), static_output.begin());
-    } else {  // Truncate and output a warning if the length of dynamic_input is greater than input size
-        std::copy(dynamic_input.begin(), dynamic_input.begin() + shape_size, static_output.begin());
-        std::cout
-            << "[Warning]Bert::to_static_1d_shape: dynamic_input is longer than model input size. Truncating to fit."
-            << std::endl;
-    }
-    return static_output;
-}
+// std::vector<int64_t> Bert::to_static_1d_shape(const std::vector<int64_t>& dynamic_input, size_t shape_size) {
+//     std::vector<int64_t> static_output(shape_size, 0);
+//     std::cout << "static_output"<< static_output.size() << std::endl;
+//     size_t n = dynamic_input.size();
+//     // Pad with 0 if the length of dynamic_input is less than or equal to the model input size.
+//     if (n <= shape_size) {
+//         std::copy(dynamic_input.begin(), dynamic_input.end(), static_output.begin());
+//     } else {  // Truncate and output a warning if the length of dynamic_input is greater than input size
+//         std::copy(dynamic_input.begin(), dynamic_input.begin() + shape_size, static_output.begin());
+//         std::cout
+//             << "[Warning]Bert::to_static_1d_shape: dynamic_input is longer than model input size. Truncating to fit."
+//             << std::endl;
+//     }
+//     return static_output;
+// }
 // only intended for testing
 [[maybe_unused]] void Bert::set_input_tensors(const std::vector<int64_t>& token_ids, bool static_shape) {
     // clear previous result
@@ -171,9 +172,9 @@ std::vector<int64_t> Bert::to_static_1d_shape(const std::vector<int64_t>& dynami
     _token_type_ids = std::vector<int64_t>(n, 0);
     if (static_shape) {
         std::cout << "[INFO]:Bert::get_bert_feature: static shape bert\n";
-        _input_ids = to_static_1d_shape(_input_ids);
-        _attention_mask = to_static_1d_shape(_attention_mask);
-        _token_type_ids = to_static_1d_shape(_token_type_ids);
+        to_static_1d_shape(_input_ids);
+        to_static_1d_shape(_attention_mask);
+        to_static_1d_shape(_token_type_ids);
     }
 }
 }  // namespace melo

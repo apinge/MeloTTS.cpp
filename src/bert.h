@@ -37,12 +37,12 @@ public:
           _static_shape(device == "NPU" ? true : false) {}
 
     Bert() = default;
-    void get_bert_feature(const std::string& text,
-                          const std::vector<int>& word2ph,
-                          std::vector<std::vector<float>>& berts);
+    void get_bert_feature(const std::string& text, std::vector<int>& word2ph, std::vector<std::vector<float>>& berts);
     virtual void ov_infer();
     virtual void get_output(const std::vector<int>& word2ph, std::vector<std::vector<float>>& phone_level_feature);
-
+    inline bool is_static_shape(){
+        return _static_shape;
+    }
     // virtual void get_output(std::vector<std::any>& output) {};
 
     inline std::string get_language() {
@@ -50,8 +50,25 @@ public:
     }
     static constexpr size_t BATCH_SIZE = 1;
     static constexpr size_t NPU_BERT_STATIC_SHAPE_SIZE = 64;
-    std::vector<int64_t> to_static_1d_shape(const std::vector<int64_t>& input,
-                                            size_t shape_size = NPU_BERT_STATIC_SHAPE_SIZE);
+
+    // @brief This function reshape an 1D vector to a static shape according to the shape_size
+    // @param dynamic_input The input vector to be reshaped
+    // @param shape_size The size of the output vector
+    template<typename T>
+    void to_static_1d_shape(std::vector<T>& input,
+                                            size_t shape_size = NPU_BERT_STATIC_SHAPE_SIZE) {
+        size_t n = input.size();
+        // Pad with 0 if the length of dynamic_input is less than or equal to the model input size.
+        if (n <= shape_size) {
+            input.resize(shape_size, 0);
+        } else {  // Truncate and output a warning if the length of dynamic_input is greater than input size
+            input.resize(shape_size);
+            std::cout << "[Warning] Bert::to_static_1d_shape: dynamic_input is longer than model input size. Truncating "
+                         "to fit."
+                      << std::endl;
+        }
+    }
+
     [[maybe_unused]] inline void set_static_shape() {
         _static_shape = true;
     }  // intended for testing purposes only
