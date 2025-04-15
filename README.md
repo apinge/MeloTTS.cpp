@@ -51,13 +51,13 @@ The table below outlines the supported devices for each model:
 
 ### 1. Download OpenVINO™ GenAI C++ Package
 
-To download the OpenVINO GenAI C++ package, please refer to the following link: [Install OpenVINO™ GenAI](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-genai.html).
-For **OpenVINO™ GenAI 2025.0** on Windows, you can run the command line in the command prompt (cmd).
+To download the OpenVINO GenAI C++ package, please refer to the following link: [Install OpenVINO™ GenAI](https://docs.openvino.ai/2025/get-started/install-openvino/install-openvino-genai.html).
+For **OpenVINO™ GenAI 2025.1** on Windows, you can run the command line in the command prompt (cmd).
 ```
-curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.0/windows/openvino_genai_windows_2025.0.0.0_x86_64.zip
-tar -xzvf openvino_genai_windows_2025.0.0.0_x86_64.zip
+curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.1/windows/openvino_genai_windows_2025.1.0.0_x86_64.zip
+tar -xzvf openvino_genai_windows_2025.1.0.0_x86_64.zip
 ```
-For Linux, you can download the C++ package from https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.0/linux/ and unzip the package.
+For Linux, you can download the C++ package from https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.1/linux/ and unzip the package.
 
 For additional versions and more information about OpenVINO, visit the official OpenVINO Toolkit page: [OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html).
 

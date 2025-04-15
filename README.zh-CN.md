@@ -44,14 +44,14 @@ MeloTTS.cpp的设计与 [原始 PyTorch 版本](https://github.com/myshell-ai/Me
 ### 1. 下载 OpenVINO™ GenAI C++ Package
 
 
-下载 OpenVINO GenAI C++ 包，请参考以下链接：[Install OpenVINO™ GenAI](https://docs.openvino.ai/2024/get-started/install-openvino/install-openvino-genai.html)。
-对于 **OpenVINO™ GenAI 2025.0** 在 Windows 上的安装，您可以在命令提示符（cmd）中运行命令行。
+下载 OpenVINO GenAI C++ 包，请参考以下链接：[Install OpenVINO™ GenAI](https://docs.openvino.ai/2025/get-started/install-openvino/install-openvino-genai.html)。
+对于 **OpenVINO™ GenAI 2025.1** 在 Windows 上的安装，您可以在命令提示符（cmd）中运行命令行。
 ```
-curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.0/windows/openvino_genai_windows_2025.0.0.0_x86_64.zip
-tar -xzvf openvino_genai_windows_2025.0.0.0_x86_64.zip
+curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.1/windows/openvino_genai_windows_2025.1.0.0_x86_64.zip
+tar -xzvf openvino_genai_windows_2025.1.0.0_x86_64.zip
 ```
 
-对于 Linux，您可以从 https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.0/linux/ 下载并解压该包。
+对于 Linux 2025.1，您可以从 https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.1/linux/ 下载并解压该包。
 
 有关其他版本和更多 OpenVINO 信息，请访问 OpenVINO 官方工具包页面：[OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html)
 
