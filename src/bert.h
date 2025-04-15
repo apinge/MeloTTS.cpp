@@ -37,6 +37,11 @@ public:
           _static_shape(device == "NPU" ? true : false) {}
 
     Bert() = default;
+
+    // @brief This function is used to get the bert feature from the text
+    // @param text The input text
+    // @param word2ph The mapping from word to phone, notice that this arg will be modified if the static_shape is true
+    // @param berts The output bert feature, this is the output
     void get_bert_feature(const std::string& text, std::vector<int>& word2ph, std::vector<std::vector<float>>& berts);
     virtual void ov_infer();
     virtual void get_output(const std::vector<int>& word2ph, std::vector<std::vector<float>>& phone_level_feature);

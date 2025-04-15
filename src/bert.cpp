@@ -83,7 +83,9 @@ void Bert::ov_infer() {
     get_profiling_info(_infer_request);
 #endif  // MODEL_PROFILING_DEBUG
 
-    std::cout << "[INOF] in inferbert infer ok\n";
+#ifdef MELO_DEBUG
+    std::cout << "bert infer ok\n";
+#endif
 
 }
 
@@ -145,21 +147,6 @@ void Bert::get_output(const std::vector<int>& word2ph, std::vector<std::vector<f
     }
 }
 
-// std::vector<int64_t> Bert::to_static_1d_shape(const std::vector<int64_t>& dynamic_input, size_t shape_size) {
-//     std::vector<int64_t> static_output(shape_size, 0);
-//     std::cout << "static_output"<< static_output.size() << std::endl;
-//     size_t n = dynamic_input.size();
-//     // Pad with 0 if the length of dynamic_input is less than or equal to the model input size.
-//     if (n <= shape_size) {
-//         std::copy(dynamic_input.begin(), dynamic_input.end(), static_output.begin());
-//     } else {  // Truncate and output a warning if the length of dynamic_input is greater than input size
-//         std::copy(dynamic_input.begin(), dynamic_input.begin() + shape_size, static_output.begin());
-//         std::cout
-//             << "[Warning]Bert::to_static_1d_shape: dynamic_input is longer than model input size. Truncating to fit."
-//             << std::endl;
-//     }
-//     return static_output;
-// }
 // only intended for testing
 [[maybe_unused]] void Bert::set_input_tensors(const std::vector<int64_t>& token_ids, bool static_shape) {
     // clear previous result
