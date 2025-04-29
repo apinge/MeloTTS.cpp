@@ -39,9 +39,9 @@ public:
         const std::string& tts_device = "CPU",
         const bool tts_quantize = true,
         const std::string& bert_device = "CPU",
-        bool disable_bert = false,
+        bool disable_bert = false
 #ifdef USE_DEEPFILTERNET
-        const std::filesystem::path& nf_ir_path = {},
+        ,const std::filesystem::path& nf_ir_path = {},
         const std::string& nf_device = "CPU",
         bool disable_nf = false
 #endif  // USE_DEEPFILTERNET
@@ -62,8 +62,11 @@ public:
                  const std::filesystem::path& tokenizer_model_folder,
                  const std::filesystem::path& punctuation_dict_path,
                  const std::string language,
-                 bool disable_bert = false,
-                 bool disable_nf = false);
+                 bool disable_bert = false
+#ifdef USE_DEEPFILTERNET
+                 ,bool disable_nf = false
+#endif
+                 );
     ~TTS() = default;
     TTS(const TTS&) = delete;
     TTS& operator=(const TTS&) = delete;
