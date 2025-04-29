@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (C)    2024-2025    Tong Qiu (tong.qiu@intel.com)
  *
  * See LICENSE for clarification regarding multiple authors
@@ -75,9 +75,9 @@ int main(int argc, char** argv) {
                     args.tts_device,
                     args.quantize,
                     args.bert_device,
-                    args.disable_bert,
+                    args.disable_bert
 #ifdef USE_DEEPFILTERNET
-                    args.nf_ir_path,
+                    ,args.nf_ir_path,
                     args.nf_device,
                     args.disable_nf
 #endif
