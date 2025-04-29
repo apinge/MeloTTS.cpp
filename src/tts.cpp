@@ -32,16 +32,20 @@ TTS::TTS(std::unique_ptr<ov::Core>& core,
          const std::string& tts_device,
          const bool tts_quantize,
          const std::string& bert_device,
-         bool disable_bert,
+         bool disable_bert
 #ifdef USE_DEEPFILTERNET
-         const std::filesystem::path& nf_ir_path,
+         ,const std::filesystem::path& nf_ir_path,
          const std::string& nf_device,
          bool disable_nf
 #endif  // USE_DEEPFILTERNET
          )
     : _language(language),
-      _disable_bert(disable_bert),
-      _disable_nf(disable_nf)
+      _disable_bert(disable_bert)
+#ifdef USE_DEEPFILTERNET
+      ,_disable_nf(disable_nf)
+#else
+      ,_disable_nf(true) // Always disable noise filtering when DeepFilterNet is not enabled
+#endif
       {
     assert((core.get() != nullptr) && "core should not be null!");
     assert((std::filesystem::exists(model_dir)) && "ir files or vocab_bert does not exit!");
@@ -130,12 +134,17 @@ TTS::TTS(std::unique_ptr<ov::Core>& core,
          const std::filesystem::path& tokenizer_model_folder,
          const std::filesystem::path& punctuation_dict_path,
          const std::string language,
-         bool disable_bert,
-         bool disable_nf)
+         bool disable_bert
+#ifdef USE_DEEPFILTERNET
+         ,bool disable_nf
+#endif
+         )
     : _language(language),
-      _disable_bert(disable_bert),
-      _disable_nf(disable_nf),
-      tts_model(core, tts_ir_path, tts_device, language),
+      _disable_bert(disable_bert)
+#ifdef USE_DEEPFILTERNET
+      ,_disable_nf(disable_nf)
+#endif
+      ,tts_model(core, tts_ir_path, tts_device, language),
       ov_tokenizer(std::make_shared<OpenVinoTokenizer>(tokenizer_model_folder)) {
 
     assert((core.get() != nullptr) && "core should not be null!");
@@ -351,8 +360,7 @@ std::unordered_set<int> sentence_splitter = {
 /*
  * @brief Splits a given text into pieces based on Chinese and English punctuation marks.
  * punctuation marks inlucde {
-    "，", "。", "！", "？", "、", "；", "：", "“", "”", "‘", "’", "（", "）", "【", "】", "《", "》", "——", "……", "·",
-    ",", ".", "!", "?", ";", ":", "\"", "\"", "'", "'", "(", ")", "[", "]", "<", ">", "-", "...", ".", "\n", "\t", "\r",
+    "，", "。", "！", "？", "、", "；", "：", """, """, "'", "'", "(", ")", "[", "]", "<", ">", "-", "...", ".", "\n", "\t", "\r",
     };
    std::unordered_set<std::string> sentence_splitter = {
        "，", "。", "！", "？","；",
