@@ -118,6 +118,12 @@ add_executable(meloTTS_ov ${SOURCE_FILES} ${HEADER_FILES})
 # Whether use deep filter net; We do not support this feature on Linux now.
 option(USE_DEEPFILTERNET "Enable DeepFilterNet support" ON)
 
+# Disable DeepFilterNet on MacOS for now due to linking issues
+if(APPLE)
+    set(USE_DEEPFILTERNET OFF)
+    message(STATUS "DeepFilterNet is disabled on macOS")
+endif()
+
 if(USE_DEEPFILTERNET)
     add_compile_definitions(USE_DEEPFILTERNET)
     message(STATUS "DeepFilterNet is enabled")
@@ -232,7 +238,62 @@ if(USE_DEEPFILTERNET AND UNIX)
 endif() # end USE_DEEPFILTERNET AND UNIX
    
 
-
+# Special handling for macOS platform
+if(APPLE)
+    message(STATUS "Configuring build for macOS")
+    # Reset all linker flags on macOS to avoid Linux-specific flags
+    set(CMAKE_EXE_LINKER_FLAGS "")
+    set(CMAKE_SHARED_LINKER_FLAGS "")
+    set(CMAKE_MODULE_LINKER_FLAGS "")
+    
+    # Enable verbose output from the linker to help diagnose issues
+    set(CMAKE_VERBOSE_MAKEFILE ON)
+    
+    # Override the link rule to not use unsupported flags
+    set(CMAKE_CXX_LINK_EXECUTABLE 
+        "<CMAKE_CXX_COMPILER> <FLAGS> <CMAKE_CXX_LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+    
+    # Handle libtorch location for macOS if using DeepFilterNet
+    if(USE_DEEPFILTERNET)
+        set(LIBTORCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdParty/libtorch)
+        
+        # Directly include and link libtorch
+        target_include_directories(meloTTS_ov PRIVATE ${LIBTORCH_DIR}/include)
+        target_include_directories(meloTTS_ov PRIVATE ${LIBTORCH_DIR}/include/torch/csrc/api/include)
+        
+        # Find the direct library paths
+        find_library(TORCH_LIB torch PATHS ${LIBTORCH_DIR}/lib)
+        find_library(C10_LIB c10 PATHS ${LIBTORCH_DIR}/lib)
+        find_library(TORCH_CPU_LIB torch_cpu PATHS ${LIBTORCH_DIR}/lib)
+        
+        if(TORCH_LIB AND C10_LIB AND TORCH_CPU_LIB)
+            message(STATUS "Found torch libraries directly:")
+            message(STATUS "  TORCH_LIB: ${TORCH_LIB}")
+            message(STATUS "  C10_LIB: ${C10_LIB}")
+            message(STATUS "  TORCH_CPU_LIB: ${TORCH_CPU_LIB}")
+            
+            # Link directly with the found libraries
+            target_link_libraries(meloTTS_ov PRIVATE ${TORCH_LIB} ${C10_LIB} ${TORCH_CPU_LIB})
+        else()
+            # Fallback to standard approach
+            set(CMAKE_PREFIX_PATH ${LIBTORCH_DIR})
+            find_package(Torch REQUIRED)
+            
+            # Override any problematic flags from Torch config
+            set(TORCH_LIBRARIES_CLEAN "")
+            foreach(lib ${TORCH_LIBRARIES})
+                string(REGEX REPLACE "--no-as-needed|--as-needed" "" lib_clean "${lib}")
+                list(APPEND TORCH_LIBRARIES_CLEAN ${lib_clean})
+            endforeach()
+            
+            # Debug Torch flags
+            message(STATUS "Original TORCH_LIBRARIES: ${TORCH_LIBRARIES}")
+            message(STATUS "Cleaned TORCH_LIBRARIES: ${TORCH_LIBRARIES_CLEAN}")
+            
+            target_link_libraries(meloTTS_ov PRIVATE ${TORCH_LIBRARIES_CLEAN})
+        endif()
+    endif()
+endif()
 
 # Define DEBUG macro for Debug configuration
 target_compile_definitions(meloTTS_ov PRIVATE "$<$<CONFIG:DEBUG>:DEBUG>")

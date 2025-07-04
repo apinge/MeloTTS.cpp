@@ -16,7 +16,8 @@ void ConfigureOneDNNCache() {
 #elif __linux__
     auto status = setenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY", "100", true);
 #else
-    std::cout << "Running on an unknown OS" << std::endl;
+    auto status = setenv("ONEDNN_PRIMITIVE_CACHE_CAPACITY", "100", 1);
+    std::cout << "Running on macOS" << std::endl;
 #endif
     // TODO : Add try catch block here
     if (status == 0) {
@@ -36,7 +37,8 @@ void SetOneDNN_CPU_MAX_ISA() {
 #elif __linux__
     auto status = setenv("ONEDNN_MAX_CPU_ISA", "AVX2_VNNI", true);
 #else
-    std::cout << "Running on an unknown OS" << std::endl;
+    auto status = setenv("ONEDNN_MAX_CPU_ISA", "AVX2_VNNI", 1);
+    std::cout << "Running on macOS" << std::endl;
 #endif
     if (status == 0) {
         char* onednn_max_cpu_isa = std::getenv("ONEDNN_MAX_CPU_ISA");
