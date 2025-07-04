@@ -52,12 +52,14 @@ The table below outlines the supported devices for each model:
 ### 1. Download OpenVINO™ GenAI C++ Package
 
 To download the OpenVINO GenAI C++ package, please refer to the following link: [Install OpenVINO™ GenAI](https://docs.openvino.ai/2025/get-started/install-openvino/install-openvino-genai.html).
-For **OpenVINO™ GenAI 2025.1** on Windows, you can run the command line in the command prompt (cmd).
+For **OpenVINO™ GenAI 2025.2** on Windows, you can run the command line in the command prompt (cmd).
 ```
-curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.1/windows/openvino_genai_windows_2025.1.0.0_x86_64.zip
-tar -xzvf openvino_genai_windows_2025.1.0.0_x86_64.zip
+curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.2/windows/openvino_genai_windows_2025.2.0.0_x86_64.zip
+tar -xzvf openvino_genai_windows_2025.2.0.0_x86_64.zip
 ```
-For Linux, you can download the C++ package from https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.1/linux/ and unzip the package.
+For Linux, you can download the C++ package from https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.2/linux/ and unzip the package.
+
+For MacOs, you can download the C++ package from https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.2/macos/ and unzip the package.
 
 For additional versions and more information about OpenVINO, visit the official OpenVINO Toolkit page: [OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html).
 
@@ -125,10 +127,10 @@ Below are the methods to enable this feature and the usage details:
 </details>
 
 ## Supported Versions
-- **Operating System**: Windows, Linux
-- **CPU Architecture**: Metor Lake, Lunar Lake, and most Intel CPUs
+- **Operating System**: Windows, Linux, MacOS
+- **CPU Architecture**: Metor Lake, Lunar Lake, Arrow Lake and most Intel CPUs
 - **GPU Architecture**: Intel® Arc™ Graphics (Intel Xe, including iGPU)
-- **NPU  Architecture**: NPU 4,  NPU in Meteor Lake or Lunar Lake
+- **NPU  Architecture**: NPU 4,  NPU in Meteor Lake, Lunar Lake or Arrow Lake
 - **OpenVINO Version**: >=2024.4
 - **C++ Version**: >=C++20
 
@@ -149,8 +151,10 @@ Here are some features and improvements planned for future releases:
 2. **Enhancing Quality in Quantized TTS Models**:
    - The current INT8 quantized model exhibits slight background noise. As a workaround, we integrated DeepFilterNet for post-processing. Moving forward, we aim to address the noise issue more effectively by the quantization techniques.
 
-## Python Version
-The Python version of this repository (MeloTTS integrated with OpenVINO) is provided in [MeloTTS-OV](https://github.com/zhaohb/MeloTTS-OV/tree/speech-enhancement-and-npu). The Python version includes methods to convert the model into OpenVINO IR.
+## Jupyter Notebook
+
+We have updated the reference notebook [Voice tone cloning with OpenVoice2 and MeloTTS for Text-to-Speech by OpenVINO](https://github.com/openvinotoolkit/openvino_notebooks/tree/latest/notebooks/openvoice2-and-melotts), which includes steps on how to convert the torch version to OpenVINO IR. The original Python version of this repository [MeloTTS-OV](https://github.com/zhaohb/MeloTTS-OV/tree/speech-enhancement-and-npu) has been deprecated now.
+
 
 ## Third-Party Code
 This repository includes third-party code and libraries for Chinese word segmentation and pinyin processing.

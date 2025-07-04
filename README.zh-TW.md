@@ -48,13 +48,15 @@ MeloTTS.cpp的設計與[原始PyTorch 版本](https://github.com/myshell-ai/Melo
 ### 1. 下載 OpenVINO C++ Package
 
 若要下載 OpenVINO GenAI C++ 套件，請參考以下連結：[Install OpenVINO™ GenAI](https://docs.openvino.ai/2025/get-started/install-openvino/install-openvino-genai.html)。
-對於 **OpenVINO™ GenAI 2025.1** 在 Windows 上的安裝，可以在cmd中執行命令列。
+對於 **OpenVINO™ GenAI 2025.2** 在 Windows 上的安裝，可以在cmd中執行命令列。
 
 ```
-curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.1/windows/openvino_genai_windows_2025.1.0.0_x86_64.zip
-tar -xzvf openvino_genai_windows_2025.1.0.0_x86_64.zip
+curl -O https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.2/windows/openvino_genai_windows_2025.2.0.0_x86_64.zip
+tar -xzvf openvino_genai_windows_2025.2.0.0_x86_64.zip
 ```
-對於 OpenVINO 2025.1 在 Linux 上的安裝，只需要從 https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.1/linux/ 下載並解壓縮該套件。
+對於 OpenVINO 2025.2 在 Linux 上的安裝，只需要從 https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.2/linux/ 下載並解壓縮該套件。
+
+對於 OpenVINO 2025.2 在 MacOS 上的安裝，只需要從 https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2025.2/macos/ 下載並解壓縮該套件。
 
 有關其他版本和更多 OpenVINO 的資訊，請參考 OpenVINO 官方工具包頁面：[OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html)
 
@@ -125,10 +127,10 @@ BERT 和 DeepFilterNet 模型支援將 NPU 作為推理設備，利用 Meteor La
 </details>
 
 ## 版本支援
-- **Operating System**: Windows, Linux
-- **CPU Architecture**: Metor Lake, Lunar Lake, 大多數 Intel CPUs
+- **Operating System**: Windows, Linux, MacOS
+- **CPU Architecture**: Metor Lake, Lunar Lake, Arrow Lake, 大多數 Intel CPUs
 - **GPU Architecture**: Intel® Arc™ Graphics (Intel Xe, 包括iGPU)
-- **NPU  Architecture**: NPU 4, Meteor Lake, Lunar Lake中整合的NPU
+- **NPU  Architecture**: NPU 4, Meteor Lake, Lunar Lake, Arrow Lake中整合的NPU
 - **OpenVINO Version**: >=2024.4
 - **C++ Version**: >=C++20
 
@@ -147,8 +149,9 @@ BERT 和 DeepFilterNet 模型支援將 NPU 作為推理設備，利用 Meteor La
 2. **提高量化品質**:
    - 目前的INT8量化模型表現出輕微的背景雜訊。我們整合了 DeepFilterNet 進行後處理。未來的目標是透過量化技術解決噪音問題。
 
-## Python版本
-Python 版本（整合 OpenVINO 的 MeloTTS）可在 [MeloTTS-OV](https://github.com/zhaohb/MeloTTS-OV/tree/speech-enhancement-and-npu) 中找到。 Python 版本包括將模型轉換為 OpenVINO IR 的方法。
+## Jupyter Notebook版本
+
+我們已經更新了[Voice tone cloning with OpenVoice2 and MeloTTS for Text-to-Speech by OpenVINO](https://github.com/openvinotoolkit/openvino_notebooks/tree/latest/notebooks/openvoice2-and-melotts)，其中包含了如何將torch版本轉換為OpenVINO IR的步驟。這個倉庫的原始Python版本[MeloTTS-OV](https://github.com/zhaohb/MeloTTS-OV/tree/speech-enhancement-and-npu) 現在已經停止維護。
 
 ## 第三方函式庫
 
