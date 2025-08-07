@@ -64,9 +64,13 @@ For MacOs, you can download the C++ package from https://storage.openvinotoolkit
 For additional versions and more information about OpenVINO, visit the official OpenVINO Toolkit page: [OpenVINO Toolkit Overview](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html).
 
 ### 2. Clone the Repository
-```
+```bash
 git lfs install
 git clone https://github.com/apinge/MeloTTS.cpp.git
+```
+You might encounter problem about git lfs, we also recommend using hugging face to download the model files
+```bash
+git clone https://huggingface.co/apinge/MeloTTS.cpp
 ```
 
 ### 3. Build and Run
